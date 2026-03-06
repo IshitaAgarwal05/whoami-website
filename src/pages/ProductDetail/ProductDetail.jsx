@@ -126,6 +126,26 @@ const ProductDetail = () => {
                                             <span className="spec-value">{product.Material}</span>
                                         </div>
                                     </div>
+
+                                    {product.Dimensions && (
+                                        <div className="spec-item">
+                                            <div className="spec-icon">📏</div>
+                                            <div className="spec-content">
+                                                <span className="spec-label">Dimensions</span>
+                                                <span className="spec-value">{product.Dimensions}</span>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {product.Weight && (
+                                        <div className="spec-item">
+                                            <div className="spec-icon">⚖️</div>
+                                            <div className="spec-content">
+                                                <span className="spec-label">Weight</span>
+                                                <span className="spec-value">{product.Weight}</span>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
