@@ -8,6 +8,7 @@ const Products = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [sortBy, setSortBy] = useState('default');
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -30,6 +31,19 @@ const Products = () => {
 
         fetchProducts();
     }, []);
+
+    const handleSortChange = (e) => {
+        setSortBy(e.target.value);
+    };
+
+    const sortedProducts = [...products].sort((a, b) => {
+        if (sortBy === 'price-asc') {
+            return a.Price - b.Price;
+        } else if (sortBy === 'price-desc') {
+            return b.Price - a.Price;
+        }
+        return 0; // default (Excel order)
+    });
 
     if (loading) {
         return (
@@ -67,10 +81,26 @@ const Products = () => {
                         collectibles, puzzles, and personalized gifts. Each piece is
                         meticulously designed and precision-crafted.
                     </p>
+
+                    <div className="products-controls">
+                        <div className="sort-container">
+                            <label htmlFor="sort-price">Sort by Price:</label>
+                            <select
+                                id="sort-price"
+                                value={sortBy}
+                                onChange={handleSortChange}
+                                className="sort-select"
+                            >
+                                <option value="default">Featured</option>
+                                <option value="price-asc">Price: Low to High</option>
+                                <option value="price-desc">Price: High to Low</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="products-grid">
-                    {products.map((product) => (
+                    {sortedProducts.map((product) => (
                         <ProductCard key={product.ID} product={product} />
                     ))}
                 </div>

@@ -74,73 +74,77 @@ const ProductDetail = () => {
     return (
         <div className="product-detail-page">
             <div className="container">
-                {/* Breadcrumb */}
-                <div className="breadcrumb">
-                    <Link to="/">Home</Link>
-                    <span>/</span>
-                    <Link to="/products">Products</Link>
-                    <span>/</span>
-                    <span>{product.Name}</span>
+                {/* Navigation and Breadcrumb */}
+                <div className="product-detail-nav">
+                    <Link to="/products" className="back-link">
+                        <span className="arrow">←</span> Back to Collection
+                    </Link>
+                    <div className="breadcrumb">
+                        <Link to="/">Home</Link>
+                        <span>/</span>
+                        <Link to="/products">Products</Link>
+                        <span>/</span>
+                        <span className="current">{product.Name}</span>
+                    </div>
                 </div>
 
                 <div className="product-detail-grid">
                     {/* Product Image */}
                     <div className="product-image-section">
-                        <div className="product-image">
-                            <img src={imageUrl} alt={product.Name} />
+                        <div className="product-image-container">
+                            <div className="product-image-glow"></div>
+                            <div className="product-image">
+                                <img src={imageUrl} alt={product.Name} />
+                            </div>
                         </div>
                     </div>
 
                     {/* Product Info */}
                     <div className="product-info-section">
-                        <div className="product-category-badge">{product.Category}</div>
-
-                        <h1 className="product-title">{product.Name}</h1>
-
-                        <div className="product-price">{formatPrice(product.Price)}</div>
-
-                        <div className="product-description">
-                            <h3>Description</h3>
-                            <p>{product.Description}</p>
+                        <div className="glass-card product-main-info">
+                            <div className="product-category-badge">{product.Category}</div>
+                            <h1 className="product-title">{product.Name}</h1>
+                            <div className="product-price-tag">
+                                <span className="price-label">Price</span>
+                                <span className="price-value">{formatPrice(product.Price)}</span>
+                            </div>
                         </div>
 
-                        <div className="product-specs">
-                            <h3>Specifications</h3>
-                            <div className="specs-grid">
-                                <div className="spec-item">
-                                    <span className="spec-label">Material</span>
-                                    <span className="spec-value">{product.Material}</span>
+                        <div className="glass-card product-details-section">
+                            <div className="detail-block">
+                                <h3>Description</h3>
+                                <p className="description-text">{product.Description}</p>
+                            </div>
+
+                            <div className="detail-block">
+                                <h3>Specifications</h3>
+                                <div className="specs-grid">
+                                    <div className="spec-item">
+                                        <div className="spec-icon">M</div>
+                                        <div className="spec-content">
+                                            <span className="spec-label">Material</span>
+                                            <span className="spec-value">{product.Material}</span>
+                                        </div>
+                                    </div>
                                 </div>
-
-                                {/* {product.Dimensions && (
-                                    <div className="spec-item">
-                                        <span className="spec-label">Dimensions</span>
-                                        <span className="spec-value">{product.Dimensions}</span>
-                                    </div>
-                                )} */}
-
-                                {/* {product.Weight && (
-                                    <div className="spec-item">
-                                        <span className="spec-label">Weight</span>
-                                        <span className="spec-value">{product.Weight}</span>
-                                    </div>
-                                )} */}
                             </div>
+
+                            {product.UseCase && (
+                                <div className="detail-block">
+                                    <h3>Ideal For</h3>
+                                    <p className="use-case-text">{product.UseCase}</p>
+                                </div>
+                            )}
                         </div>
 
-                        {product.UseCase && (
-                            <div className="product-use-case">
-                                <h3>Use Case</h3>
-                                <p>{product.UseCase}</p>
+                        <div className="product-note-card">
+                            <div className="note-icon">!</div>
+                            <div className="note-content">
+                                <p>
+                                    <strong>Showcase Item:</strong> For inquiries or bespoke orders,
+                                    please reach out via our <Link to="/contact">Contact</Link> page.
+                                </p>
                             </div>
-                        )}
-
-                        {/* Note: No purchase button - informational only */}
-                        <div className="product-note">
-                            <p>
-                                <strong>Note:</strong> This is a showcase website. For inquiries
-                                about this product, please visit our <Link to="/contact">Contact</Link> page.
-                            </p>
                         </div>
                     </div>
                 </div>
