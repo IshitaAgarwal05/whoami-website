@@ -11,6 +11,7 @@
   --color-amber-glow: #FF9500;
   --color-light-amber: #FFC966;
   --color-dark-gold: #CC8A00;
+  --color-warm-white: #FAF9F6;
 
   --color-graphite-grey: #2B2B2B;
   --color-deep-blue-grey: #1E2A33;
@@ -56,6 +57,7 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+  --font-weight-black: 900;
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -102,6 +104,7 @@
   /* 12px */
   --radius-2xl: 1rem;
   /* 16px */
+  --radius-full: 9999px;
 }
 
 /* CSS Reset */
@@ -236,11 +239,11 @@ select {
 }
 
 .section {
-  padding: var(--spacing-5xl) 0;
+  padding: var(--spacing-4xl) 0;
 }
 
 .section-sm {
-  padding: var(--spacing-4xl) 0;
+  padding: var(--spacing-3xl) 0;
 }
 
 /* Text utilities */
@@ -306,11 +309,11 @@ select {
   }
 
   .section {
-    padding: var(--spacing-4xl) 0;
+    padding: var(--spacing-3xl) 0;
   }
 
   .section-sm {
-    padding: var(--spacing-3xl) 0;
+    padding: var(--spacing-2xl) 0;
   }
 }
 
@@ -355,6 +358,6 @@ html {
 
 /* Selection */
 ::selection {
-  background-color: var(--color-deep-blue-grey);
+  background-color: rgba(255, 184, 77, 0.3);
   color: var(--color-warm-white);
 }

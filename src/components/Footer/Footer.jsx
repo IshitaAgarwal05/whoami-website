@@ -28,11 +28,18 @@ const Footer = () => {
                     <div className="footer-column">
                         <h4 className="footer-heading">Quick Links</h4>
                         <ul className="footer-links">
-                            <li><Link to="/">Home</Link></li>
-                            <li><Link to="/products">Products</Link></li>
-                            <li><Link to="/about">About</Link></li>
+                            <li><Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Home</Link></li>
+                            <li><Link to="/products" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Products</Link></li>
+                            <li><Link to="/about" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>About</Link></li>
                             {/* <li><Link to="/blog">Journal</Link></li> */}
-                            <li><Link to="/contact">Contact</Link></li>
+                            <li>
+                                <Link
+                                    to="/contact"
+                                    onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                                >
+                                    Contact
+                                </Link>
+                            </li>
                         </ul>
                     </div>
 
@@ -52,7 +59,6 @@ const Footer = () => {
                         <h4 className="footer-heading">Connect</h4>
                         <ul className="footer-links">
                             <li><a href="mailto:studios.whoami@gmail.com">studios.whoami@gmail.com</a></li>
-                            <li><a href="tel:+919314065601">+91 93140 65601</a></li>
                             <li><a href="https://www.instagram.com/whoami.studios" target="_blank" rel="noopener noreferrer">Instagram</a></li>
                             <li><a href="https://www.pinterest.com/studioswhoami/" target="_blank" rel="noopener noreferrer">Pinterest</a></li>
                         </ul>

@@ -6,29 +6,38 @@ const Hero = () => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const heroRef = useRef(null);
     const logoRef = useRef(null);
+    const throttleTimerRef = useRef(null);
 
-    // Track mouse position for 3D tilt effect
+    // Throttled mouse position tracking (update every 16ms instead of every mousemove)
     useEffect(() => {
         const handleMouseMove = (e) => {
-            if (!heroRef.current) return;
+            if (!heroRef.current || throttleTimerRef.current) return;
 
             const rect = heroRef.current.getBoundingClientRect();
             const x = (e.clientX - rect.left) / rect.width;
             const y = (e.clientY - rect.top) / rect.height;
 
             setMousePosition({ x, y });
+
+            // Throttle to ~60fps
+            throttleTimerRef.current = setTimeout(() => {
+                throttleTimerRef.current = null;
+            }, 16);
         };
 
         window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            if (throttleTimerRef.current) clearTimeout(throttleTimerRef.current);
+        };
     }, []);
 
-    // Apply 3D transform to logo based on mouse position
+    // Apply 3D transform to logo (only when needed)
     useEffect(() => {
         if (!logoRef.current) return;
 
-        const tiltX = (mousePosition.y - 0.5) * 20; // -10 to 10 degrees
-        const tiltY = (mousePosition.x - 0.5) * -20; // -10 to 10 degrees
+        const tiltX = (mousePosition.y - 0.5) * 20;
+        const tiltY = (mousePosition.x - 0.5) * -20;
 
         logoRef.current.style.transform = `
             perspective(1000px) 
@@ -37,6 +46,9 @@ const Hero = () => {
             translateZ(20px)
         `;
     }, [mousePosition]);
+
+    // Reduce particles on initial load - only 10 instead of 20
+    const particleCount = typeof window !== 'undefined' && window.innerWidth < 768 ? 5 : 10;
 
     return (
         <section className="hero-immersive" ref={heroRef}>
@@ -104,9 +116,9 @@ const Hero = () => {
                 </div>
             </div>
 
-            {/* Floating particles */}
+            {/* Floating particles - REDUCED COUNT */}
             <div className="hero-particles">
-                {[...Array(20)].map((_, i) => (
+                {[...Array(particleCount)].map((_, i) => (
                     <div key={i} className="particle" style={{
                         left: `${Math.random() * 100}%`,
                         animationDelay: `${Math.random() * 5}s`,

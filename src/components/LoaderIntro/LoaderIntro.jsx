@@ -43,7 +43,7 @@ const LoaderIntro = ({ onComplete, onRevealStart }) => {
                 i++;
                 timerRef.current = setTimeout(type, LETTER_DELAY);
             } else {
-                timerRef.current = setTimeout(() => setPhase('thread'), PHASE1_HOLD);
+                timerRef.current = setTimeout(() => setPhase('scan'), PHASE1_HOLD);
             }
         };
         timerRef.current = setTimeout(type, 800);
@@ -52,6 +52,7 @@ const LoaderIntro = ({ onComplete, onRevealStart }) => {
     }, [phase]);
 
     // ─── PHASE 2: GOLDEN THREAD (JS-driven stroke animation) ───
+    /*
     useEffect(() => {
         if (phase !== 'thread') return;
 
@@ -103,6 +104,7 @@ const LoaderIntro = ({ onComplete, onRevealStart }) => {
             clearTimeout(timerRef.current);
         };
     }, [phase]);
+    */
 
     // ─── PHASE 3: SCAN → REVEAL → DONE ───
     useEffect(() => {
@@ -136,7 +138,9 @@ const LoaderIntro = ({ onComplete, onRevealStart }) => {
                 </div>
             )}
 
+
             {/* ── PHASE 2: GOLDEN THREAD ── */}
+            {/*
             {phase === 'thread' && (
                 <div className="loader-thread-wrapper">
                     <svg className="loader-thread-svg" viewBox="0 0 600 100" xmlns="http://www.w3.org/2000/svg">
@@ -147,7 +151,7 @@ const LoaderIntro = ({ onComplete, onRevealStart }) => {
                                 <stop offset="100%" stopColor="#e8b230" />
                             </linearGradient>
                         </defs>
-                        {/* Main stroke — only element animated per-frame */}
+                        // Main stroke - only element animated per-frame
                         <text
                             ref={svgTextRef}
                             className="loader-thread-stroke"
@@ -156,7 +160,7 @@ const LoaderIntro = ({ onComplete, onRevealStart }) => {
                             fontWeight="700" letterSpacing="12"
                             fill="none" stroke="url(#goldGrad)" strokeWidth="1.5"
                         >WHOAMI</text>
-                        {/* Fill — fades in via CSS class toggle */}
+                        // Fill - fades in via CSS class toggle
                         <text
                             className={`loader-thread-text-fill ${threadFilled ? 'loader-thread-text-filled' : ''}`}
                             x="300" y="75" textAnchor="middle"
@@ -168,6 +172,7 @@ const LoaderIntro = ({ onComplete, onRevealStart }) => {
                     <p className="loader-thread-tagline">Identity, crafted.</p>
                 </div>
             )}
+            */} 
 
             {/* ── PHASE 3: FINGERPRINT SCAN ── */}
             {(phase === 'scan' || phase === 'reveal') && (

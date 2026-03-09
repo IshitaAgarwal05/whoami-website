@@ -1,14 +1,13 @@
 /* Contact Page Styles */
 .contact-page {
     min-height: 100vh;
-    padding: var(--spacing-4xl) 0;
+    padding: var(--spacing-lg) 0;
 }
 
-/* Header */
 .contact-header {
     text-align: center;
-    margin-bottom: var(--spacing-5xl);
-    padding-bottom: var(--spacing-3xl);
+    margin-bottom: var(--spacing-3xl);
+    padding: var(--spacing-xl) 0 var(--spacing-2xl);
     border-bottom: 1px solid var(--color-border);
 }
 
@@ -37,7 +36,7 @@
 
 /* Form Section */
 .contact-form-section h2,
-.contact-inf.error-message h3 {
+.contact-info-section h2 {
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
@@ -79,8 +78,8 @@
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--color-deep-blue-grey);
-    box-shadow: 0 0 0 3px rgba(30, 42, 51, 0.1);
+    border-color: var(--color-warm-gold);
+    box-shadow: 0 0 0 3px rgba(255, 184, 77, 0.15);
 }
 
 .form-group textarea {
@@ -160,13 +159,12 @@
 }
 
 .contact-content h3 {
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-muted);
     margin-bottom: var(--spacing-xs);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    font-size: var(--font-size-sm);
 }
 
 .contact-content a {

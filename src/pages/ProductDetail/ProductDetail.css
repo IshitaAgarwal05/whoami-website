@@ -1,7 +1,7 @@
 /* Product Detail Page Styles */
 .product-detail-page {
     min-height: 100vh;
-    padding: var(--spacing-3xl) 0 var(--spacing-5xl);
+    padding: var(--spacing-3xl) 0 var(--spacing-3xl);
 }
 
 /* Breadcrumb */
@@ -107,13 +107,12 @@
 .product-description h3,
 .product-specs h3,
 .product-use-case h3 {
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
     margin-bottom: var(--spacing-md);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    font-size: var(--font-size-sm);
 }
 
 .product-description p,
@@ -142,12 +141,11 @@
 }
 
 .spec-label {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     font-weight: var(--font-weight-medium);
     color: var(--color-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    font-size: var(--font-size-xs);
 }
 
 .spec-value {

@@ -1,5 +1,5 @@
 .faq-page {
-    padding: var(--spacing-5xl) 0;
+    padding: var(--spacing-lg) 0;
     min-height: 80vh;
 }
 
@@ -73,7 +73,7 @@
 
 .faq-cta {
     text-align: center;
-    margin-top: var(--spacing-5xl);
+    margin-top: var(--spacing-3xl);
     padding: var(--spacing-3xl);
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);

@@ -177,14 +177,6 @@ const Contact = () => {
                             </div>
 
                             <div className="contact-item">
-                                <div className="contact-icon">📞</div>
-                                <div className="contact-content">
-                                    <h3>Phone</h3>
-                                    <a href="tel:+919314065601">+91 93140 65601</a>
-                                </div>
-                            </div>
-
-                            <div className="contact-item">
                                 <div className="contact-icon">📍</div>
                                 <div className="contact-content">
                                     <h3>Location</h3>
