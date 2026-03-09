@@ -17,7 +17,7 @@ const faqData = [
     },
     {
         question: "Custom designs?",
-        answer: "Absolutely! We love creating custom identity artifacts. Reach out to us via email at studios.whoami@gmail.com, call us at +91 93140 65601, or DM us on Instagram @whoami.studios with your ideas."
+        answer: "Absolutely! We love creating custom identity artifacts. Reach out to us via email at studios.whoami@gmail.com, or DM us on Instagram @whoami.studios with your ideas."
     },
     {
         question: "Materials used?",
@@ -29,7 +29,7 @@ const faqData = [
     },
     {
         question: "Return policy?",
-        answer: "Customer satisfaction is important to us. If there's any issue with your order, please contact us at studios.whoami@gmail.com or call +91 93140 65601 within 3 days of delivery."
+        answer: "Customer satisfaction is important to us. If there's any issue with your order, please contact us at studios.whoami@gmail.com, or DM us on Instagram @whoami.studios within 3 days of delivery."
     },
     {
         question: "Gift wrapping?",

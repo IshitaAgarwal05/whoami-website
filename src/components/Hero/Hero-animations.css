@@ -51,7 +51,7 @@
 }
 
 /* Mobile responsive for logo */
-@media (max-width: 10244px) {
+@media (max-width: 1024px) {
     .hero-header {
         flex-direction: column;
         gap: var(--spacing-2xl);

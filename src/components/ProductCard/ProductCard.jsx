@@ -2,6 +2,10 @@ import { Link } from 'react-router-dom';
 import './ProductCard.css';
 
 const ProductCard = ({ product }) => {
+
+    const FALLBACK_IMAGE = 'https://placehold.co/400x400';
+
+    console.log(product);
     // Format price in INR
     const formatPrice = (price) => {
         return new Intl.NumberFormat('en-IN', {
@@ -12,12 +16,20 @@ const ProductCard = ({ product }) => {
     };
 
     // Placeholder image if none provided
-    const imageUrl = product.ImageURL || 'https://via.placeholder.com/400x400/2B2B2B/F5F5F3?text=WhoAmI';
+    const imageUrl = product.ImageURL || FALLBACK_IMAGE;
 
     return (
         <Link to={`/product/${product.ID}`} className="product-card">
             <div className="product-card-image">
-                <img src={imageUrl} alt={product.Name} loading="lazy" />
+                <img
+                    src={imageUrl}
+                    alt={product.Name}
+                    loading="lazy"
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = FALLBACK_IMAGE;
+                    }}
+                />
             </div>
 
             <div className="product-card-content">

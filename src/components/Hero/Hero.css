@@ -1,9 +1,7 @@
 /* ==========================================
-   COSMIC IMMERSIVE HERO SECTION
-   Full-screen experience with 3D effects
+   COSMIC IMMERSIVE HERO SECTION - OPTIMIZED
    ========================================== */
 
-/* Hero Container - Full Viewport */
 .hero-immersive {
     position: relative;
     min-height: 100vh;
@@ -14,7 +12,7 @@
     background: #0a0a0f;
 }
 
-/* Animated Diagonal Gradient Background */
+/* OPTIMIZED: Use solid color + subtle gradient instead of animated gradient */
 .hero-gradient-bg {
     position: absolute;
     inset: 0;
@@ -23,21 +21,20 @@
             #0a0a0f 30%,
             #2a1810 60%,
             #0a0a0f 100%);
-    background-size: 200% 200%;
-    animation: gradientMove 15s ease infinite;
     z-index: 1;
+    /* REMOVED: animation - static gradient is much faster */
 }
 
-/* Grain Texture Overlay */
+/* Grain Texture Overlay - OPTIMIZED */
 .hero-grain-overlay {
     position: absolute;
     inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     opacity: 0.03;
     z-index: 2;
+    /* Grain is static - no animation needed */
 }
 
-/* Main Container */
 .hero-immersive-container {
     position: relative;
     z-index: 10;
@@ -47,11 +44,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-3xl);
+    gap: var(--spacing-2xl);
     animation: fadeInScale 1.2s ease-out;
 }
 
-/* Background Giant Text */
 .hero-bg-text {
     position: absolute;
     top: 50%;
@@ -69,7 +65,7 @@
 }
 
 /* ==========================================
-   LOGO - 3D Interactive
+   LOGO - 3D Interactive OPTIMIZED
    ========================================== */
 
 .hero-logo-container {
@@ -80,8 +76,6 @@
     transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
     animation: logoFloatImmersive 4s ease-in-out infinite;
     cursor: pointer;
-
-    /* Circular frame with golden ring */
     border-radius: 50%;
     padding: 15px;
     background: linear-gradient(135deg, transparent, rgba(255, 184, 77, 0.1));
@@ -89,6 +83,8 @@
     box-shadow:
         0 0 30px rgba(255, 184, 77, 0.4),
         inset 0 0 20px rgba(255, 184, 77, 0.1);
+    /* GPU acceleration + hint for transform animations */
+    will-change: transform;
 }
 
 .hero-logo-immersive {
@@ -98,22 +94,17 @@
     position: relative;
     z-index: 2;
     border-radius: 50%;
-    filter: drop-shadow(0 0 40px rgba(255, 184, 77, 0.6));
-    transition: filter 0.4s ease;
-}
-
-.hero-logo-container:hover {
-    border-color: var(--color-amber-glow);
-    box-shadow:
-        0 0 50px rgba(255, 184, 77, 0.6),
-        inset 0 0 30px rgba(255, 184, 77, 0.2);
+    /* OPTIMIZED: Remove drop-shadow filter, use box-shadow instead */
+    filter: none;
+    box-shadow: 0 0 40px rgba(255, 184, 77, 0.6);
+    transition: box-shadow 0.4s ease;
 }
 
 .hero-logo-container:hover .hero-logo-immersive {
-    filter: drop-shadow(0 0 60px rgba(255, 184, 77, 0.9));
+    box-shadow: 0 0 60px rgba(255, 184, 77, 0.9);
 }
 
-/* Pulsing Glow Behind Logo */
+/* OPTIMIZED: Glow using background instead of transform + scale */
 .hero-logo-glow {
     position: absolute;
     inset: -30%;
@@ -121,13 +112,14 @@
             rgba(255, 184, 77, 0.4) 0%,
             rgba(255, 184, 77, 0.2) 30%,
             transparent 70%);
-    animation: glowPulse 3s ease-in-out infinite;
+    animation: glowPulseOpacity 3s ease-in-out infinite;
     z-index: 1;
     border-radius: 50%;
+    will-change: opacity;
 }
 
 /* ==========================================
-   TYPOGRAPHY - Bold & Dramatic
+   TYPOGRAPHY - OPTIMIZED
    ========================================== */
 
 .hero-immersive-content {
@@ -147,6 +139,8 @@
     line-height: 1;
     margin: 0;
     animation: fadeInUp 1s ease-out 0.3s both;
+    /* Remove text-shadow animation - static only */
+    text-shadow: 0 0 10px rgba(255, 184, 77, 0.3);
 }
 
 .hero-tagline-immersive {
@@ -157,13 +151,13 @@
             var(--color-warm-gold) 0%,
             var(--color-amber-glow) 50%,
             var(--color-warm-gold) 100%);
-    background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: fadeInUp 1s ease-out 0.5s both, gradientText 4s ease infinite;
     margin: 0;
-    text-shadow: 0 0 30px rgba(255, 184, 77, 0.5);
+    animation: fadeInUp 1s ease-out 0.5s both;
+    /* REMOVED: gradientText animation - too expensive */
+    text-shadow: none;
 }
 
 .hero-description-immersive {
@@ -176,7 +170,7 @@
 }
 
 /* ==========================================
-   CTA BUTTONS - Neon Glow
+   CTA BUTTONS - OPTIMIZED
    ========================================== */
 
 .hero-cta-immersive {
@@ -224,7 +218,7 @@
 }
 
 /* ==========================================
-   GLASSMORPHISM STATS BAR
+   GLASSMORPHISM STATS BAR - OPTIMIZED
    ========================================== */
 
 .hero-stats-glass {
@@ -233,13 +227,14 @@
     gap: var(--spacing-2xl);
     padding: var(--spacing-lg) var(--spacing-3xl);
     background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    /* OPTIMIZED: Reduce blur from 20px to 10px for better performance */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 184, 77, 0.2);
     border-radius: var(--radius-2xl);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     animation: fadeInUp 1s ease-out 1.1s both;
-    margin-bottom: var(--spacing-5xl);
+    margin-bottom: var(--spacing-2xl);
 }
 
 .stat-glass-item {
@@ -272,7 +267,7 @@
 }
 
 /* ==========================================
-   SCROLL INDICATOR
+   SCROLL INDICATOR - Simplified
    ========================================== */
 
 .hero-scroll-indicator {
@@ -295,10 +290,11 @@
     font-size: var(--font-size-2xl);
     color: var(--color-warm-gold);
     animation: scrollBounce 2s ease-in-out infinite;
+    will-change: transform;
 }
 
 /* ==========================================
-   FLOATING PARTICLES
+   FLOATING PARTICLES - OPTIMIZED
    ========================================== */
 
 .hero-particles {
@@ -316,25 +312,15 @@
     background: var(--color-warm-gold);
     border-radius: 50%;
     opacity: 0;
-    box-shadow: 0 0 10px var(--color-warm-gold);
+    /* OPTIMIZED: Remove box-shadow, use background only */
+    box-shadow: none;
     animation: particleFloat 10s linear infinite;
+    will-change: transform;
 }
 
 /* ==========================================
-   ANIMATIONS
+   ANIMATIONS - OPTIMIZED
    ========================================== */
-
-@keyframes gradientMove {
-
-    0%,
-    100% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-}
 
 @keyframes fadeInScale {
     from {
@@ -361,7 +347,6 @@
 }
 
 @keyframes logoFloatImmersive {
-
     0%,
     100% {
         transform: translateY(0px);
@@ -372,34 +357,19 @@
     }
 }
 
-@keyframes glowPulse {
-
+/* OPTIMIZED: Only change opacity instead of scale + opacity */
+@keyframes glowPulseOpacity {
     0%,
     100% {
         opacity: 0.6;
-        transform: scale(1);
     }
 
     50% {
         opacity: 1;
-        transform: scale(1.1);
-    }
-}
-
-@keyframes gradientText {
-
-    0%,
-    100% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
     }
 }
 
 @keyframes scrollBounce {
-
     0%,
     100% {
         transform: translateY(0);
@@ -477,6 +447,9 @@
         flex-direction: column;
         gap: var(--spacing-md);
         padding: var(--spacing-lg);
+        /* Further reduce blur on mobile */
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
     }
 
     .stat-divider-glass {
@@ -486,11 +459,6 @@
 
     .hero-bg-text {
         font-size: clamp(60px, 15vw, 120px);
-    }
-
-    /* Reduce particles on mobile */
-    .particle:nth-child(n+11) {
-        display: none;
     }
 }
 
@@ -507,7 +475,6 @@
 
 /* Performance Optimization */
 @media (prefers-reduced-motion: reduce) {
-
     .hero-gradient-bg,
     .hero-logo-container,
     .hero-logo-glow,

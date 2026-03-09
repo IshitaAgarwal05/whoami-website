@@ -13,8 +13,8 @@
 
 .product-card:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--color-graphite-grey);
+    box-shadow: 0 8px 24px rgba(255, 184, 77, 0.15), var(--shadow-lg);
+    border-color: var(--color-warm-gold);
 }
 
 /* Image */
