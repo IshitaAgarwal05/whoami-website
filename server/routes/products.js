@@ -6,9 +6,9 @@ const excelService = require('../services/excelService');
  * GET /api/products
  * Get all products
  */
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        const products = excelService.getAllProducts();
+        const products = await excelService.getAllProducts();
         res.json({
             success: true,
             count: products.length,
@@ -27,9 +27,9 @@ router.get('/', (req, res) => {
  * GET /api/products/categories
  * Get all unique categories
  */
-router.get('/categories', (req, res) => {
+router.get('/categories', async (req, res) => {
     try {
-        const categories = excelService.getCategories();
+        const categories = await excelService.getCategories();
         res.json({
             success: true,
             data: categories
@@ -47,10 +47,10 @@ router.get('/categories', (req, res) => {
  * GET /api/products/category/:category
  * Get products by category
  */
-router.get('/category/:category', (req, res) => {
+router.get('/category/:category', async (req, res) => {
     try {
         const { category } = req.params;
-        const products = excelService.getProductsByCategory(category);
+        const products = await excelService.getProductsByCategory(category);
         res.json({
             success: true,
             count: products.length,
@@ -69,10 +69,10 @@ router.get('/category/:category', (req, res) => {
  * GET /api/products/:id
  * Get single product by ID
  */
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const product = excelService.getProductById(id);
+        const product = await excelService.getProductById(id);
 
         if (!product) {
             return res.status(404).json({
@@ -98,9 +98,9 @@ router.get('/:id', (req, res) => {
  * POST /api/products/reload
  * Reload products from Excel file
  */
-router.post('/reload', (req, res) => {
+router.post('/reload', async (req, res) => {
     try {
-        const products = excelService.reloadProducts();
+        const products = await excelService.reloadProducts();
         res.json({
             success: true,
             message: 'Products reloaded successfully',

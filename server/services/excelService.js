@@ -1,25 +1,30 @@
 const XLSX = require('xlsx');
 const path = require('path');
+const cachingService = require('./cachingService');
 
 class ExcelService {
     constructor() {
-        this.productsCache = null;
-        this.lastLoadTime = null;
         this.excelFilePath = path.join(__dirname, '../data/products.xlsx');
+        this.CACHE_KEY = 'whoami:products:all';
     }
 
     /**
-     * Load products from Excel file
+     * Load products from Excel file with Redis caching
      * @param {boolean} forceReload - Force reload even if cache exists
-     * @returns {Array} Array of product objects
+     * @returns {Promise<Array>} Array of product objects
      */
-    loadProducts(forceReload = false) {
-        // Return cached data if available and not forcing reload
-        if (this.productsCache && !forceReload) {
-            return this.productsCache;
+    async loadProducts(forceReload = false) {
+        // Try to get from Redis cache first
+        if (!forceReload) {
+            const cachedProducts = await cachingService.get(this.CACHE_KEY);
+            if (cachedProducts) {
+                console.log(`🚀 Serving ${cachedProducts.length} products from Redis cache`);
+                return cachedProducts;
+            }
         }
 
         try {
+            console.log('📄 Reading products from Excel file...');
             // Read the Excel file
             const workbook = XLSX.readFile(this.excelFilePath);
 
@@ -38,11 +43,10 @@ class ExcelService {
                 return product;
             });
 
-            // Cache the products
-            this.productsCache = products;
-            this.lastLoadTime = new Date();
+            // Save to Redis cache
+            await cachingService.set(this.CACHE_KEY, products);
 
-            console.log(`Loaded ${products.length} products from Excel (Transformed to WebP)`);
+            console.log(`✅ Loaded ${products.length} products from Excel and updated Redis cache`);
             return products;
         } catch (error) {
             console.error('Error loading Excel file:', error);
@@ -52,29 +56,29 @@ class ExcelService {
 
     /**
      * Get all products
-     * @returns {Array} All products
+     * @returns {Promise<Array>} All products
      */
-    getAllProducts() {
-        return this.loadProducts();
+    async getAllProducts() {
+        return await this.loadProducts();
     }
 
     /**
      * Get product by ID
      * @param {number} id - Product ID
-     * @returns {Object|null} Product object or null if not found
+     * @returns {Promise<Object|null>} Product object or null if not found
      */
-    getProductById(id) {
-        const products = this.loadProducts();
+    async getProductById(id) {
+        const products = await this.loadProducts();
         return products.find(product => product.ID === parseInt(id)) || null;
     }
 
     /**
      * Get products by category
      * @param {string} category - Category name
-     * @returns {Array} Filtered products
+     * @returns {Promise<Array>} Filtered products
      */
-    getProductsByCategory(category) {
-        const products = this.loadProducts();
+    async getProductsByCategory(category) {
+        const products = await this.loadProducts();
         return products.filter(product =>
             product.Category.toLowerCase() === category.toLowerCase()
         );
@@ -82,21 +86,21 @@ class ExcelService {
 
     /**
      * Get all unique categories
-     * @returns {Array} Array of category names
+     * @returns {Promise<Array>} Array of category names
      */
-    getCategories() {
-        const products = this.loadProducts();
+    async getCategories() {
+        const products = await this.loadProducts();
         const categories = [...new Set(products.map(p => p.Category))];
         return categories;
     }
 
     /**
      * Reload products from Excel file
-     * @returns {Array} Refreshed products array
+     * @returns {Promise<Array>} Refreshed products array
      */
-    reloadProducts() {
-        console.log('Reloading products from Excel...');
-        return this.loadProducts(true);
+    async reloadProducts() {
+        console.log('♻️ Forcing reload of products from Excel...');
+        return await this.loadProducts(true);
     }
 }
 
