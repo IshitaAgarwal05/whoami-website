@@ -35,16 +35,47 @@ const Home = () => {
             {/* Worlds Section */}
             <section className="section fandoms-showcase">
                 <div className="container">
-                    <h2 className="text-center">Translate Your World</h2>
-                    <p className="section-description text-center">
-                        Artifacts for the quietly expressive. From wizards to superheroes, symbols of your universe, crafted with precision in Jaipur.
-                    </p>
-                    <div className="fandom-badges">
-                        <span className="fandom-tag">The Wizarding World</span>
-                        <span className="fandom-tag">Superhero Universes</span>
-                        <span className="fandom-tag">Galactic Sagas</span>
-                        <span className="fandom-tag">Comic Mythologies</span>
-                        <span className="fandom-tag">Gaming Realms</span>
+                    <div className="section-header-centered">
+                        <span className="section-label">Fandoms</span>
+                        <h2>Translate Your World</h2>
+                        <p className="section-description">
+                            Artifacts for the quietly expressive. We distill the essence of your favorite universes into geometric forms that resonate on your desk.
+                        </p>
+                    </div>
+
+                    <div className="fandom-staggered-grid">
+                        <div className="fandom-card-premium">
+                            <span className="fandom-card-icon">⚡</span>
+                            <div className="fandom-card-content">
+                                <h3>The Wizarding World</h3>
+                                <p>Ancient symbols, modern craft.</p>
+                            </div>
+                            <div className="card-glow"></div>
+                        </div>
+                        <div className="fandom-card-premium">
+                            <span className="fandom-card-icon">🛡️</span>
+                            <div className="fandom-card-content">
+                                <h3>Superhero Universes</h3>
+                                <p>Icons of resilience and power.</p>
+                            </div>
+                            <div className="card-glow"></div>
+                        </div>
+                        <div className="fandom-card-premium">
+                            <span className="fandom-card-icon">🚀</span>
+                            <div className="fandom-card-content">
+                                <h3>Galactic Sagas</h3>
+                                <p>Artifacts from a galaxy far away.</p>
+                            </div>
+                            <div className="card-glow"></div>
+                        </div>
+                        <div className="fandom-card-premium">
+                            <span className="fandom-card-icon">⚔️</span>
+                            <div className="fandom-card-content">
+                                <h3>Gaming Realms</h3>
+                                <p>Mythology in the palm of your hand.</p>
+                            </div>
+                            <div className="card-glow"></div>
+                        </div>
                     </div>
                 </div>
             </section>
