@@ -120,6 +120,8 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  /* Ensure scrollbar space is reserved */
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -360,4 +362,49 @@ html {
 ::selection {
   background-color: rgba(255, 184, 77, 0.3);
   color: var(--color-warm-white);
+}
+
+/* ==========================================
+   CUSTOM SCROLLBAR - CINEMATIC GOLDEN GLOW
+   ========================================== */
+
+/* FORCE visibility by overriding potential display:none/width:0 */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 12px !important;
+  height: 12px !important;
+  display: block !important;
+}
+
+/* Track — sleek deep black */
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: var(--color-deep-black) !important;
+  border-left: 1px solid rgba(255, 184, 77, 0.05) !important;
+}
+
+/* Thumb — dual-tone golden gradient + intense glow */
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom,
+      var(--color-dark-gold) 0%,
+      var(--color-warm-gold) 50%,
+      var(--color-dark-gold) 100%) !important;
+  border-radius: 20px !important;
+  border: 3px solid var(--color-deep-black) !important;
+  box-shadow: 0 0 15px rgba(255, 184, 77, 0.4) !important;
+  cursor: pointer !important;
+}
+
+/* Hover State — increase intensity */
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+  background: var(--color-warm-gold) !important;
+  box-shadow: 0 0 25px rgba(255, 184, 77, 0.7) !important;
+}
+
+/* Standard properties for cross-browser future-proofing */
+html {
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--color-warm-gold) var(--color-deep-black) !important;
 }

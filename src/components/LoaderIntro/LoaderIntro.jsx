@@ -123,7 +123,11 @@ const LoaderIntro = ({ onComplete, onRevealStart }) => {
         return () => clearTimeout(timerRef.current);
     }, [phase, onComplete]);
 
-    const handleSkip = () => { setPhase('done'); onComplete(); };
+    const handleSkip = () => {
+        if (onRevealStart) onRevealStart();
+        setPhase('done');
+        onComplete();
+    };
 
     if (phase === 'done') return null;
 
@@ -172,7 +176,7 @@ const LoaderIntro = ({ onComplete, onRevealStart }) => {
                     <p className="loader-thread-tagline">Identity, crafted.</p>
                 </div>
             )}
-            */} 
+            */}
 
             {/* ── PHASE 3: FINGERPRINT SCAN ── */}
             {(phase === 'scan' || phase === 'reveal') && (
