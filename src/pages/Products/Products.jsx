@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { getApiUrl } from '../../config';
-import ProductCarousel from '../../components/ProductCarousel/ProductCarousel';
+import ProductCard from '../../components/ProductCard/ProductCard';
 import './Products.css';
 
 const Products = () => {
@@ -57,18 +57,6 @@ const Products = () => {
         );
     }
 
-    // Group products by category
-    const productsByCategory = products.reduce((acc, product) => {
-        const category = product.Category || 'Uncategorized';
-        if (!acc[category]) {
-            acc[category] = [];
-        }
-        acc[category].push(product);
-        return acc;
-    }, {});
-
-    const categories = Object.keys(productsByCategory);
-
     return (
         <div className="products-page">
             <div className="container">
@@ -81,13 +69,9 @@ const Products = () => {
                     </p>
                 </div>
 
-                <div className="products-sections">
-                    {categories.map((category) => (
-                        <ProductCarousel
-                            key={category}
-                            categoryName={category}
-                            products={productsByCategory[category]}
-                        />
+                <div className="products-grid">
+                    {products.map((product) => (
+                        <ProductCard key={product.ID} product={product} />
                     ))}
                 </div>
             </div>

@@ -235,6 +235,10 @@
     font-weight: var(--font-weight-medium);
     letter-spacing: 0.025em;
     transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
 }
 
 .fandom-badge:hover {

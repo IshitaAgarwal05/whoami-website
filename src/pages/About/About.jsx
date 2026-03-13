@@ -14,23 +14,42 @@ const About = () => {
                 {/* Story Section */}
                 <section className="about-section">
                     <h2>Our Story</h2>
+
                     <div className="about-content">
                         <p>
-                            WhoAmI was born in India from a quiet rebellion: the refusal to explain yourself.
+                        WHOAMI started with a simple question: <strong>Who are you, really?</strong>
                         </p>
+
                         <p>
-                            We craft artifacts for those who belong to worlds beyond the ordinary—
-                            fantasy realms, sci-fi universes, mythologies reimagined. Not because you're a "fan,"
-                            but because these stories are part of who you are.
+                        In a world full of trends, noise, and mass-produced merchandise, we felt
+                        something was missing — objects that actually mean something. Not just
+                        decor. Not just fandom merch. But artifacts that represent identity,
+                        imagination, and the stories we connect with.
                         </p>
+
                         <p>
-                            Your desk isn't a workspace. It's a declaration. Your hoodie isn't clothing.
-                            It's a manifesto you don't need to speak aloud.
+                        We are a student-led startup built on curiosity, creativity, and the
+                        belief that the things we keep around us should reflect who we are
+                        becoming.
                         </p>
+
                         <p>
-                            For the students in Bangalore who carry magic in their backpacks.
-                            For the creators in Delhi who build universes pixel by pixel.
-                            For everyone who knows: identity isn't chosen. It's discovered, then owned.
+                        At WHOAMI, we create limited-edition 3D-printed desk artifacts and
+                        collectible pieces inspired by culture, fandom, and symbolism. Every
+                        piece is designed to be more than just an object — it's a conversation
+                        starter, a personal symbol, and a reminder of the worlds and ideas that
+                        shape us.
+                        </p>
+
+                        <p>
+                        We're starting small, experimenting, building in public, and learning as
+                        we go. But our vision is simple:
+                        </p>
+
+                        <p>
+                        <strong>
+                            To build a brand where identity, creativity, and collectibles meet.
+                        </strong>
                         </p>
                     </div>
                 </section>
@@ -101,7 +120,7 @@ const About = () => {
                             <div className="step-number">02</div>
                             <h3>Craft</h3>
                             <p>
-                                Made in India using 3D printing and laser cutting.
+                                Made using 3D printing technology.
                                 Premium materials ensure durability fit for everyone.
                             </p>
                         </div>

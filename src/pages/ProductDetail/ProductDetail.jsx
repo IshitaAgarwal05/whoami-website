@@ -112,19 +112,19 @@ const ProductDetail = () => {
                                     <span className="spec-value">{product.Material}</span>
                                 </div>
 
-                                {product.Dimensions && (
+                                {/* {product.Dimensions && (
                                     <div className="spec-item">
                                         <span className="spec-label">Dimensions</span>
                                         <span className="spec-value">{product.Dimensions}</span>
                                     </div>
-                                )}
+                                )} */}
 
-                                {product.Weight && (
+                                {/* {product.Weight && (
                                     <div className="spec-item">
                                         <span className="spec-label">Weight</span>
                                         <span className="spec-value">{product.Weight}</span>
                                     </div>
-                                )}
+                                )} */}
                             </div>
                         </div>
 
