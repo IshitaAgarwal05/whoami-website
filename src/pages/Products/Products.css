@@ -27,6 +27,14 @@
     margin: 0 auto;
 }
 
+/* Products Grid */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-2xl);
+    margin-top: var(--spacing-3xl);
+}
+
 /* Loading State */
 .loading-state {
     display: flex;

@@ -13,10 +13,8 @@
 
 .footer-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr repeat(2, 1fr);
     gap: var(--spacing-2xl);
-    margin-bottom: var(--spacing-2xl);
-    /* align-items: stretch; */
 }
 
 /* Brand Column */

@@ -191,14 +191,6 @@ const Contact = () => {
                                     <a href="https://www.instagram.com/whoami.studios" target="_blank" rel="noopener noreferrer">@whoami.studios</a>
                                 </div>
                             </div>
-
-                            <div className="contact-item">
-                                <div className="contact-icon">⌚</div>
-                                <div className="contact-content">
-                                    <h3>Contact Hours</h3>
-                                    <p>Monday - Friday<br />9:00 AM - 6:00 PM IST</p>
-                                </div>
-                            </div>
                         </div>
 
                         <div className="contact-note">
