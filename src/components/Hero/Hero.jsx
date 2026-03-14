@@ -3,13 +3,29 @@ import { Link } from 'react-router-dom';
 import './Hero.css';
 
 const Hero = () => {
+    const [isVisible, setIsVisible] = useState(true);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const heroRef = useRef(null);
     const logoRef = useRef(null);
     const throttleTimerRef = useRef(null);
 
-    // Throttled mouse position tracking (update every 16ms instead of every mousemove)
+    // Intersection Observer to pause animations when out of view
     useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsVisible(entry.isIntersecting);
+            },
+            { threshold: 0.1 }
+        );
+
+        if (heroRef.current) observer.observe(heroRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    // Throttled mouse position tracking
+    useEffect(() => {
+        if (!isVisible) return; // Pause tracking when not visible
+
         const handleMouseMove = (e) => {
             if (!heroRef.current || throttleTimerRef.current) return;
 
@@ -19,10 +35,9 @@ const Hero = () => {
 
             setMousePosition({ x, y });
 
-            // Throttle to ~60fps
             throttleTimerRef.current = setTimeout(() => {
                 throttleTimerRef.current = null;
-            }, 16);
+            }, 32); // Lower frequency (30fps tracking is enough for tilt)
         };
 
         window.addEventListener('mousemove', handleMouseMove);
@@ -30,25 +45,24 @@ const Hero = () => {
             window.removeEventListener('mousemove', handleMouseMove);
             if (throttleTimerRef.current) clearTimeout(throttleTimerRef.current);
         };
-    }, []);
+    }, [isVisible]);
 
-    // Apply 3D transform to logo (only when needed)
+    // Apply 3D transform to logo
     useEffect(() => {
-        if (!logoRef.current) return;
+        if (!logoRef.current || !isVisible) return;
 
-        const tiltX = (mousePosition.y - 0.5) * 20;
-        const tiltY = (mousePosition.x - 0.5) * -20;
+        const tiltX = (mousePosition.y - 0.5) * 15; // Reduced range
+        const tiltY = (mousePosition.x - 0.5) * -15;
 
         logoRef.current.style.transform = `
             perspective(1000px) 
             rotateX(${tiltX}deg) 
             rotateY(${tiltY}deg)
-            translateZ(20px)
+            translateZ(10px)
         `;
-    }, [mousePosition]);
+    }, [mousePosition, isVisible]);
 
-    // Reduce particles on initial load - only 10 instead of 20
-    const particleCount = typeof window !== 'undefined' && window.innerWidth < 768 ? 5 : 10;
+    const particleCount = typeof window !== 'undefined' && window.innerWidth < 768 ? 4 : 8;
 
     return (
         <section className="hero-immersive" ref={heroRef}>
@@ -116,16 +130,18 @@ const Hero = () => {
                 </div>
             </div>
 
-            {/* Floating particles - REDUCED COUNT */}
-            <div className="hero-particles">
-                {[...Array(particleCount)].map((_, i) => (
-                    <div key={i} className="particle" style={{
-                        left: `${Math.random() * 100}%`,
-                        animationDelay: `${Math.random() * 5}s`,
-                        animationDuration: `${5 + Math.random() * 10}s`
-                    }}></div>
-                ))}
-            </div>
+            {/* Floating particles - REDUCED COUNT & Visibility Optimized */}
+            {isVisible && (
+                <div className="hero-particles">
+                    {[...Array(particleCount)].map((_, i) => (
+                        <div key={i} className="particle" style={{
+                            left: `${Math.random() * 100}%`,
+                            animationDelay: `${Math.random() * 5}s`,
+                            animationDuration: `${5 + Math.random() * 10}s`
+                        }}></div>
+                    ))}
+                </div>
+            )}
         </section>
     );
 };

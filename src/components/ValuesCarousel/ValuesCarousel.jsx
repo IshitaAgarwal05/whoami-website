@@ -54,36 +54,40 @@ const ValuesCarousel = () => {
         });
     };
 
-    const handleScroll = () => {
-        const container = carouselRef.current;
-        if (!container) return;
+    const throttleTimer = useRef(null);
 
-        setShowLeftArrow(container.scrollLeft > 10);
-        setShowRightArrow(
-            container.scrollLeft < container.scrollWidth - container.clientWidth - 10
-        );
+    const handleScroll = () => {
+        if (throttleTimer.current) return;
+
+        throttleTimer.current = setTimeout(() => {
+            const container = carouselRef.current;
+            if (container) {
+                setShowLeftArrow(container.scrollLeft > 10);
+                setShowRightArrow(
+                    container.scrollLeft < container.scrollWidth - container.clientWidth - 10
+                );
+            }
+            throttleTimer.current = null;
+        }, 100);
     };
 
     return (
         <div className="values-carousel-section">
-            <div className="values-carousel-header">
-                <h2>What We Stand For</h2>
-                <div className="values-carousel-controls">
-                    <button
-                        className={`values-carousel-arrow left ${!showLeftArrow ? 'hidden' : ''}`}
-                        onClick={() => scroll('left')}
-                        aria-label="Scroll left"
-                    >
-                        ←
-                    </button>
-                    <button
-                        className={`values-carousel-arrow right ${!showRightArrow ? 'hidden' : ''}`}
-                        onClick={() => scroll('right')}
-                        aria-label="Scroll right"
-                    >
-                        →
-                    </button>
-                </div>
+            <div className="values-carousel-controls">
+                <button
+                    className={`values-carousel-arrow left ${!showLeftArrow ? 'hidden' : ''}`}
+                    onClick={() => scroll('left')}
+                    aria-label="Scroll left"
+                >
+                    ←
+                </button>
+                <button
+                    className={`values-carousel-arrow right ${!showRightArrow ? 'hidden' : ''}`}
+                    onClick={() => scroll('right')}
+                    aria-label="Scroll right"
+                >
+                    →
+                </button>
             </div>
 
             <div

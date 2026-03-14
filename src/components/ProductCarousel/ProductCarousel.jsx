@@ -22,15 +22,21 @@ const ProductCarousel = ({ products, categoryName }) => {
         });
     };
 
-    const handleScroll = () => {
-        const container = carouselRef.current;
-        if (!container) return;
+    const throttleTimer = useRef(null);
 
-        // Show/hide arrows based on scroll position
-        setShowLeftArrow(container.scrollLeft > 10);
-        setShowRightArrow(
-            container.scrollLeft < container.scrollWidth - container.clientWidth - 10
-        );
+    const handleScroll = () => {
+        if (throttleTimer.current) return;
+
+        throttleTimer.current = setTimeout(() => {
+            const container = carouselRef.current;
+            if (container) {
+                setShowLeftArrow(container.scrollLeft > 10);
+                setShowRightArrow(
+                    container.scrollLeft < container.scrollWidth - container.clientWidth - 10
+                );
+            }
+            throttleTimer.current = null;
+        }, 100); // Throttle to 10fps for arrow checks (unobtrusive)
     };
 
     return (
