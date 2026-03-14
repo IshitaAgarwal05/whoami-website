@@ -66,40 +66,48 @@
 
 /* Value Cards */
 .value-card {
-    flex: 0 0 calc(50% - var(--spacing-xl));
-    min-width: 350px;
+    flex: 0 0 calc(33.333% - var(--spacing-xl));
+    min-width: 320px;
     padding: var(--spacing-3xl);
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    transition: all var(--transition-base);
+    background: rgba(26, 26, 26, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-2xl);
+    transition: all 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .value-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-xl);
-    border-color: var(--color-warm-gold);
+    transform: translateY(-10px);
+    background: rgba(26, 26, 26, 0.6);
+    border-color: rgba(255, 184, 77, 0.4);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 .value-card .value-icon {
-    font-size: 48px;
-    margin-bottom: var(--spacing-lg);
+    font-size: 40px;
+    margin-bottom: var(--spacing-xl);
     background: linear-gradient(135deg, var(--color-warm-gold), var(--color-amber-glow));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    filter: drop-shadow(0 0 10px rgba(255, 184, 77, 0.2));
 }
 
 .value-card .value-content h3 {
-    font-size: var(--font-size-2xl);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-warm-gold);
     margin-bottom: var(--spacing-md);
+    letter-spacing: 0.05em;
 }
 
 .value-card .value-content p {
-    font-size: var(--font-size-base);
-    color: var(--color-text-secondary);
+    font-size: 15px;
+    color: rgba(245, 245, 243, 0.8);
     line-height: 1.7;
 }
 
