@@ -28,13 +28,21 @@ class ExcelService {
             const worksheet = workbook.Sheets[sheetName];
 
             // Convert to JSON
-            const products = XLSX.utils.sheet_to_json(worksheet);
+            let products = XLSX.utils.sheet_to_json(worksheet);
+
+            // Transform Image URLs to .webp
+            products = products.map(product => {
+                if (product.ImageURL) {
+                    product.ImageURL = product.ImageURL.replace(/\.(jpg|jpeg|png|JPG|JPEG|PNG)$/i, '.webp');
+                }
+                return product;
+            });
 
             // Cache the products
             this.productsCache = products;
             this.lastLoadTime = new Date();
 
-            console.log(`Loaded ${products.length} products from Excel`);
+            console.log(`Loaded ${products.length} products from Excel (Transformed to WebP)`);
             return products;
         } catch (error) {
             console.error('Error loading Excel file:', error);

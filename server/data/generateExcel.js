@@ -67,7 +67,7 @@ const products = [
         ID: 6,
         Name: 'Sorting Hat',
         Description: 'Harry Potter inspired Sorting Hat model, recreated as a detailed collectible for fans.',
-        Price: 250,
+        Price: 350,
         Material: 'PLA',
         UseCase: 'Decor item for desks, bookshelves, and fandom collections.',
         Category: 'Collectibles',
