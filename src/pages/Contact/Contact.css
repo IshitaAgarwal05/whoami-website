@@ -54,16 +54,11 @@
 }
 
 @keyframes blobFloat {
-    from {
-        transform: translate(0, 0) scale(1);
-    }
-
-    to {
-        transform: translate(30px, 50px) scale(1.1);
-    }
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(30px, 50px) scale(1.1); }
 }
 
-/* Header Section */
+/* ── Header Section ──────────────────────────────────────── */
 .contact-header {
     text-align: center;
     margin-bottom: var(--spacing-5xl);
@@ -101,7 +96,7 @@
     line-height: 1.6;
 }
 
-/* Base Glass Card */
+/* ── Base Glass Card ─────────────────────────────────────── */
 .glass-card {
     background: rgba(255, 255, 255, 0.02);
     backdrop-filter: blur(20px);
@@ -112,7 +107,7 @@
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
-/* Grid Layout */
+/* ── Grid Layout ─────────────────────────────────────────── */
 .contact-grid {
     display: grid;
     grid-template-columns: 1.2fr 0.8fr;
@@ -136,7 +131,7 @@
     color: var(--color-text-muted);
 }
 
-/* Error Message Styling */
+/* ── Error Message ───────────────────────────────────────── */
 .error-message {
     background: rgba(239, 68, 68, 0.1);
     border: 1px solid rgba(239, 68, 68, 0.3);
@@ -163,147 +158,285 @@
     border-radius: 50%;
     font-weight: bold;
     font-size: 12px;
+    flex-shrink: 0;
 }
 
 @keyframes shake {
-
-    10%,
-    90% {
-        transform: translate3d(-1px, 0, 0);
-    }
-
-    20%,
-    80% {
-        transform: translate3d(2px, 0, 0);
-    }
-
-    30%,
-    50%,
-    70% {
-        transform: translate3d(-4px, 0, 0);
-    }
-
-    40%,
-    60% {
-        transform: translate3d(4px, 0, 0);
-    }
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
 }
 
-/* Form Styles */
+/* ═══════════════════════════════════════════════════════════
+   ENHANCED FORM STYLES
+   ═══════════════════════════════════════════════════════════ */
+
 .form-container {
     height: 100%;
 }
 
 .contact-form {
     display: grid;
-    gap: var(--spacing-2xl);
+    gap: var(--spacing-xl);
 }
 
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-xl);
+    gap: var(--spacing-lg);
 }
 
+/* ── Form Group & Field Shell ────────────────────────────── */
 .form-group {
+    position: relative;
+}
+
+/* Gold left-accent rule on focus — purely decorative */
+.form-group::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--color-warm-gold), var(--color-amber-glow));
+    border-radius: 2px;
+    opacity: 0;
+    transform: scaleY(0.4);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.form-group:focus-within::before {
+    opacity: 1;
+    transform: scaleY(1);
+}
+
+/* ── Floating Label Inputs / Textarea ───────────────────── */
+.floating-label {
     position: relative;
 }
 
 .floating-label input,
 .floating-label textarea {
     width: 100%;
-    padding: var(--spacing-lg) var(--spacing-md) var(--spacing-xs);
+    padding: 22px var(--spacing-lg) 8px;
     background: rgba(255, 255, 255, 0.03);
-    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: var(--radius-lg);
     color: var(--color-text-primary);
     font-size: var(--font-size-base);
-    transition: all var(--transition-base);
+    line-height: 1.5;
+    transition:
+        border-color 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
     outline: none;
+    /* Subtle inner shadow for depth */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
+.floating-label textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* ── Floating Label ─────────────────────────────────────── */
 .floating-label label {
     position: absolute;
-    left: var(--spacing-md);
+    left: var(--spacing-lg);
     top: 50%;
     transform: translateY(-50%);
     color: var(--color-text-muted);
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm);
     pointer-events: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: left center;
+    white-space: nowrap;
 }
 
-/* For textarea, align label to top initially */
-.floating-label textarea~label {
+/* Textarea: label starts at top */
+.floating-label textarea ~ label {
     top: var(--spacing-lg);
     transform: translateY(0);
 }
 
-/* Floating label logic */
-.floating-label input:focus~label,
-.floating-label input:not(:placeholder-shown)~label,
-.floating-label textarea:focus~label,
-.floating-label textarea:not(:placeholder-shown)~label {
-    top: 8px;
-    transform: translateY(0);
-    font-size: var(--font-size-xs);
+/* Raised / active state */
+.floating-label input:focus ~ label,
+.floating-label input:not(:placeholder-shown) ~ label,
+.floating-label textarea:focus ~ label,
+.floating-label textarea:not(:placeholder-shown) ~ label {
+    top: 6px;
+    transform: translateY(0) scale(0.78);
     color: var(--color-warm-gold);
     font-weight: var(--font-weight-bold);
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
 }
 
+/* ── Focus State ─────────────────────────────────────────── */
 .floating-label input:focus,
 .floating-label textarea:focus {
-    border-color: var(--color-warm-gold);
-    background: rgba(212, 175, 55, 0.03);
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+    border-color: rgba(212, 175, 55, 0.45);
+    background: rgba(212, 175, 55, 0.025);
+    box-shadow:
+        inset 0 1px 3px rgba(0, 0, 0, 0.2),
+        0 0 0 3px rgba(212, 175, 55, 0.08),
+        0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* Button Refinement */
+/* Subtle hover before focus */
+.floating-label input:hover:not(:focus),
+.floating-label textarea:hover:not(:focus) {
+    border-color: rgba(255, 255, 255, 0.13);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* ── Character counter (optional — progressive enhancement) */
+.field-hint {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--color-text-muted);
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.form-group:focus-within .field-hint {
+    opacity: 1;
+}
+
+/* ── Field Validation States ─────────────────────────────── */
+.floating-label input:not(:placeholder-shown):valid,
+.floating-label textarea:not(:placeholder-shown):valid {
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.floating-label input:not(:placeholder-shown):invalid,
+.floating-label textarea:not(:placeholder-shown):invalid {
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* ── Divider between field groups ───────────────────────── */
+.form-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
+    margin: var(--spacing-xs) 0;
+}
+
+/* ── Subject / Select field (if used) ───────────────────── */
+.floating-label select {
+    width: 100%;
+    padding: 22px var(--spacing-lg) 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-base);
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.25s ease, background 0.25s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.floating-label select:focus {
+    border-color: rgba(212, 175, 55, 0.45);
+    background: rgba(212, 175, 55, 0.025);
+    box-shadow:
+        inset 0 1px 3px rgba(0, 0, 0, 0.2),
+        0 0 0 3px rgba(212, 175, 55, 0.08);
+}
+
+/* Arrow for select */
+.select-wrapper::after {
+    content: '›';
+    position: absolute;
+    right: var(--spacing-lg);
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    color: var(--color-warm-gold);
+    font-size: 18px;
+    pointer-events: none;
+    transition: transform 0.2s;
+}
+
+/* ── Submit Button ───────────────────────────────────────── */
 .contact-form .btn-primary {
     position: relative;
+    width: 100%;
     padding: var(--spacing-lg) var(--spacing-3xl);
-    background: linear-gradient(135deg, var(--color-warm-gold), var(--color-amber-glow));
+    background: linear-gradient(
+        135deg,
+        var(--color-warm-gold) 0%,
+        var(--color-amber-glow) 60%,
+        var(--color-warm-gold) 100%
+    );
+    background-size: 200% 100%;
     border: none;
     border-radius: var(--radius-lg);
     color: var(--color-deep-black);
     font-weight: var(--font-weight-bold);
     font-size: var(--font-size-base);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     cursor: pointer;
     overflow: hidden;
-    transition: all var(--transition-bounce);
-    margin-top: var(--spacing-lg);
+    transition:
+        transform 0.25s var(--transition-bounce),
+        box-shadow 0.25s ease,
+        background-position 0.4s ease;
+    margin-top: var(--spacing-md);
+
+    /* Subtle top-edge highlight */
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.25) inset,
+        0 8px 24px rgba(212, 175, 55, 0.2);
 }
 
+/* Shimmer layer */
 .btn-glow {
     position: absolute;
     top: -50%;
-    left: -50%;
-    width: 200%;
+    left: -75%;
+    width: 50%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.4), transparent 70%);
+    background: linear-gradient(
+        105deg,
+        transparent,
+        rgba(255, 255, 255, 0.35),
+        transparent
+    );
     opacity: 0;
-    transition: opacity 0.3s;
+    transform: skewX(-15deg);
+    transition: opacity 0.1s, left 0.55s ease;
     pointer-events: none;
 }
 
 .contact-form .btn-primary:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3);
+    background-position: 100% 0;
+    transform: translateY(-2px);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.25) inset,
+        0 16px 32px rgba(212, 175, 55, 0.35);
 }
 
 .contact-form .btn-primary:hover .btn-glow {
     opacity: 1;
+    left: 125%;
 }
 
 .contact-form .btn-primary:active {
-    transform: translateY(-1px) scale(0.98);
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
 }
 
-/* Info Section Interaction */
+/* ═══════════════════════════════════════════════════════════ */
+
+/* ── Info Cards ──────────────────────────────────────────── */
 .contact-cards-stack {
     display: grid;
     gap: var(--spacing-lg);
@@ -341,6 +474,7 @@
     font-size: 24px;
     border-radius: var(--radius-lg);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
 }
 
 .card-content {
@@ -375,7 +509,7 @@
     transform: translateX(0);
 }
 
-/* Newsletter Card */
+/* ── Newsletter Card ─────────────────────────────────────── */
 .newsletter-teaser {
     background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(0, 0, 0, 0));
 }
@@ -391,7 +525,7 @@
     opacity: 0.6;
 }
 
-/* Success State Refinement */
+/* ── Success State ───────────────────────────────────────── */
 .success-message {
     text-align: center;
     padding: var(--spacing-3xl);
@@ -400,15 +534,8 @@
 }
 
 @keyframes successFadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1);   }
 }
 
 .success-icon {
@@ -444,21 +571,14 @@
     background: rgba(212, 175, 55, 0.1);
 }
 
-/* Responsive Design */
+/* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 1200px) {
-    .contact-grid {
-        gap: var(--spacing-3xl);
-    }
+    .contact-grid { gap: var(--spacing-3xl); }
 }
 
 @media (max-width: 900px) {
-    .contact-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .form-row {
-        grid-template-columns: 1fr;
-    }
+    .contact-grid      { grid-template-columns: 1fr; }
+    .form-row          { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 600px) {
@@ -466,11 +586,12 @@
         padding: var(--spacing-xl) 0 var(--spacing-4xl);
     }
 
-    .contact-header h1 {
-        font-size: var(--font-size-4xl);
-    }
+    .contact-header h1 { font-size: var(--font-size-4xl); }
 
-    .glass-card {
-        padding: var(--spacing-xl);
+    .glass-card { padding: var(--spacing-xl); }
+
+    /* Full-width button feels better on mobile */
+    .contact-form .btn-primary {
+        letter-spacing: 0.08em;
     }
 }
