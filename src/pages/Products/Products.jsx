@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { getApiUrl } from '../../config';
 import ProductCard from '../../components/ProductCard/ProductCard';
@@ -9,6 +9,14 @@ const Products = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [sortBy, setSortBy] = useState('default');
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    const sortOptions = [
+        { value: 'default', label: 'Featured' },
+        { value: 'price-asc', label: 'Price: Low to High' },
+        { value: 'price-desc', label: 'Price: High to Low' }
+    ];
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -32,8 +40,21 @@ const Products = () => {
         fetchProducts();
     }, []);
 
-    const handleSortChange = (e) => {
-        setSortBy(e.target.value);
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleSortSelect = (value) => {
+        setSortBy(value);
+        setIsDropdownOpen(false);
     };
 
     const sortedProducts = [...products].sort((a, b) => {
@@ -44,6 +65,8 @@ const Products = () => {
         }
         return 0; // default (Excel order)
     });
+
+    const currentSortLabel = sortOptions.find(opt => opt.value === sortBy)?.label;
 
     if (loading) {
         return (
@@ -83,18 +106,31 @@ const Products = () => {
                     </p>
 
                     <div className="products-controls">
-                        <div className="sort-container">
-                            <label htmlFor="sort-price">Sort by Price:</label>
-                            <select
-                                id="sort-price"
-                                value={sortBy}
-                                onChange={handleSortChange}
-                                className="sort-select"
+                        <div className="custom-dropdown" ref={dropdownRef}>
+                            <span className="dropdown-label">Sort by:</span>
+                            <div
+                                className={`dropdown-trigger ${isDropdownOpen ? 'active' : ''}`}
+                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                             >
-                                <option value="default">Featured</option>
-                                <option value="price-asc">Price: Low to High</option>
-                                <option value="price-desc">Price: High to Low</option>
-                            </select>
+                                <span>{currentSortLabel}</span>
+                                <svg className={`chevron-icon ${isDropdownOpen ? 'rotate' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M6 9l6 6 6-6"></path>
+                                </svg>
+                            </div>
+
+                            {isDropdownOpen && (
+                                <ul className="dropdown-menu">
+                                    {sortOptions.map((option) => (
+                                        <li
+                                            key={option.value}
+                                            className={`dropdown-item ${sortBy === option.value ? 'selected' : ''}`}
+                                            onClick={() => handleSortSelect(option.value)}
+                                        >
+                                            {option.label}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
                     </div>
                 </div>

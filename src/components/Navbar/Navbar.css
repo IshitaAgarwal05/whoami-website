@@ -28,15 +28,21 @@
 }
 
 .logo-image {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-    filter: drop-shadow(0 0 8px rgba(255, 184, 77, 0.4));
-    transition: filter var(--transition-base);
+    width: 43px;
+    height: 43px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--color-warm-gold);
+    padding: 1px;
+    background: rgba(255, 255, 255, 0.05);
+    filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.2));
+    transition: all var(--transition-base);
 }
 
 .navbar-logo:hover .logo-image {
-    filter: drop-shadow(0 0 12px rgba(255, 184, 77, 0.6));
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5));
+    border-color: var(--color-amber-glow);
 }
 
 .logo-text-container {
