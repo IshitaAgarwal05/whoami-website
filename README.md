@@ -10,9 +10,16 @@ A minimalistic, premium product showcase website for **WhoAmI** - India's home f
 
 WhoAmI is an Indian D2C brand that creates handcrafted merchandise for fantasy franchise fans. Our products help fans:
 
-- **Prove their identity** - Display your Hogwarts house, your favorite Avenger, or your allegiance to the Force
-- **Decorate their desks** - Transform workspaces into fandom shrines with premium desk accessories
-- **Gift with meaning** - Find personalized gifts that resonate with fellow fans
+- **Prove their identity** - Display your Hogwarts house, your favorite Avenger, or your allegiance to the Force.
+- **Decorate their desks** - Transform workspaces into fandom shrines with premium, 3D-printed desk accessories.
+- **Gift with meaning** - Find personalized gifts that resonate with fellow fans.
+
+**Latest Features:**
+- **Identity-First Design**: A premium, "glassmorphism" UI with gold accents throughout.
+- **Unified FAQ System**: Foldable, themed FAQ categories to help customers discover more about the brand.
+- **Community Proof**: Dedicated testimonials section featuring real stories from our community.
+- **Technical Specs**: Detailed product dimensions and weight information for all artifacts.
+- **Optimized Assets**: Continuous performance monitoring for a snappy, high-end experience.
 
 **This is a showcase website** - displaying products, designs, use-cases, and pricing. No e-commerce functionality (no cart, checkout, or payment).
 

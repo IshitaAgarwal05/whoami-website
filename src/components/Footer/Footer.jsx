@@ -60,6 +60,9 @@ const Footer = () => {
                     <p className="footer-copyright">
                         © {currentYear} WhoAmI. Designed and crafted with ❤️
                     </p>
+                    <p className="footer-made-by">
+                        By <a href="https://github.com/ishitaAgarwal05/" target="_blank" rel="noopener noreferrer">Ishita Agarwal</a> & <a href="https://github.com/MayurSoni2003" target="_blank" rel="noopener noreferrer">Mayur Soni</a>
+                    </p>
                 </div>
             </div>
         </footer>

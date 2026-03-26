@@ -20,7 +20,13 @@ const Navbar = () => {
         <nav className="navbar">
             <div className="navbar-container container">
                 <Link to="/" className="navbar-logo">
-                    <img src="/whoami_logo.png" alt="WhoAmI Logo" className="logo-image" />
+                    <img
+                        src="/whoami_logo.png"
+                        alt="WhoAmI Logo"
+                        className="logo-image"
+                        width="43"
+                        height="43"
+                    />
                     <div className="logo-text-container">
                         <span className="logo-text">WhoAmI</span>
                         <span className="logo-subtitle">Identity, crafted.</span>
