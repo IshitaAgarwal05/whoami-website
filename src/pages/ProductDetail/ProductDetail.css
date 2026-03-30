@@ -144,6 +144,109 @@
     margin-bottom: var(--spacing-lg);
 }
 
+.product.info-original-price {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-muted);
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.info-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-md);
+}
+
+.product-actions {
+    margin: var(--spacing-xl) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.quantity-controller {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.05);
+    width: fit-content;
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quantity-controller button {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-xl);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.quantity-controller button:hover {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--color-warm-gold);
+}
+
+.quantity-controller span {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    min-width: 30px;
+    text-align: center;
+}
+
+.action-buttons-group {
+    display: flex;
+    gap: var(--spacing-md);
+}
+
+.add-to-cart-btn,
+.buy-now-btn {
+    flex: 1;
+    padding: 16px;
+    border-radius: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.add-to-cart-btn {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.add-to-cart-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.buy-now-btn {
+    background: var(--color-warm-gold);
+    color: #000;
+    border: none;
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+}
+
+.buy-now-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.5);
+    filter: brightness(1.1);
+}
+
+@media (max-width: 768px) {
+    .action-buttons-group {
+        flex-direction: column;
+    }
+}
+
 .product-title {
     font-size: var(--font-size-5xl);
     font-weight: var(--font-weight-bold);
