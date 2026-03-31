@@ -3,8 +3,7 @@
     background-color: var(--color-deep-black);
     border-top: 1px solid var(--color-border);
     color: var(--color-text-primary);
-    margin-top: var(--spacing-3xl);
-    padding: var(--spacing-3xl) 0 var(--spacing-2xl);
+    padding: var(--spacing-4xl) 0 var(--spacing-2xl);
 }
 
 .footer-container {
@@ -13,8 +12,8 @@
 
 .footer-grid {
     display: grid;
-    grid-template-columns: 2fr repeat(2, 1fr);
-    gap: var(--spacing-2xl);
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-4xl);
 }
 
 /* Brand Column */
@@ -51,7 +50,7 @@
     font-size: var(--font-size-sm);
     line-height: 1.7;
     color: var(--color-text-secondary);
-    margin: 0;
+    max-width: 400px;
 }
 
 .footer-india {
@@ -61,18 +60,10 @@
     font-weight: var(--font-weight-medium);
 }
 
-.footer-location {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-muted);
-    margin-top: auto;
-    font-weight: var(--font-weight-medium);
-}
-
 /* Footer Columns */
 .footer-column {
     display: flex;
     flex-direction: column;
-    /* min-height: 220px; */
 }
 
 .footer-heading {
@@ -84,26 +75,36 @@
     letter-spacing: 0.05em;
 }
 
-.footer-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    /* flex-grow: 1; */
+.social-icons {
+    display: flex;
+    gap: var(--spacing-xl);
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
 }
 
-.footer-links li {
-    margin-bottom: var(--spacing-md);
-}
-
-.footer-links a {
-    font-size: var(--font-size-sm);
+.social-icons a {
     color: var(--color-text-secondary);
-    text-decoration: none;
-    transition: color var(--transition-base);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.footer-links a:hover {
+.social-icons svg {
+    width: 18px;
+    height: 18px;
+}
+
+.social-icons a:hover {
     color: var(--color-warm-gold);
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-3px);
+    border-color: rgba(212, 175, 55, 0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 /* Footer Bottom */
