@@ -3,6 +3,7 @@ import axios from 'axios';
 import { getApiUrl } from '../../config';
 import Hero from '../../components/Hero/Hero';
 import ProductCarousel from '../../components/ProductCarousel/ProductCarousel';
+import TestimonialCarousel from '../../components/TestimonialCarousel/TestimonialCarousel';
 import FaqFolders from '../../components/FaqFolders/FaqFolders';
 import './Home.css';
 
@@ -165,62 +166,35 @@ const Home = () => {
                         </p>
                     </div>
 
-                    <div className="testimonials-grid">
-                        <div className="testimonial-card">
-                            <div className="testimonial-quote-icon">“</div>
-                            <p className="testimonial-text">
-                                I ordered a desk piece from WhoAmI and honestly, it doesn’t feel like a typical 3D printed object. It feels like something designed with thought. It’s subtle, aesthetic, and people actually ask me about it when they see my desk.
-                            </p>
-                            <div className="testimonial-footer">
-                                <span className="testimonial-author">— Aayush</span>
-                                <span className="testimonial-role">Architecture Student</span>
-                            </div>
-                        </div>
-
-                        <div className="testimonial-card">
-                            <div className="testimonial-quote-icon">“</div>
-                            <p className="testimonial-text">
-                                I bought this as a gift for a friend who is a huge Harry Potter fan, and the reaction was priceless. It didn’t look mass-produced at all. It felt personal and unique. That’s very rare to find these days.
-                            </p>
-                            <div className="testimonial-footer">
-                                <span className="testimonial-author">— Riya</span>
-                                <span className="testimonial-role">MBA Student</span>
-                            </div>
-                        </div>
-
-                        <div className="testimonial-card">
-                            <div className="testimonial-quote-icon">“</div>
-                            <p className="testimonial-text">
-                                Most desk decor items online look very generic, but WhoAmI pieces are different. They feel like identity pieces rather than just decor. It’s a small thing, but it changes how my desk feels.
-                            </p>
-                            <div className="testimonial-footer">
-                                <span className="testimonial-author">— Kunal</span>
-                                <span className="testimonial-role">Software Engineer</span>
-                            </div>
-                        </div>
-
-                        <div className="testimonial-card">
-                            <div className="testimonial-quote-icon">“</div>
-                            <p className="testimonial-text">
-                                The finish, the weight, the detailing — everything was much better than what I expected from a student startup. If this is their starting quality, I’m excited to see what they build next.
-                            </p>
-                            <div className="testimonial-footer">
-                                <span className="testimonial-author">— Mehul</span>
-                                <span className="testimonial-role">Product Designer</span>
-                            </div>
-                        </div>
-
-                        <div className="testimonial-card">
-                            <div className="testimonial-quote-icon">“</div>
-                            <p className="testimonial-text">
-                                What I liked the most is the idea behind the brand — that the things on your desk represent you. That thought stayed with me, and that’s why I bought it. The product just made that idea real.
-                            </p>
-                            <div className="testimonial-footer">
-                                <span className="testimonial-author">— Sneha</span>
-                                <span className="testimonial-role">Psychology Student</span>
-                            </div>
-                        </div>
-                    </div>
+                    <TestimonialCarousel
+                        testimonials={[
+                            {
+                                text: "I ordered a desk piece from WhoAmI and honestly, it doesn’t feel like a typical 3D printed object. It feels like something designed with thought. It’s subtle, aesthetic, and people actually ask me about it when they see my desk.",
+                                author: "Aayush",
+                                role: "Architecture Student"
+                            },
+                            {
+                                text: "I bought this as a gift for a friend who is a huge Harry Potter fan, and the reaction was priceless. It didn’t look mass-produced at all. It felt personal and unique. That’s very rare to find these days.",
+                                author: "Riya",
+                                role: "MBA Student"
+                            },
+                            {
+                                text: "Most desk decor items online look very generic, but WhoAmI pieces are different. They feel like identity pieces rather than just decor. It’s a small thing, but it changes how my desk feels.",
+                                author: "Kunal",
+                                role: "Software Engineer"
+                            },
+                            {
+                                text: "The finish, the weight, the detailing — everything was much better than what I expected from a student startup. If this is their starting quality, I’m excited to see what they build next.",
+                                author: "Mehul",
+                                role: "Product Designer"
+                            },
+                            {
+                                text: "What I liked the most is the idea behind the brand — that the things on your desk represent you. That thought stayed with me, and that’s why I bought it. The product just made that idea real.",
+                                author: "Sneha",
+                                role: "Psychology Student"
+                            }
+                        ]}
+                    />
                 </div>
             </section>
         </div>

@@ -25,32 +25,31 @@ const Footer = () => {
                         <p className="footer-india">🇮🇳 Crafted in Jaipur, India</p>
                     </div>
 
-                    {/* Quick Links */}
-                    <div className="footer-column">
-                        <h4 className="footer-heading">Quick Links</h4>
-                        <ul className="footer-links">
-                            <li><Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Home</Link></li>
-                            <li><Link to="/products" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Products</Link></li>
-                            <li><Link to="/about" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>About</Link></li>
-                            <li>
-                                <Link
-                                    to="/contact"
-                                    onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                                >
-                                    Contact
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-
                     {/* Contact Info */}
                     <div className="footer-column">
                         <h4 className="footer-heading">Connect</h4>
-                        <ul className="footer-links">
-                            <li><a href="mailto:studios.whoami@gmail.com">studios.whoami@gmail.com</a></li>
-                            <li><a href="https://www.instagram.com/whoami.studios" target="_blank" rel="noopener noreferrer">Instagram</a></li>
-                            <li><a href="https://www.pinterest.com/studioswhoami/" target="_blank" rel="noopener noreferrer">Pinterest</a></li>
-                        </ul>
+                        <div className="social-icons">
+                            <a href="mailto:studios.whoami@gmail.com" title="Email Us">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                            </a>
+                            <a href="https://www.instagram.com/whoami.studios" target="_blank" rel="noopener noreferrer" title="Instagram">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                                </svg>
+                            </a>
+                            <a href="https://www.pinterest.com/studioswhoami/" target="_blank" rel="noopener noreferrer" title="Pinterest">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                </svg>
+                            </a>
+                        </div>
                     </div>
 
                 </div>
