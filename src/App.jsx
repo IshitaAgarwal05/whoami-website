@@ -4,6 +4,7 @@ import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import LoaderIntro from './components/LoaderIntro/LoaderIntro';
+import FluidSimulation from './components/FluidSimulation/FluidSimulation'
 
 // Lazy load pages for performance
 const Home = lazy(() => import('./pages/Home/Home'));
@@ -39,6 +40,7 @@ function App() {
           <div className="app">
             <Navbar />
             <main className="main-content">
+              <FluidSimulation />
               <Suspense fallback={<PageLoader />}>
                 <Routes>
                   <Route path="/" element={<Home />} />
