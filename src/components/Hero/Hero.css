@@ -423,44 +423,77 @@
 
 @media (max-width: 768px) {
     .hero-immersive {
-        height: calc(100vh - 90px);
-        height: calc(100dvh - 90px);
+        min-height: calc(100vh - 90px);
+        min-height: calc(100dvh - 90px);
+        height: auto;
     }
 
     .hero-immersive-container {
-        padding: var(--spacing-md);
-        gap: var(--spacing-md);
+        padding: var(--spacing-md) var(--spacing-md) var(--spacing-lg);
+        gap: var(--spacing-sm);
+        justify-content: center;
+    }
+
+    .hero-immersive-content {
+        gap: var(--spacing-xl);
     }
 
     .hero-logo-container {
-        width: 130px;
-        height: 130px;
-        padding: 8px;
+        width: 100px;
+        height: 100px;
+        padding: 6px;
+    }
+
+    .hero-title-immersive {
+        font-size: clamp(28px, 8vw, 40px);
+    }
+
+    .hero-tagline-immersive {
+        font-size: clamp(18px, 5vw, 28px);
+    }
+
+    .hero-description-immersive {
+        font-size: clamp(13px, 3.5vw, 15px);
+        margin: var(--spacing-xs) 0;
     }
 
     .hero-cta-immersive {
         flex-direction: column;
         width: 100%;
-        max-width: 300px;
+        max-width: 280px;
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-sm);
     }
 
     .btn-immersive {
         width: 100%;
         text-align: center;
+        padding: var(--spacing-sm) var(--spacing-xl);
+        font-size: var(--font-size-sm);
     }
 
     .hero-stats-glass {
-        flex-direction: column;
-        gap: var(--spacing-sm);
-        padding: var(--spacing-md);
-        /* Further reduce blur on mobile */
+        flex-direction: row;
+        gap: var(--spacing-md);
+        padding: var(--spacing-sm) var(--spacing-lg);
         backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
+        width: auto;
+        max-width: 100%;
+    }
+
+    .stat-glass-number {
+        font-size: var(--font-size-lg);
+    }
+
+    .stat-glass-label {
+        font-size: var(--font-size-xs);
+        text-align: center;
     }
 
     .stat-divider-glass {
-        width: 60px;
-        height: 1px;
+        width: 1px;
+        height: 30px;
     }
 
     .hero-bg-text {
@@ -470,8 +503,13 @@
 
 @media (max-width: 480px) {
     .hero-logo-container {
-        width: 110px;
-        height: 110px;
+        width: 85px;
+        height: 85px;
+    }
+
+    .hero-stats-glass {
+        gap: var(--spacing-sm);
+        padding: var(--spacing-xs) var(--spacing-md);
     }
 
     .hero-scroll-indicator span {
