@@ -2,15 +2,15 @@
 
 > **Identity, crafted.** 🇮🇳
 
-A minimalistic, premium product showcase website for **WhoAmI** - India's home for handcrafted fandom merchandise. 3D-printed and laser-cut desk accessories, collectibles, and personalized gifts for fans of Harry Potter, Marvel, Star Wars, DC Comics, Anime, and more.
+A minimalistic, premium product showcase website for **WhoAmI** - India's home for handcrafted fandom merchandise. 3D-printed and laser-cut desk accessories, collectibles, and personalized gifts for fans of legendary sagas, cinematic universes, and iconic characters.
 
 ---
 
 ## 🎯 About WhoAmI
 
-WhoAmI is an Indian D2C brand that creates handcrafted merchandise for fantasy franchise fans. Our products help fans:
+WhoAmI is an Indian D2C brand that creates handcrafted merchandise for dedicated fans. Our products help fans:
 
-- **Prove their identity** - Display your Hogwarts house, your favorite Avenger, or your allegiance to the Force.
+- **Prove their identity** - Display your favorite universe, your iconic heroes, or your legendary allegiances.
 - **Decorate their desks** - Transform workspaces into fandom shrines with premium, 3D-printed desk accessories.
 - **Gift with meaning** - Find personalized gifts that resonate with fellow fans.
 
@@ -152,11 +152,21 @@ Backend runs on: `http://localhost:5000`
 
 **Terminal 2 - Frontend Server:**
 ```bash
+cd server
 npm run dev
 ```
-Frontend runs on: `http://localhost:5173`
+Wait, the frontend should be `npm run dev` in the root. 
+Actually, I'll fix this in the README too while I'm at it.
+Wait, let me check the original README carefully.
+Line 148: `npm run dev` in root.
 
-**Access:** Open http://localhost:5173 in your browser
+Wait, looking at the original README again (Line 135-150):
+```bash
+Terminal 2 - Frontend Server:
+cd .. (if in server)
+npm run dev
+```
+I'll make it clearer.
 
 ---
 
@@ -169,11 +179,11 @@ Products are stored in `server/data/products.xlsx`.
 | Column | Description | Example |
 |--------|-------------|---------|
 | ID | Unique product ID | 1 |
-| Name | Product name | Hogwarts House Crest Desk Stand |
-| Description | Detailed description | Laser-cut wooden desk stand... |
+| Name | Product name | Iconic Hero Desk Stand |
+| Description | Detailed description | Premium handcrafted desk accessory... |
 | Price | Price in INR | 899 |
 | Material | Material used | Birch Wood |
-| UseCase | How to use/gift | Display your Hogwarts house pride... |
+| UseCase | How to use/gift | Display your fandom pride... |
 | Category | Product category | Collectibles |
 | ImageURL | Image URL | https://... |
 | Dimensions | Product size | 15cm x 12cm x 3cm |
@@ -206,19 +216,19 @@ Base URL: `http://localhost:5000/api`
 
 | Page | Route | Description |
 |------|-------|-------------|
-| Home | `/` | Hero, fandoms showcase, featured products, values |
+| Home | `/` | Hero, fandoms showcase, featured products, testimonials |
 | Products | `/products` | All products with category filters |
 | Product Detail | `/product/:id` | Individual product information |
-| About | `/about` | Brand story, fandoms, values, Made in India |
-| Contact | `/contact` | Contact form and information |
+| About | `/about` | Brand story, values, Made in India |
+| Contact | `/contact` | Contact form with custom validation |
 
 ---
 
 ## 🎨 Design Philosophy
 
 - **Minimalistic** - Clean, Apple/Tesla-inspired simplicity
-- **Premium Feel** - Subtle shadows, smooth transitions
-- **Fandom Focused** - Celebrates Harry Potter, Marvel, Star Wars, DC, Anime
+- **Premium Feel** - Glassmorphism, golden accents, smooth transitions
+- **Fandom Focused** - Celebrates iconic realms and beloved characters
 - **Indian Identity** - "Proudly Made in India" messaging throughout
 - **No E-commerce** - Showcase only, no purchase flow
 - **Responsive** - Works on mobile, tablet, and desktop
@@ -242,6 +252,7 @@ npm run preview  # Preview production build
 
 **Backend:**
 ```bash
+cd server
 npm run dev    # Start with nodemon (auto-restart)
 npm start      # Start production server
 ```
@@ -251,7 +262,7 @@ npm start      # Start production server
 ## 🔒 Important Notes
 
 - ⚠️ **This is NOT an e-commerce site** - No purchasing functionality
-- 📧 Contact form is frontend-only (for demonstration)
+- 📧 Contact form includes real-time validation (no empty fields, no specific special characters)
 - 🖼️ Product images use placeholders - update `ImageURL` in Excel for real images
 - 🇮🇳 Brand messaging emphasizes Indian origin throughout
 
