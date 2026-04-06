@@ -47,7 +47,8 @@
 
 /* Values Section */
 .values-section {
-    background-color: var(--color-surface);
+    /* background-color: var(--color-surface); */
+    background-color: transparent;
     border-top: 1px solid var(--color-border);
     border-bottom: 1px solid var(--color-border);
 }
@@ -132,7 +133,8 @@
 
 /* Fandoms Showcase Section */
 .fandoms-showcase {
-    background-color: var(--color-deep-black);
+    /* background-color: var(--color-deep-black); */
+    background-color: transparent;
     position: relative;
     overflow: hidden;
 }
