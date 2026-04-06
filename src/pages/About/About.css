@@ -18,7 +18,8 @@
 /* ─── Immersive Hero ─── */
 .about-hero-immersive {
     position: relative;
-    height: 80vh;
+    height: calc(100vh - 70px);
+    height: calc(100dvh - 70px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -383,7 +384,8 @@
 
 @media (max-width: 768px) {
     .about-hero-immersive {
-        height: 60vh;
+        height: calc(100vh - 90px);
+        height: calc(100dvh - 90px);
     }
 
     .audience-glass-grid {
