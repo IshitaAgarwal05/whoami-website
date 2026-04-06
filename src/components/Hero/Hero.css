@@ -71,8 +71,8 @@
 
 .hero-logo-container {
     position: relative;
-    width: 180px;
-    height: 180px;
+    width: 200px;
+    height: 200px;
     transform-style: preserve-3d;
     transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
     animation: logoFloatImmersive 4s ease-in-out infinite;
@@ -131,7 +131,7 @@
 }
 
 .hero-title-immersive {
-    font-size: clamp(36px, 6vw, 72px);
+    font-size: clamp(32px, 5vw, 60px);
     font-weight: var(--font-weight-bold);
     color: var(--color-text-primary);
     letter-spacing: -0.02em;
@@ -143,7 +143,7 @@
 }
 
 .hero-tagline-immersive {
-    font-size: clamp(24px, 4vw, 48px);
+    font-size: clamp(18px, 3vw, 32px);
     font-weight: var(--font-weight-light);
     font-style: italic;
     background: linear-gradient(135deg,
