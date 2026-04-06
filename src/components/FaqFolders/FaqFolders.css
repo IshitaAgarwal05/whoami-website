@@ -5,7 +5,8 @@
 
 .faq-folders-section {
     padding: var(--spacing-5xl) 0;
-    background-color: var(--color-charcoal-black);
+    /* background-color: var(--color-charcoal-black); */
+    background-color: transparent;
     border-top: 1px solid var(--color-border);
 }
 
