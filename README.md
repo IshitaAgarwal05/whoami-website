@@ -25,35 +25,6 @@ WhoAmI is an Indian D2C brand that creates handcrafted merchandise for dedicated
 
 ---
 
-## 📸 Screenshots
-
-### Home Page
-Hero section with brand messaging and fandom showcase.
-
-![Home Page](screenshots/home_page.png)
-
-### Products Page
-Product grid with category filters. All data loaded from Excel file.
-
-![Products Page](screenshots/products_page.png)
-
-### Product Detail
-Individual product information with specifications and use cases.
-
-![Product Detail](screenshots/product_detail.png)
-
-### About Page
-Brand story, values, and "Proudly Made in India" emphasis.
-
-![About Page](screenshots/about_page.png)
-
-### Contact Page
-Contact form and information.
-
-![Contact Page](screenshots/contact_page.png)
-
----
-
 ## 🛠️ Tech Stack
 
 ### Frontend
