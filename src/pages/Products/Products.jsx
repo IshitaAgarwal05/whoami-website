@@ -6,11 +6,21 @@ import './Products.css';
 
 const Products = () => {
     const [products, setProducts] = useState([]);
+    const [combos, setCombos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [sortBy, setSortBy] = useState('default');
+    const [activeTab, setActiveTab] = useState('store-99');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeCategory, setActiveCategory] = useState('All');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+
+    const tabs = [
+        { id: 'store-99', label: 'Under ₹99', subtext: 'Small price. Big personality.' },
+        { id: 'all', label: 'Explore Identity', subtext: 'Find what represents you' },
+        { id: 'combos', label: 'Curated Combos', subtext: 'Save more. Gift better.' }
+    ];
 
     const sortOptions = [
         { value: 'default', label: 'Featured' },
@@ -19,25 +29,29 @@ const Products = () => {
     ];
 
     useEffect(() => {
-        const fetchProducts = async () => {
+        const fetchData = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(getApiUrl('/api/products'));
+                const [productsRes, combosRes] = await Promise.all([
+                    axios.get(getApiUrl('/api/products')),
+                    axios.get(getApiUrl('/api/products/combos'))
+                ]);
 
-                if (response.data.success) {
-                    setProducts(response.data.data);
-                } else {
-                    setError('Failed to load products');
+                if (productsRes.data.success) {
+                    setProducts(productsRes.data.data);
+                }
+                if (combosRes.data.success) {
+                    setCombos(combosRes.data.data);
                 }
             } catch (err) {
-                console.error('Error fetching products:', err);
+                console.error('Error fetching data:', err);
                 setError('Failed to connect to the server');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchProducts();
+        fetchData();
     }, []);
 
     // Close dropdown when clicking outside
@@ -57,16 +71,50 @@ const Products = () => {
         setIsDropdownOpen(false);
     };
 
-    const sortedProducts = [...products].sort((a, b) => {
-        if (sortBy === 'price-asc') {
-            return a.Price - b.Price;
-        } else if (sortBy === 'price-desc') {
-            return b.Price - a.Price;
+    // Get categories for current tab
+    const getCategories = () => {
+        const data = activeTab === 'combos' ? combos : products;
+        const cats = ['All', ...new Set(data.map(p => p.Category))];
+        return cats.filter(c => c); // Remove null/undefined
+    };
+
+    const getActiveData = () => {
+        let data = [];
+        if (activeTab === 'store-99') {
+            data = products.filter(p => p.Price === 99);
+        } else if (activeTab === 'combos') {
+            data = combos;
+        } else {
+            data = products;
         }
-        return 0; // default (Excel order)
-    });
+
+        // Apply Category Filter
+        if (activeCategory !== 'All') {
+            data = data.filter(p => p.Category === activeCategory);
+        }
+
+        // Apply Search Filter
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            data = data.filter(p =>
+                p.Name.toLowerCase().includes(query) ||
+                p.Description.toLowerCase().includes(query) ||
+                (p.Material && p.Material.toLowerCase().includes(query))
+            );
+        }
+
+        // Apply Sort
+        return [...data].sort((a, b) => {
+            if (sortBy === 'price-asc') return a.Price - b.Price;
+            if (sortBy === 'price-desc') return b.Price - a.Price;
+            return 0;
+        });
+    };
 
     const currentSortLabel = sortOptions.find(opt => opt.value === sortBy)?.label;
+    const activeTabData = tabs.find(t => t.id === activeTab);
+    const displayItems = getActiveData();
+    const categories = getCategories();
 
     if (loading) {
         return (
@@ -74,7 +122,7 @@ const Products = () => {
                 <div className="container">
                     <div className="loading-state">
                         <div className="loading"></div>
-                        <p>Loading products...</p>
+                        <p>Loading your identity...</p>
                     </div>
                 </div>
             </div>
@@ -95,17 +143,57 @@ const Products = () => {
     }
 
     return (
-        <div className="products-page">
+        <div className={`products-page ${activeTab}`}>
             <div className="container">
                 <div className="products-header">
-                    <h1>Our Products</h1>
+                    <h1 className="reveal-text">Choose Your Identity</h1>
                     <p className="products-subtitle">
-                        Discover our complete collection of handcrafted desk accessories,
-                        collectibles, puzzles, and personalized gifts. Each piece is
-                        meticulously designed and precision-crafted.
+                        {activeTabData.subtext}
                     </p>
 
+                    <div className="products-tabs-container">
+                        <div className="products-tabs">
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`}
+                                    onClick={() => {
+                                        setActiveTab(tab.id);
+                                        setActiveCategory('All'); // Reset category on tab change
+                                    }}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
                     <div className="products-controls">
+                        <div className="search-bar">
+                            <svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input
+                                type="text"
+                                placeholder="Search identity..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="category-filters">
+                            {categories.map(cat => (
+                                <button
+                                    key={cat}
+                                    className={`cat-btn ${activeCategory === cat ? 'active' : ''}`}
+                                    onClick={() => setActiveCategory(cat)}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
+                        </div>
+
                         <div className="custom-dropdown" ref={dropdownRef}>
                             <span className="dropdown-label">Sort by:</span>
                             <div
@@ -135,11 +223,24 @@ const Products = () => {
                     </div>
                 </div>
 
-                <div className="products-grid">
-                    {sortedProducts.map((product) => (
-                        <ProductCard key={product.ID} product={product} />
+                <div className={`products-grid ${activeTab === 'store-99' ? 'dense' : ''}`}>
+                    {displayItems.map((item) => (
+                        <ProductCard
+                            key={`${activeTab}-${item.ID}`}
+                            product={item}
+                            compact={activeTab === 'store-99'}
+                        />
                     ))}
                 </div>
+
+                {displayItems.length === 0 && (
+                    <div className="empty-state">
+                        <p>No products found in this category.</p>
+                        <button onClick={() => { setSearchQuery(''); setActiveCategory('All'); }} className="reset-btn">
+                            Clear Filter
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

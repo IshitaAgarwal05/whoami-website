@@ -66,6 +66,27 @@ router.get('/category/:category', async (req, res) => {
 });
 
 /**
+ * GET /api/products/combos
+ * Get all curated combos
+ */
+router.get('/combos', async (req, res) => {
+    try {
+        const combos = await excelService.getAllCombos();
+        res.json({
+            success: true,
+            count: combos.length,
+            data: combos
+        });
+    } catch (error) {
+        console.error('Error fetching combos:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch combos'
+        });
+    }
+});
+
+/**
  * GET /api/products/:id
  * Get single product by ID
  */
@@ -96,21 +117,21 @@ router.get('/:id', async (req, res) => {
 
 /**
  * POST /api/products/reload
- * Reload products from Excel file
+ * Reload all products and combos from Excel files
  */
 router.post('/reload', async (req, res) => {
     try {
-        const products = await excelService.reloadProducts();
+        const counts = await excelService.reloadAll();
         res.json({
             success: true,
-            message: 'Products reloaded successfully',
-            count: products.length
+            message: 'All datasets reloaded successfully',
+            data: counts
         });
     } catch (error) {
-        console.error('Error reloading products:', error);
+        console.error('Error reloading data:', error);
         res.status(500).json({
             success: false,
-            error: 'Failed to reload products'
+            error: 'Failed to reload data'
         });
     }
 });
