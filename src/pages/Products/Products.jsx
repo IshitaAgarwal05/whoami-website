@@ -81,7 +81,7 @@ const Products = () => {
     const getActiveData = () => {
         let data = [];
         if (activeTab === 'store-99') {
-            data = products.filter(p => p.Price === 99);
+            data = products.filter(p => p.Price <= 99);
         } else if (activeTab === 'combos') {
             data = combos;
         } else {
