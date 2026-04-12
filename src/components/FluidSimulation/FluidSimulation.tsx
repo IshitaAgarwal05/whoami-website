@@ -325,12 +325,12 @@ const FluidSimulation: React.FC = () => {
     update();
 
     let count = 0;
-    let colorArr = [1.0, 0.72, 0.28]; // Start with cyan
+    let colorArr = [1.0, 0.72, 0.28]; // Start with golden
 
     const handleMouseMove = (e: MouseEvent) => {
       count++;
       if (count > 25) {
-        // Switch between cyan and blue hues
+        // Switch between golden and amber hues
         colorArr = Math.random() > 0.5 ? [1.0, 0.72, 0.28] : [1.0, 0.55, 0.18];
         count = 0;
       }
@@ -348,7 +348,7 @@ const FluidSimulation: React.FC = () => {
       const touches = e.targetTouches;
       count++;
       if (count > 25) {
-        colorArr = Math.random() > 0.5 ? [0.0, 0.74, 0.83] : [0.23, 0.51, 0.96];
+        colorArr = Math.random() > 0.5 ? [1.0, 0.72, 0.28] : [1.0, 0.55, 0.18];
         count = 0;
       }
       for (let i = 0; i < touches.length; i++) {
