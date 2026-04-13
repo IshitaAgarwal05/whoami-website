@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import config from '../config';
 import Toast from '../components/Toast/Toast';
 
 const CartContext = createContext();
@@ -27,6 +28,14 @@ export const CartProvider = ({ children }) => {
         setToast({ message, type });
     };
 
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            maximumFractionDigits: 0,
+        }).format(price);
+    };
+
     const addToCart = (product, quantity = 1) => {
         setCartItems(prevItems => {
             const existingItem = prevItems.find(item => item.ID === product.ID);
@@ -53,11 +62,15 @@ export const CartProvider = ({ children }) => {
     const updateQuantity = (productId, delta) => {
         setCartItems(prevItems => prevItems.map(item => {
             if (item.ID === productId) {
-                const newQty = Math.max(1, item.quantity + delta);
+                const newQty = item.quantity + delta;
+                if (newQty <= 0) {
+                    removeFromCart(productId);
+                    return null;
+                }
                 return { ...item, quantity: newQty };
             }
             return item;
-        }));
+        }).filter(item => item !== null));
     };
 
     const clearCart = () => {
@@ -66,6 +79,22 @@ export const CartProvider = ({ children }) => {
 
     const getCartTotal = () => {
         return cartItems.reduce((total, item) => total + (item.Price * item.quantity), 0);
+    };
+
+    const handleCheckout = () => {
+        if (cartItems.length === 0) return;
+
+        let message = "Hi, I want to order:\n\n";
+        cartItems.forEach((item, index) => {
+            message += `${index + 1}. ${item.Name} – ${formatPrice(item.Price)} x ${item.quantity}\n`;
+        });
+
+        const total = getCartTotal();
+        message += `\nTotal: ${formatPrice(total)}`;
+        message += `\n\nName:\nCity:`;
+
+        const encodedMessage = encodeURIComponent(message);
+        window.open(`https://wa.me/${config.WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
     };
 
     const getItemCount = () => {
@@ -84,7 +113,9 @@ export const CartProvider = ({ children }) => {
         getCartTotal,
         getItemCount,
         toggleDrawer,
-        setIsDrawerOpen
+        setIsDrawerOpen,
+        formatPrice,
+        handleCheckout
     };
 
     return (

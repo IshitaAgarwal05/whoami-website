@@ -4,7 +4,7 @@
 
 const config = {
     API_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000',
-    WHATSAPP_NUMBER: import.meta.env.VITE_WHATSAPP_NUMBER || '919876543210'
+    WHATSAPP_NUMBER: import.meta.env.VITE_WHATSAPP_NUMBER || '917891063938'
 };
 
 export default config;

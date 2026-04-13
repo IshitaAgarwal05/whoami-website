@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
-import config from '../../config';
 import './Cart.css';
 
 const Cart = () => {
@@ -11,32 +10,10 @@ const Cart = () => {
         removeFromCart,
         getCartTotal,
         clearCart,
-        addToCart
+        addToCart,
+        formatPrice,
+        handleCheckout
     } = useCart();
-
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            maximumFractionDigits: 0,
-        }).format(price);
-    };
-
-    const handleCheckout = () => {
-        if (cartItems.length === 0) return;
-
-        let message = "Hi, I want to order:\n\n";
-        cartItems.forEach((item, index) => {
-            message += `${index + 1}. ${item.Name} – ${formatPrice(item.Price)} x ${item.quantity}\n`;
-        });
-
-        const total = getCartTotal();
-        message += `\nTotal: ${formatPrice(total)}`;
-        message += `\n\nName:\nCity:`;
-
-        const encodedMessage = encodeURIComponent(message);
-        window.open(`https://wa.me/${config.WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
-    };
 
     const freeDeliveryThreshold = 1000;
     const currentTotal = getCartTotal();
