@@ -223,7 +223,8 @@ const Products = () => {
                     </div>
                 </div>
 
-                <div className={`products-grid ${activeTab === 'store-99' ? 'dense' : ''}`}>
+                <div className={`products-grid ${activeTab === 'store-99' ? '' : ''}`}>
+                {/* <div className={`products-grid ${activeTab === 'store-99' ? 'dense' : ''}`}> */}
                     {displayItems.map((item) => (
                         <ProductCard
                             key={`${activeTab}-${item.ID}`}
