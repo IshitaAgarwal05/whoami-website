@@ -81,6 +81,14 @@ app.use((req, res, next) => {
 // -------------------------------------------------------------------
 // Routes
 // -------------------------------------------------------------------
+app.get('/', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Welcome to the WhoAmI API. Everything is running smoothly!',
+        docs: 'Connect your frontend to see the merchandise.'
+    });
+});
+
 app.use('/api/products/reload', reloadLimiter);
 app.use('/api/products', productRoutes);
 
