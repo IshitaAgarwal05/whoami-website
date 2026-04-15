@@ -18,14 +18,19 @@ const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests with no origin (mobile apps, curl, etc.) in dev
-        if (!origin && process.env.NODE_ENV !== 'production') {
-            return callback(null, true);
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+
+        // Standardize: remove trailing slash for comparison
+        const sanitizedOrigin = origin.replace(/\/$/, '');
+        const isAllowed = allowedOrigins.some(allowed => allowed.replace(/\/$/, '') === sanitizedOrigin);
+
+        if (isAllowed) {
+            callback(null, true);
+        } else {
+            console.error(`❌ CORS blocked origin: ${origin}`);
+            callback(new Error('Not allowed by CORS'));
         }
-        if (allowedOrigins.includes(origin)) {
-            return callback(null, true);
-        }
-        callback(new Error('Not allowed by CORS'));
     },
     credentials: true
 }));
