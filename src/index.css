@@ -368,19 +368,18 @@ html {
    CUSTOM SCROLLBAR - CINEMATIC GOLDEN GLOW
    ========================================== */
 
-/* FORCE visibility by overriding potential display:none/width:0 */
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
-  width: 12px !important;
-  height: 12px !important;
-  display: block !important;
+  width: 12px;
+  height: 12px;
+  display: block;
 }
 
 /* Track — sleek deep black */
 html::-webkit-scrollbar-track,
 body::-webkit-scrollbar-track {
-  background: var(--color-deep-black) !important;
-  border-left: 1px solid rgba(255, 184, 77, 0.05) !important;
+  background: var(--color-deep-black);
+  border-left: 1px solid rgba(255, 184, 77, 0.05);
 }
 
 /* Thumb — dual-tone golden gradient + intense glow */
@@ -389,22 +388,22 @@ body::-webkit-scrollbar-thumb {
   background: linear-gradient(to bottom,
       var(--color-dark-gold) 0%,
       var(--color-warm-gold) 50%,
-      var(--color-dark-gold) 100%) !important;
-  border-radius: 20px !important;
-  border: 3px solid var(--color-deep-black) !important;
-  box-shadow: 0 0 15px rgba(255, 184, 77, 0.4) !important;
-  cursor: pointer !important;
+      var(--color-dark-gold) 100%);
+  border-radius: 20px;
+  border: 3px solid var(--color-deep-black);
+  box-shadow: 0 0 15px rgba(255, 184, 77, 0.4);
+  cursor: pointer;
 }
 
 /* Hover State — increase intensity */
 html::-webkit-scrollbar-thumb:hover,
 body::-webkit-scrollbar-thumb:hover {
-  background: var(--color-warm-gold) !important;
-  box-shadow: 0 0 25px rgba(255, 184, 77, 0.7) !important;
+  background: var(--color-warm-gold);
+  box-shadow: 0 0 25px rgba(255, 184, 77, 0.7);
 }
 
 /* Standard properties for cross-browser future-proofing */
 html {
-  scrollbar-width: thin !important;
-  scrollbar-color: var(--color-warm-gold) var(--color-deep-black) !important;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-warm-gold) var(--color-deep-black);
 }

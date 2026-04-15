@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import './Cart.css';
@@ -139,7 +138,7 @@ const Cart = () => {
                                             Name: 'Mystery Keychain Bundle',
                                             Price: 99,
                                             Material: 'PLA/Resin',
-                                            ImageURL: '/products/placeholder.webp'
+                                            ImageURL: '/products/sorting-hat/sorting-hat.webp'
                                         })}
                                     >
                                         + Add to Bag

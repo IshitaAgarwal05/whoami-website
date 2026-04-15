@@ -1,7 +1,14 @@
+// =============================================================
+// DEAD CODE — Commented out per codebase audit (2026-04-15)
+// Reason: This BullMQ task service is never imported by any
+// route or the server entry point. The worker only has a
+// placeholder setTimeout. Kept for future reference.
+// =============================================================
+
+/*
 const { Queue, Worker } = require('bullmq');
 const cachingService = require('./cachingService');
 
-// Create the product sync queue
 const productSyncQueue = new Queue('product-sync', {
     connection: {
         host: 'localhost',
@@ -10,10 +17,6 @@ const productSyncQueue = new Queue('product-sync', {
 });
 
 class TaskService {
-    /**
-     * Add a product sync job to the queue
-     * @param {Object} data - Optional data for the job
-     */
     async addProductSyncJob(data = {}) {
         try {
             const job = await productSyncQueue.add('sync-products', data);
@@ -26,16 +29,10 @@ class TaskService {
     }
 }
 
-// Set up the worker to process jobs
 const worker = new Worker('product-sync', async (job) => {
     if (job.name === 'sync-products') {
         console.log(`👷 Processing job ${job.id}: Syncing products...`);
-
-        // Simulate a heavy task (e.g., intensive image processing or remote sync)
         await new Promise(resolve => setTimeout(resolve, 3000));
-
-        // In a real scenario, this would involve complex logic.
-        // For now, we'll just log and complete.
         console.log(`✅ Job ${job.id} completed: Products synchronized.`);
     }
 }, {
@@ -50,3 +47,7 @@ worker.on('failed', (job, err) => {
 });
 
 module.exports = new TaskService();
+*/
+
+// Export empty object so any accidental require() doesn't crash
+module.exports = {};

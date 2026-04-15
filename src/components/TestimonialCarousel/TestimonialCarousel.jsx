@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './TestimonialCarousel.css';
 
 const TestimonialCarousel = ({ testimonials }) => {
@@ -21,18 +21,17 @@ const TestimonialCarousel = ({ testimonials }) => {
         });
     };
 
-    const handleScroll = () => {
-        const container = carouselRef.current;
-        if (container) {
-            setShowLeftArrow(container.scrollLeft > 20);
-            setShowRightArrow(
-                container.scrollLeft < container.scrollWidth - container.clientWidth - 20
-            );
-        }
-    };
-
     useEffect(() => {
         const container = carouselRef.current;
+        const handleScroll = () => {
+            if (container) {
+                setShowLeftArrow(container.scrollLeft > 20);
+                setShowRightArrow(
+                    container.scrollLeft < container.scrollWidth - container.clientWidth - 20
+                );
+            }
+        };
+
         if (container) {
             handleScroll();
             window.addEventListener('resize', handleScroll);

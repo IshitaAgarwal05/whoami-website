@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
@@ -7,6 +8,27 @@ const productRoutes = require('./routes/products');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// -------------------------------------------------------------------
+// CORS — restrict to allowed origins
+// -------------------------------------------------------------------
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+    .split(',')
+    .map(o => o.trim());
+
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests with no origin (mobile apps, curl, etc.) in dev
+        if (!origin && process.env.NODE_ENV !== 'production') {
+            return callback(null, true);
+        }
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true
+}));
 
 // -------------------------------------------------------------------
 // Rate Limiters — use Redis store if connected, fall back to in-memory
@@ -42,7 +64,6 @@ const reloadLimiter = buildLimiter(
 // -------------------------------------------------------------------
 // Middleware
 // -------------------------------------------------------------------
-app.use(cors());
 app.use(express.json());
 app.use('/api/', limiter);
 
@@ -86,5 +107,6 @@ app.listen(PORT, () => {
     const redisStatus = cachingService.connected ? 'active' : 'disabled (set REDIS_URL to enable)';
     console.log(`\n🚀 WhoAmI API running on http://localhost:${PORT}`);
     console.log(`⚡ Redis caching: ${redisStatus}`);
-    console.log(`🔒 Rate limiting: ${cachingService.connected ? 'Redis-backed' : 'in-memory'}\n`);
+    console.log(`🔒 Rate limiting: ${cachingService.connected ? 'Redis-backed' : 'in-memory'}`);
+    console.log(`🌐 CORS origins: ${allowedOrigins.join(', ')}\n`);
 });

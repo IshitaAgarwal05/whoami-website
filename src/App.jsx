@@ -23,6 +23,14 @@ const PageLoader = () => (
   </div>
 );
 
+const NotFound = () => (
+  <div style={{ textAlign: 'center', padding: '6rem 2rem', minHeight: '60vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+    <h1 style={{ fontSize: '4rem', fontWeight: 700, color: 'var(--color-warm-gold)', marginBottom: '1rem' }}>404</h1>
+    <p style={{ fontSize: '1.25rem', color: 'var(--color-text-secondary)', marginBottom: '2rem' }}>This page doesn't exist.</p>
+    <a href="/" style={{ color: 'var(--color-warm-gold)', textDecoration: 'underline', fontSize: '1rem' }}>Back to Home</a>
+  </div>
+);
+
 function App() {
   const [showSite, setShowSite] = useState(false);
 
@@ -46,6 +54,7 @@ function App() {
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
             </main>

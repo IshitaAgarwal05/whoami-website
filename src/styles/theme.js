@@ -1,16 +1,18 @@
-// WhoAmI Design System Theme
+// =============================================================
+// DEAD CODE — Commented out per codebase audit (2026-04-15)
+// Reason: This JS theme object is never imported anywhere.
+// The CSS variables in index.css serve this purpose instead.
+// Also contains stale light-mode values that contradict the
+// actual dark theme. Kept for reference only.
+// =============================================================
+
+/*
 export const theme = {
-    // Color Palette (Approved)
     colors: {
-        // Base Colors
         charcoalBlack: '#0F0F0F',
         warmWhite: '#F5F5F3',
         graphiteGrey: '#2B2B2B',
-
-        // Accent
         deepBlueGrey: '#1E2A33',
-
-        // Semantic Colors
         background: '#F5F5F3',
         surface: '#ffffff',
         text: {
@@ -20,25 +22,21 @@ export const theme = {
         },
         border: '#e0e0e0',
     },
-
-    // Typography
     fonts: {
         primary: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     },
-
     fontSizes: {
-        xs: '0.75rem',      // 12px
-        sm: '0.875rem',     // 14px
-        base: '1rem',       // 16px
-        lg: '1.125rem',     // 18px
-        xl: '1.25rem',      // 20px
-        '2xl': '1.5rem',    // 24px
-        '3xl': '1.875rem',  // 30px
-        '4xl': '2.25rem',   // 36px
-        '5xl': '3rem',      // 48px
-        '6xl': '3.75rem',   // 60px
+        xs: '0.75rem',
+        sm: '0.875rem',
+        base: '1rem',
+        lg: '1.125rem',
+        xl: '1.25rem',
+        '2xl': '1.5rem',
+        '3xl': '1.875rem',
+        '4xl': '2.25rem',
+        '5xl': '3rem',
+        '6xl': '3.75rem',
     },
-
     fontWeights: {
         light: 300,
         regular: 400,
@@ -46,21 +44,17 @@ export const theme = {
         semibold: 600,
         bold: 700,
     },
-
-    // Spacing (4px base unit)
     spacing: {
-        xs: '0.25rem',    // 4px
-        sm: '0.5rem',     // 8px
-        md: '0.75rem',    // 12px
-        lg: '1rem',       // 16px
-        xl: '1.5rem',     // 24px
-        '2xl': '2rem',    // 32px
-        '3xl': '3rem',    // 48px
-        '4xl': '4rem',    // 64px
-        '5xl': '6rem',    // 96px
+        xs: '0.25rem',
+        sm: '0.5rem',
+        md: '0.75rem',
+        lg: '1rem',
+        xl: '1.5rem',
+        '2xl': '2rem',
+        '3xl': '3rem',
+        '4xl': '4rem',
+        '5xl': '6rem',
     },
-
-    // Breakpoints
     breakpoints: {
         sm: '640px',
         md: '768px',
@@ -68,15 +62,11 @@ export const theme = {
         xl: '1280px',
         '2xl': '1536px',
     },
-
-    // Transitions
     transitions: {
         fast: '0.15s ease',
         base: '0.2s ease',
         slow: '0.3s ease',
     },
-
-    // Shadows
     shadows: {
         sm: '0 1px 2px 0 rgba(15, 15, 15, 0.05)',
         base: '0 1px 3px 0 rgba(15, 15, 15, 0.1), 0 1px 2px 0 rgba(15, 15, 15, 0.06)',
@@ -84,18 +74,17 @@ export const theme = {
         lg: '0 10px 15px -3px rgba(15, 15, 15, 0.1), 0 4px 6px -2px rgba(15, 15, 15, 0.05)',
         xl: '0 20px 25px -5px rgba(15, 15, 15, 0.1), 0 10px 10px -5px rgba(15, 15, 15, 0.04)',
     },
-
-    // Border Radius
     borderRadius: {
         none: '0',
-        sm: '0.125rem',   // 2px
-        base: '0.25rem',  // 4px
-        md: '0.375rem',   // 6px
-        lg: '0.5rem',     // 8px
-        xl: '0.75rem',    // 12px
-        '2xl': '1rem',    // 16px
+        sm: '0.125rem',
+        base: '0.25rem',
+        md: '0.375rem',
+        lg: '0.5rem',
+        xl: '0.75rem',
+        '2xl': '1rem',
         full: '9999px',
     },
 };
 
 export default theme;
+*/
