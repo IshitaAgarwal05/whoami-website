@@ -2,20 +2,23 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { getApiUrl } from '../../config';
+import { useCart } from '../../context/CartContext';
+import config from '../../config';
 import './ProductDetail.css';
 
 const ProductDetail = () => {
     const { id } = useParams();
+    const { addToCart } = useCart();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 setLoading(true);
                 const response = await axios.get(getApiUrl(`/api/products/${id}`));
-
                 if (response.data.success) {
                     setProduct(response.data.data);
                 } else {
@@ -23,7 +26,7 @@ const ProductDetail = () => {
                 }
             } catch (err) {
                 console.error('Error fetching product:', err);
-                setError('Failed to load product details');
+                setError('Failed to connect to the server');
             } finally {
                 setLoading(false);
             }
@@ -40,13 +43,20 @@ const ProductDetail = () => {
         }).format(price);
     };
 
+    const handleBuyNow = () => {
+        if (!product) return;
+        const message = `Hi, I want to order:\n\n1. ${product.Name} – ${formatPrice(product.Price)} x ${quantity}\n\nTotal: ${formatPrice(product.Price * quantity)}\n\nName:\nCity:`;
+        const encodedMessage = encodeURIComponent(message);
+        window.open(`https://wa.me/${config.WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
+    };
+
     if (loading) {
         return (
             <div className="product-detail-page">
                 <div className="container">
                     <div className="loading-state">
                         <div className="loading"></div>
-                        <p>Loading product...</p>
+                        <p>Loading details...</p>
                     </div>
                 </div>
             </div>
@@ -58,26 +68,21 @@ const ProductDetail = () => {
             <div className="product-detail-page">
                 <div className="container">
                     <div className="error-state">
-                        <h2>Product Not Found</h2>
-                        <p>{error || 'The product you are looking for does not exist.'}</p>
-                        <Link to="/products" className="btn-primary">
-                            Browse All Products
-                        </Link>
+                        <h2>Oops!</h2>
+                        <p>{error || 'Product not found'}</p>
+                        <Link to="/products" className="back-btn">Back to Products</Link>
                     </div>
                 </div>
             </div>
         );
     }
 
-    const imageUrl = product.ImageURL || 'https://via.placeholder.com/600x600/2B2B2B/F5F5F3?text=WhoAmI';
-
     return (
         <div className="product-detail-page">
             <div className="container">
-                {/* Navigation and Breadcrumb */}
                 <div className="product-detail-nav">
                     <Link to="/products" className="back-link">
-                        <span className="arrow">←</span> Back to Collection
+                        &larr; Back to Collection
                     </Link>
                     <div className="breadcrumb">
                         <Link to="/">Home</Link>
@@ -89,24 +94,27 @@ const ProductDetail = () => {
                 </div>
 
                 <div className="product-detail-grid">
-                    {/* Product Image */}
                     <div className="product-image-section">
                         <div className="product-image-container">
                             <div className="product-image-glow"></div>
                             <div className="product-image">
-                                <img src={imageUrl} alt={product.Name} />
+                                <img src={product.ImageURL} alt={product.Name} />
                             </div>
                         </div>
                     </div>
 
-                    {/* Product Info */}
                     <div className="product-info-section">
                         <div className="glass-card product-main-info">
-                            <div className="product-category-badge">{product.Category}</div>
+                            <span className="product-category-badge">{product.Category}</span>
                             <h1 className="product-title">{product.Name}</h1>
                             <div className="product-price-tag">
                                 <span className="price-label">Price</span>
-                                <span className="price-value">{formatPrice(product.Price)}</span>
+                                <div className="info-price-row">
+                                    {product.OriginalPrice && (
+                                        <span className="info-original-price">{formatPrice(product.OriginalPrice)}</span>
+                                    )}
+                                    <span className="price-value">{formatPrice(product.Price)}</span>
+                                </div>
                             </div>
                         </div>
 
@@ -115,6 +123,13 @@ const ProductDetail = () => {
                                 <h3>Description</h3>
                                 <p className="description-text">{product.Description}</p>
                             </div>
+
+                            {product.UseCase && (
+                                <div className="detail-block">
+                                    <h3>Ideal For</h3>
+                                    <p className="use-case-text">{product.UseCase}</p>
+                                </div>
+                            )}
 
                             <div className="detail-block">
                                 <h3>Specifications</h3>
@@ -126,20 +141,18 @@ const ProductDetail = () => {
                                             <span className="spec-value">{product.Material}</span>
                                         </div>
                                     </div>
-
                                     {product.Dimensions && (
                                         <div className="spec-item">
-                                            <div className="spec-icon">📏</div>
+                                            <div className="spec-icon">D</div>
                                             <div className="spec-content">
                                                 <span className="spec-label">Dimensions</span>
                                                 <span className="spec-value">{product.Dimensions}</span>
                                             </div>
                                         </div>
                                     )}
-
                                     {product.Weight && (
                                         <div className="spec-item">
-                                            <div className="spec-icon">⚖️</div>
+                                            <div className="spec-icon">W</div>
                                             <div className="spec-content">
                                                 <span className="spec-label">Weight</span>
                                                 <span className="spec-value">{product.Weight}</span>
@@ -149,20 +162,36 @@ const ProductDetail = () => {
                                 </div>
                             </div>
 
-                            {product.UseCase && (
-                                <div className="detail-block">
-                                    <h3>Ideal For</h3>
-                                    <p className="use-case-text">{product.UseCase}</p>
+                            <div className="product-actions">
+                                <div className="quantity-controller">
+                                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
+                                    <span>{quantity}</span>
+                                    <button onClick={() => setQuantity(quantity + 1)}>+</button>
                                 </div>
-                            )}
+
+                                <div className="action-buttons-group">
+                                    <button
+                                        className="add-to-cart-btn"
+                                        onClick={() => addToCart(product, quantity)}
+                                    >
+                                        Add to Cart
+                                    </button>
+                                    <button
+                                        className="buy-now-btn"
+                                        onClick={handleBuyNow}
+                                    >
+                                        Buy Now
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="product-note-card">
                             <div className="note-icon">!</div>
                             <div className="note-content">
                                 <p>
-                                    <strong>Showcase Item:</strong> For inquiries or bespoke orders,
-                                    please reach out via our <Link to="/contact">Contact</Link> page.
+                                    <strong>Handcrafted Item:</strong> Shipped within 3-5 business days.
+                                    For inquiries, visit our <Link to="/contact">Contact</Link> page.
                                 </p>
                             </div>
                         </div>
