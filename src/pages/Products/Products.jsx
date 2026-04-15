@@ -10,7 +10,7 @@ const Products = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [sortBy, setSortBy] = useState('default');
-    const [activeTab, setActiveTab] = useState('store-99');
+    const [activeTab, setActiveTab] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [activeCategory, setActiveCategory] = useState('All');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
