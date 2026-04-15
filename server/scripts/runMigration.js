@@ -61,11 +61,15 @@ async function runMigration() {
         name: p.Name,
         description: p.Description,
         price: p.Price,
+        original_price: p.OriginalPrice || null, // Added
         category: p.Category,
         material: p.Material,
         image_url: p.ImageURL,
-        stock: 10, // Default base stock
-        tags: [] // Default empty JSONB array
+        stock: 10,
+        tags: [],
+        use_case: p.UseCase || null, // Added
+        dimensions: p.Dimensions || null, // Added
+        weight: p.Weight || null // Added
     }));
 
     const supabaseCombos = combos.map(c => ({

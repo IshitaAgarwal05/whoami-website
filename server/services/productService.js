@@ -19,14 +19,18 @@ class ProductService {
             
             // Map the Supabase data to match the old format to prevent frontend breakage
             const formattedData = data.map(p => ({
-                ID: isNaN(parseInt(p.internal_id)) ? p.internal_id : parseInt(p.internal_id), // Preserve numeric type if applicable
+                ID: isNaN(parseInt(p.internal_id)) ? p.internal_id : parseInt(p.internal_id),
                 Name: p.name,
                 Description: p.description,
                 Price: p.price,
+                OriginalPrice: p.original_price, // Added
                 Category: p.category,
                 Material: p.material,
                 ImageURL: p.image_url,
-                Stock: p.stock
+                Stock: p.stock,
+                UseCase: p.use_case, // Added
+                Dimensions: p.dimensions, // Added
+                Weight: p.weight // Added
             }));
 
             await cachingService.set(cacheKey, formattedData, 3600); // Cache for 1 hour
