@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import config from '../config';
+import { formatPrice } from '../utils/formatPrice';
 import Toast from '../components/Toast/Toast';
 
 const CartContext = createContext();
@@ -14,8 +15,13 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState(() => {
-        const savedCart = localStorage.getItem('whoami_cart');
-        return savedCart ? JSON.parse(savedCart) : [];
+        try {
+            const savedCart = localStorage.getItem('whoami_cart');
+            return savedCart ? JSON.parse(savedCart) : [];
+        } catch (e) {
+            console.warn('Failed to parse cart from localStorage:', e);
+            return [];
+        }
     });
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [toast, setToast] = useState(null);
@@ -28,13 +34,7 @@ export const CartProvider = ({ children }) => {
         setToast({ message, type });
     };
 
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            maximumFractionDigits: 0,
-        }).format(price);
-    };
+    // formatPrice is now imported from src/utils/formatPrice.js
 
     const addToCart = (product, quantity = 1) => {
         setCartItems(prevItems => {
@@ -60,17 +60,23 @@ export const CartProvider = ({ children }) => {
     };
 
     const updateQuantity = (productId, delta) => {
-        setCartItems(prevItems => prevItems.map(item => {
-            if (item.ID === productId) {
-                const newQty = item.quantity + delta;
-                if (newQty <= 0) {
-                    removeFromCart(productId);
-                    return null;
+        setCartItems(prevItems => {
+            const updated = prevItems.map(item => {
+                if (item.ID === productId) {
+                    const newQty = item.quantity + delta;
+                    if (newQty <= 0) return null;
+                    return { ...item, quantity: newQty };
                 }
-                return { ...item, quantity: newQty };
+                return item;
+            }).filter(Boolean);
+
+            // Show toast for removed items (handled inline, no competing setState)
+            const removedItem = prevItems.find(item => item.ID === productId);
+            if (removedItem && !updated.find(item => item.ID === productId)) {
+                setTimeout(() => showToast(`${removedItem.Name} removed`, 'info'), 0);
             }
-            return item;
-        }).filter(item => item !== null));
+            return updated;
+        });
     };
 
     const clearCart = () => {

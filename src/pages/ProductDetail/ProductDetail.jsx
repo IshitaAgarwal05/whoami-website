@@ -4,6 +4,7 @@ import axios from 'axios';
 import { getApiUrl } from '../../config';
 import { useCart } from '../../context/CartContext';
 import config from '../../config';
+import { formatPrice } from '../../utils/formatPrice';
 import './ProductDetail.css';
 
 const ProductDetail = () => {
@@ -35,13 +36,7 @@ const ProductDetail = () => {
         fetchProduct();
     }, [id]);
 
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            maximumFractionDigits: 0,
-        }).format(price);
-    };
+    // formatPrice is imported from src/utils/formatPrice.js
 
     const handleBuyNow = () => {
         if (!product) return;

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import './CartDrawer.css';
@@ -114,7 +114,7 @@ const CartDrawer = () => {
                                             Name: 'Mystery Keychain Bundle',
                                             Price: 99,
                                             Material: 'PLA/Resin',
-                                            ImageURL: '/products/placeholder.webp' // Assuming a mystery image exists
+                                            ImageURL: '/products/sorting-hat/sorting-hat.webp' // Assuming a mystery image exists
                                         })}
                                     >
                                         + Add to order

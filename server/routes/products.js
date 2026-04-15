@@ -1,6 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const excelService = require('../services/excelService');
+const productService = require('../services/productService');
+
+/**
+ * Auth middleware for protected routes.
+ * Checks for RELOAD_API_KEY in x-api-key header.
+ */
+const requireApiKey = (req, res, next) => {
+    const apiKey = req.headers['x-api-key'];
+    const expectedKey = process.env.RELOAD_API_KEY;
+    if (!expectedKey || apiKey !== expectedKey) {
+        return res.status(401).json({ success: false, error: 'Unauthorized. Provide a valid x-api-key header.' });
+    }
+    next();
+};
 
 /**
  * GET /api/products
@@ -8,7 +21,7 @@ const excelService = require('../services/excelService');
  */
 router.get('/', async (req, res) => {
     try {
-        const products = await excelService.getAllProducts();
+        const products = await productService.getAllProducts();
         res.json({
             success: true,
             count: products.length,
@@ -23,47 +36,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-/**
- * GET /api/products/categories
- * Get all unique categories
- */
-router.get('/categories', async (req, res) => {
-    try {
-        const categories = await excelService.getCategories();
-        res.json({
-            success: true,
-            data: categories
-        });
-    } catch (error) {
-        console.error('Error fetching categories:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Failed to fetch categories'
-        });
-    }
-});
-
-/**
- * GET /api/products/category/:category
- * Get products by category
- */
-router.get('/category/:category', async (req, res) => {
-    try {
-        const { category } = req.params;
-        const products = await excelService.getProductsByCategory(category);
-        res.json({
-            success: true,
-            count: products.length,
-            data: products
-        });
-    } catch (error) {
-        console.error('Error fetching products by category:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Failed to fetch products by category'
-        });
-    }
-});
+// Category endpoints removed as frontend derives categories dynamically from payloads.
 
 /**
  * GET /api/products/combos
@@ -71,7 +44,7 @@ router.get('/category/:category', async (req, res) => {
  */
 router.get('/combos', async (req, res) => {
     try {
-        const combos = await excelService.getAllCombos();
+        const combos = await productService.getAllCombos();
         res.json({
             success: true,
             count: combos.length,
@@ -93,7 +66,7 @@ router.get('/combos', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const product = await excelService.getProductById(id);
+        const product = await productService.getProductById(id);
 
         if (!product) {
             return res.status(404).json({
@@ -117,15 +90,15 @@ router.get('/:id', async (req, res) => {
 
 /**
  * POST /api/products/reload
- * Reload all products and combos from Excel files
+ * Clears the Redis cache so next requests pull fresh from Supabase
  */
-router.post('/reload', async (req, res) => {
+router.post('/reload', requireApiKey, async (req, res) => {
     try {
-        const counts = await excelService.reloadAll();
+        const result = await productService.clearCache();
         res.json({
             success: true,
-            message: 'All datasets reloaded successfully',
-            data: counts
+            message: 'Cache invalidated. Next requests will fetch fresh from Supabase.',
+            data: result
         });
     } catch (error) {
         console.error('Error reloading data:', error);

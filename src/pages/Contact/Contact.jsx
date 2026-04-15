@@ -1,9 +1,6 @@
 import { useState } from 'react';
+import config from '../../config';
 import './Contact.css';
-
-// IMPORTANT: Replace this URL with your deployed Google Apps Script Web App URL
-// Get it from: Extensions > Apps Script > Deploy > New deployment > Web app URL
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbztif46bJmM11JFhEZTTbB3F07cVR0wnja4f_soFYLLcUWB3_5nft5ytRa853BBI18t/exec';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -52,7 +49,7 @@ const Contact = () => {
 
         try {
             // Submit to Google Sheets via Apps Script
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
+            const response = await fetch(config.GOOGLE_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors', // Important for Google Apps Script
                 headers: {

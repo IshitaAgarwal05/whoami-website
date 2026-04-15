@@ -1,14 +1,21 @@
-'use client';
-
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import './FluidSimulation.css';
 
-const FluidSimulation: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const FluidSimulation = () => {
+  const canvasRef = useRef(null);
+  const animFrameRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    // WebGL availability check
+    const testCanvas = document.createElement('canvas');
+    const testGl = testCanvas.getContext('webgl2') || testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+    if (!testGl) {
+      console.warn('WebGL not supported — FluidSimulation disabled.');
+      return;
+    }
 
     let width = canvas.clientWidth;
     let height = canvas.clientHeight;
@@ -25,10 +32,10 @@ const FluidSimulation: React.FC = () => {
       SPLAT_RADIUS: 0.005,
     };
 
-    const pointers: any[] = [];
-    const splatStack: any[] = [];
+    const pointers = [];
+    const splatStack = [];
 
-    const getWebGLContext = (canvas: HTMLCanvasElement) => {
+    const getWebGLContext = (canvas) => {
       const params = {
         alpha: true,
         depth: false,
@@ -36,9 +43,9 @@ const FluidSimulation: React.FC = () => {
         antialias: false,
       };
 
-      let gl = canvas.getContext('webgl2', params) as any;
+      let gl = canvas.getContext('webgl2', params);
       const isWebGL2 = !!gl;
-      if (!isWebGL2) gl = (canvas.getContext('webgl', params) || canvas.getContext('experimental-webgl', params)) as any;
+      if (!isWebGL2) gl = canvas.getContext('webgl', params) || canvas.getContext('experimental-webgl', params);
 
       const halfFloat = gl.getExtension('OES_texture_half_float');
       let support_linear_float = gl.getExtension('OES_texture_half_float_linear');
@@ -48,7 +55,7 @@ const FluidSimulation: React.FC = () => {
         support_linear_float = gl.getExtension('OES_texture_float_linear');
       }
 
-      gl.clearColor(0.0, 0.0, 0.0, 0.0); // Transparent background
+      gl.clearColor(0.0, 0.0, 0.0, 0.0);
 
       const internalFormat = isWebGL2 ? gl.RGBA16F : gl.RGBA;
       const internalFormatRG = isWebGL2 ? gl.RG16F : gl.RGBA;
@@ -57,12 +64,7 @@ const FluidSimulation: React.FC = () => {
 
       return {
         gl,
-        ext: {
-          internalFormat,
-          internalFormatRG,
-          formatRG,
-          texType,
-        },
+        ext: { internalFormat, internalFormatRG, formatRG, texType },
         support_linear_float,
       };
     };
@@ -77,38 +79,30 @@ const FluidSimulation: React.FC = () => {
       dy = 0;
       down = false;
       moved = false;
-      color = [0.0, 0.74, 0.83]; // Default cyan
+      color = [0.0, 0.74, 0.83];
     }
 
     pointers.push(new Pointer());
 
     const GLProgram = (function () {
-      function GLProgram(this: any, vertexShader: WebGLShader, fragmentShader: WebGLShader) {
+      function GLProgram(vertexShader, fragmentShader) {
         this.uniforms = {};
         this.program = gl.createProgram();
-
         gl.attachShader(this.program, vertexShader);
         gl.attachShader(this.program, fragmentShader);
         gl.linkProgram(this.program);
-
         if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) throw gl.getProgramInfoLog(this.program);
-
         const uniformCount = gl.getProgramParameter(this.program, gl.ACTIVE_UNIFORMS);
-
         for (let i = 0; i < uniformCount; i++) {
           const uniformName = gl.getActiveUniform(this.program, i).name;
           this.uniforms[uniformName] = gl.getUniformLocation(this.program, uniformName);
         }
       }
-
-      GLProgram.prototype.bind = function () {
-        gl.useProgram(this.program);
-      };
-
-      return GLProgram as any;
+      GLProgram.prototype.bind = function () { gl.useProgram(this.program); };
+      return GLProgram;
     })();
 
-    function compileShader(type: number, source: string) {
+    function compileShader(type, source) {
       const shader = gl.createShader(type);
       gl.shaderSource(shader, source);
       gl.compileShader(shader);
@@ -128,10 +122,10 @@ const FluidSimulation: React.FC = () => {
     const pressureShader = compileShader(gl.FRAGMENT_SHADER, 'precision highp float; precision mediump sampler2D; varying vec2 vUv; varying vec2 vL; varying vec2 vR; varying vec2 vT; varying vec2 vB; uniform sampler2D uPressure; uniform sampler2D uDivergence; vec2 boundary (in vec2 uv) {     uv = min(max(uv, 0.0), 1.0);     return uv; } void main () {     float L = texture2D(uPressure, boundary(vL)).x;     float R = texture2D(uPressure, boundary(vR)).x;     float T = texture2D(uPressure, boundary(vT)).x;     float B = texture2D(uPressure, boundary(vB)).x;     float C = texture2D(uPressure, vUv).x;     float divergence = texture2D(uDivergence, vUv).x;     float pressure = (L + R + B + T - divergence) * 0.25;     gl_FragColor = vec4(pressure, 0.0, 0.0, 1.0); }');
     const gradientSubtractShader = compileShader(gl.FRAGMENT_SHADER, 'precision highp float; precision mediump sampler2D; varying vec2 vUv; varying vec2 vL; varying vec2 vR; varying vec2 vT; varying vec2 vB; uniform sampler2D uPressure; uniform sampler2D uVelocity; vec2 boundary (in vec2 uv) {     uv = min(max(uv, 0.0), 1.0);     return uv; } void main () {     float L = texture2D(uPressure, boundary(vL)).x;     float R = texture2D(uPressure, boundary(vR)).x;     float T = texture2D(uPressure, boundary(vT)).x;     float B = texture2D(uPressure, boundary(vB)).x;     vec2 velocity = texture2D(uVelocity, vUv).xy;     velocity.xy -= vec2(R - L, T - B);     gl_FragColor = vec4(velocity, 0.0, 1.0); }');
 
-    let textureWidth: number, textureHeight: number;
-    let density: any, velocity: any, divergence: any, curl: any, pressure: any;
+    let textureWidth, textureHeight;
+    let density, velocity, divergence, curl, pressure;
 
-    function createFBO(texId: number, w: number, h: number, internalFormat: any, format: any, type: any, param: any) {
+    function createFBO(texId, w, h, internalFormat, format, type, param) {
       gl.activeTexture(gl.TEXTURE0 + texId);
       const texture = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -143,22 +137,18 @@ const FluidSimulation: React.FC = () => {
       const fbo = gl.createFramebuffer();
       gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
-      gl.viewport( 0, 0, w, h );
+      gl.viewport(0, 0, w, h);
       gl.clear(gl.COLOR_BUFFER_BIT);
       return [texture, fbo, texId];
     }
 
-    function createDoubleFBO(texId: number, w: number, h: number, internalFormat: any, format: any, type: any, param: any) {
+    function createDoubleFBO(texId, w, h, internalFormat, format, type, param) {
       let fbo1 = createFBO(texId, w, h, internalFormat, format, type, param);
       let fbo2 = createFBO(texId + 1, w, h, internalFormat, format, type, param);
       return {
         get first() { return fbo1; },
         get second() { return fbo2; },
-        swap() {
-          const temp = fbo1;
-          fbo1 = fbo2;
-          fbo2 = temp;
-        },
+        swap() { const temp = fbo1; fbo1 = fbo2; fbo2 = temp; },
       };
     }
 
@@ -167,13 +157,13 @@ const FluidSimulation: React.FC = () => {
       textureHeight = gl.drawingBufferHeight >> config.TEXTURE_DOWNSAMPLE;
       const iFormat = ext.internalFormat;
       const iFormatRG = ext.internalFormatRG;
-      const formatRG = ext.formatRG;
-      const texType = ext.texType;
-      density = createDoubleFBO(0, textureWidth, textureHeight, iFormat, gl.RGBA, texType, support_linear_float ? gl.LINEAR : gl.NEAREST);
-      velocity = createDoubleFBO(2, textureWidth, textureHeight, iFormatRG, formatRG, texType, support_linear_float ? gl.LINEAR : gl.NEAREST);
-      divergence = createFBO(4, textureWidth, textureHeight, iFormatRG, formatRG, texType, gl.NEAREST);
-      curl = createFBO(5, textureWidth, textureHeight, iFormatRG, formatRG, texType, gl.NEAREST);
-      pressure = createDoubleFBO(6, textureWidth, textureHeight, iFormatRG, formatRG, texType, gl.NEAREST);
+      const fRG = ext.formatRG;
+      const tType = ext.texType;
+      density = createDoubleFBO(0, textureWidth, textureHeight, iFormat, gl.RGBA, tType, support_linear_float ? gl.LINEAR : gl.NEAREST);
+      velocity = createDoubleFBO(2, textureWidth, textureHeight, iFormatRG, fRG, tType, support_linear_float ? gl.LINEAR : gl.NEAREST);
+      divergence = createFBO(4, textureWidth, textureHeight, iFormatRG, fRG, tType, gl.NEAREST);
+      curl = createFBO(5, textureWidth, textureHeight, iFormatRG, fRG, tType, gl.NEAREST);
+      pressure = createDoubleFBO(6, textureWidth, textureHeight, iFormatRG, fRG, tType, gl.NEAREST);
     }
 
     initFramebuffers();
@@ -195,16 +185,16 @@ const FluidSimulation: React.FC = () => {
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0, 1, 2, 0, 2, 3]), gl.STATIC_DRAW);
       gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(0);
-
-      return function (destination: any) {
+      return function (destination) {
         gl.bindFramebuffer(gl.FRAMEBUFFER, destination);
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
       };
     })();
 
     let lastTime = Date.now();
+    let isRunning = true;
 
-    const splat = (x: number, y: number, dx: number, dy: number, color: number[]) => {
+    const splat = (x, y, dx, dy, color) => {
       splatProgram.bind();
       gl.uniform1i(splatProgram.uniforms.uTarget, velocity.first[2]);
       gl.uniform1f(splatProgram.uniforms.aspectRatio, canvas.width / canvas.height);
@@ -220,11 +210,13 @@ const FluidSimulation: React.FC = () => {
     };
 
     const update = () => {
-      const width = canvas.clientWidth;
-      const height = canvas.clientHeight;
-      if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width;
-        canvas.height = height;
+      if (!isRunning) return;
+
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
         initFramebuffers();
       }
 
@@ -235,12 +227,12 @@ const FluidSimulation: React.FC = () => {
 
       if (splatStack.length > 0) {
         for (let m = 0; m < splatStack.pop(); m++) {
-          const color = [ 0.0, 0.5 + Math.random() * 0.5, 0.8 + Math.random() * 0.2 ]; // Theme matched
+          const color = [0.0, 0.5 + Math.random() * 0.5, 0.8 + Math.random() * 0.2];
           const x = canvas.width * Math.random();
           const y = canvas.height * Math.random();
-          const dx = 1000 * (Math.random() - 0.5);
-          const dy = 1000 * (Math.random() - 0.5);
-          splat(x, y, dx, dy, color);
+          const ddx = 1000 * (Math.random() - 0.5);
+          const ddy = 1000 * (Math.random() - 0.5);
+          splat(x, y, ddx, ddy, color);
         }
       }
 
@@ -319,18 +311,17 @@ const FluidSimulation: React.FC = () => {
       gl.uniform1i(displayProgram.uniforms.uTexture, density.first[2]);
       blit(null);
 
-      requestAnimationFrame(update);
+      animFrameRef.current = requestAnimationFrame(update);
     };
 
-    update();
+    animFrameRef.current = requestAnimationFrame(update);
 
     let count = 0;
-    let colorArr = [1.0, 0.72, 0.28]; // Start with golden
+    let colorArr = [1.0, 0.72, 0.28];
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMouseMove = (e) => {
       count++;
       if (count > 25) {
-        // Switch between golden and amber hues
         colorArr = Math.random() > 0.5 ? [1.0, 0.72, 0.28] : [1.0, 0.55, 0.18];
         count = 0;
       }
@@ -343,8 +334,7 @@ const FluidSimulation: React.FC = () => {
       pointers[0].y = e.clientY;
     };
 
-    const handleTouchMove = (e: TouchEvent) => {
-      // e.preventDefault(); // Don't prevent default, allow scrolling
+    const handleTouchMove = (e) => {
       const touches = e.targetTouches;
       count++;
       if (count > 25) {
@@ -369,6 +359,10 @@ const FluidSimulation: React.FC = () => {
     window.addEventListener('touchmove', handleTouchMove);
 
     return () => {
+      isRunning = false;
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchmove', handleTouchMove);
     };

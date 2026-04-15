@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import { formatPrice } from '../../utils/formatPrice';
 import './ProductCard.css';
 
 const ProductCard = ({ product, compact = false }) => {
@@ -10,14 +11,7 @@ const ProductCard = ({ product, compact = false }) => {
     const cartItem = cartItems.find(item => item.ID === product.ID);
     const quantity = cartItem ? cartItem.quantity : 0;
 
-    // Format price in INR
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            maximumFractionDigits: 0,
-        }).format(price);
-    };
+    // formatPrice is imported from src/utils/formatPrice.js
 
     // Placeholder image if none provided
     const imageUrl = product.ImageURL || FALLBACK_IMAGE;
@@ -73,9 +67,9 @@ const ProductCard = ({ product, compact = false }) => {
 
                 {!compact && (
                     <p className="product-card-description">
-                        {product.Description.length > 80
+                        {(product.Description || '').length > 80
                             ? `${product.Description.substring(0, 80)}...`
-                            : product.Description}
+                            : product.Description || ''}
                     </p>
                 )}
 

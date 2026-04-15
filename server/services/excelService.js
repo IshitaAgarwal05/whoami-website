@@ -84,8 +84,12 @@ class ExcelService {
             this.getAllProducts(),
             this.getAllCombos()
         ]);
-        const targetId = parseInt(id);
-        return products.find(p => p.ID === targetId) || combos.find(c => c.ID === targetId) || null;
+        // Support both numeric and string IDs (e.g. 'UPS-99')
+        const numericId = parseInt(id);
+        const isNumeric = !isNaN(numericId);
+        return products.find(p => isNumeric ? p.ID === numericId : String(p.ID) === String(id))
+            || combos.find(c => isNumeric ? c.ID === numericId : String(c.ID) === String(id))
+            || null;
     }
 
     /**
