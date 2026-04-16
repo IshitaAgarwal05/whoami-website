@@ -144,7 +144,7 @@
     margin-bottom: var(--spacing-lg);
 }
 
-.product.info-original-price {
+.info-original-price {
     font-size: var(--font-size-lg);
     color: var(--color-text-muted);
     text-decoration: line-through;
