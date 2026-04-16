@@ -105,10 +105,10 @@ const ProductDetail = () => {
                             <div className="product-price-tag">
                                 <span className="price-label">Price</span>
                                 <div className="info-price-row">
+                                    <span className="price-value">{formatPrice(product.Price)}</span>
                                     {product.OriginalPrice && (
                                         <span className="info-original-price">{formatPrice(product.OriginalPrice)}</span>
                                     )}
-                                    <span className="price-value">{formatPrice(product.Price)}</span>
                                 </div>
                             </div>
                         </div>

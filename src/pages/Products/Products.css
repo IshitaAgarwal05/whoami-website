@@ -43,12 +43,13 @@
     top: 80px;
     /* Adjust based on navbar height */
     z-index: 500;
-    padding: var(--spacing-md) 0;
-    margin-bottom: var(--spacing-3xl);
+    padding: var(--spacing-sm) 0;
+    margin: 0 var(--spacing-md) var(--spacing-3xl);
     background: rgba(15, 15, 15, 0.6);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 50px;
 }
 
 .products-tabs {
