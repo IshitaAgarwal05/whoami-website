@@ -5,6 +5,7 @@ import { getApiUrl } from '../../config';
 import { useCart } from '../../context/CartContext';
 import config from '../../config';
 import { formatPrice } from '../../utils/formatPrice';
+import ImageCarousel from '../../components/ImageCarousel/ImageCarousel';
 import './ProductDetail.css';
 
 const ProductDetail = () => {
@@ -92,9 +93,7 @@ const ProductDetail = () => {
                     <div className="product-image-section">
                         <div className="product-image-container">
                             <div className="product-image-glow"></div>
-                            <div className="product-image">
-                                <img src={product.ImageURL} alt={product.Name} />
-                            </div>
+                            <ImageCarousel imageUrl={product.ImageURL} productName={product.Name} />
                         </div>
                     </div>
 
