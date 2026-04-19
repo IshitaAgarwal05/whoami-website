@@ -132,6 +132,7 @@ const editProduct = async () => {
         { type: 'input', name: 'category', message: 'Category:', default: product.category },
         { type: 'input', name: 'dimensions', message: 'Dimensions:', default: product.dimensions },
         { type: 'input', name: 'weight', message: 'Weight:', default: product.weight },
+        { type: 'input', name: 'image_url', message: 'Image Path:', default: product.image_url },
         { type: 'number', name: 'stock', message: 'Stock:', default: product.stock }
     ]);
 
