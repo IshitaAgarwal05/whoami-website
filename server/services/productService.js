@@ -13,7 +13,7 @@ class ProductService {
             const { data, error } = await supabase
                 .from('products')
                 .select('*')
-                .order('created_at', { ascending: false });
+                .order('created_at', { ascending: true });
                 
             if (error) throw error;
             
