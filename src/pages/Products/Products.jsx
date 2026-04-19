@@ -74,8 +74,21 @@ const Products = () => {
     // Get categories for current tab
     const getCategories = () => {
         const data = activeTab === 'combos' ? combos : products;
-        const cats = ['All', ...new Set(data.map(p => p.Category))];
-        return cats.filter(c => c); // Remove null/undefined
+        const rawCats = [...new Set(data.map(p => p.Category))].filter(Boolean);
+        
+        const preferredOrder = ['Collectibles', 'Keychains', 'Book Accessories', 'Decor'];
+        
+        const sortedCats = rawCats.sort((a, b) => {
+            const indexA = preferredOrder.indexOf(a);
+            const indexB = preferredOrder.indexOf(b);
+            
+            if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+            if (indexA !== -1) return -1;
+            if (indexB !== -1) return 1;
+            return a.localeCompare(b);
+        });
+
+        return ['All', ...sortedCats];
     };
 
     const getActiveData = () => {
