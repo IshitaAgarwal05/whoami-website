@@ -159,7 +159,7 @@ const Products = () => {
         <div className={`products-page ${activeTab}`}>
             <div className="container">
                 <div className="products-header">
-                    <h1 className="reveal-text">Choose Your Identity</h1>
+                    <h1 className="reveal-text">Discover Your Identity</h1>
                     <p className="products-subtitle">
                         {activeTabData.subtext}
                     </p>
