@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import Link from 'next/link';
 import './FaqFolders.css';
 
 const faqData = [
@@ -87,14 +89,13 @@ const NewFolderIcon = () => (
 
 const FaqFolders = () => {
     const [activeIndex, setActiveIndex] = useState(null);
-    const navigate = useNavigate();
 
     const handleToggle = (index) => {
         setActiveIndex(activeIndex === index ? null : index);
     };
 
     const handleNewQuery = () => {
-        navigate('/contact');
+        window.location.href = '/contact';
     };
 
     return (

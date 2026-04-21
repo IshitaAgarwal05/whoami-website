@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useRef } from 'react';
 import ProductCard from '../ProductCard/ProductCard';
 import './ProductCarousel.css';

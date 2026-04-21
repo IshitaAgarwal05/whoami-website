@@ -3,9 +3,9 @@
 // In production: uses VITE_API_URL environment variable
 
 const config = {
-    API_BASE_URL: import.meta.env.VITE_API_BASE_URL || '',
-    WHATSAPP_NUMBER: import.meta.env.VITE_WHATSAPP_NUMBER || '',
-    GOOGLE_SCRIPT_URL: import.meta.env.VITE_GOOGLE_SCRIPT_URL || '',
+    API_BASE_URL: (typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_API_BASE_URL : '') || (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_API_BASE_URL : '') || '',
+    WHATSAPP_NUMBER: (typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_WHATSAPP_NUMBER : '') || (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_WHATSAPP_NUMBER : '') || '',
+    GOOGLE_SCRIPT_URL: (typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL : '') || (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_GOOGLE_SCRIPT_URL : '') || '',
 };
 
 export default config;

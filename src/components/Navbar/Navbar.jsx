@@ -1,9 +1,12 @@
-import { Link, useLocation } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useCart } from '../../context/CartContext';
 import './Navbar.css';
 
 const Navbar = () => {
-    const location = useLocation();
+    const pathname = usePathname();
     const { toggleDrawer, getItemCount } = useCart();
     const itemCount = getItemCount();
 
@@ -16,13 +19,13 @@ const Navbar = () => {
     ];
 
     const isActive = (path) => {
-        return location.pathname === path;
+        return pathname === path;
     };
 
     return (
         <nav className="navbar">
             <div className="navbar-container container">
-                <Link to="/" className="navbar-logo">
+                <Link href="/" className="navbar-logo">
                     <img
                         src="/whoami_logo.png"
                         alt="WhoAmI Logo"
@@ -41,7 +44,7 @@ const Navbar = () => {
                         {navLinks.map((link) => (
                             <li key={link.path}>
                                 <Link
-                                    to={link.path}
+                                    href={link.path}
                                     className={`navbar-link ${isActive(link.path) ? 'active' : ''}`}
                                 >
                                     {link.label}

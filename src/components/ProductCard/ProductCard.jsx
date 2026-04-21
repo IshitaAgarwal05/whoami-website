@@ -1,6 +1,10 @@
-import { Link } from 'react-router-dom';
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
 import { useCart } from '../../context/CartContext';
 import { formatPrice } from '../../utils/formatPrice';
+import { slugify } from '../../utils/slugify';
 import './ProductCard.css';
 
 const ProductCard = ({ product, compact = false }) => {
@@ -42,21 +46,20 @@ const ProductCard = ({ product, compact = false }) => {
     };
 
     return (
-        <Link to={`/product/${product.ID}`} className={`product-card ${compact ? 'compact' : ''}`}>
+        <Link href={`/products/${slugify(product.Name)}`} className={`product-card ${compact ? 'compact' : ''}`}>
             {tag && (
                 <div className={`product-card-tag ${tag.toLowerCase()}`}>
                     {tag}
                 </div>
             )}
             <div className="product-card-image">
-                <img
+                <Image
                     src={imageUrl}
-                    alt={product.Name}
+                    alt={`${product.Name} - ${product.Category || 'Identity Artifact'}`}
+                    width={400}
+                    height={400}
                     loading="lazy"
-                    onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = FALLBACK_IMAGE;
-                    }}
+                    style={{ objectFit: 'cover' }}
                 />
             </div>
 

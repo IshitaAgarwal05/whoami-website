@@ -1,4 +1,7 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { getProductImages } from '../../utils/imageUtils';
 import './ImageCarousel.css';
 
@@ -60,7 +63,14 @@ const ImageCarousel = ({ imageUrl, productName }) => {
     if (images.length === 1) {
         return (
             <div className="product-image">
-                <img src={images[0]} alt={productName} />
+                <Image 
+                    src={images[0]} 
+                    alt={`${productName} - Identity Artifact`}
+                    width={600}
+                    height={600}
+                    priority
+                    style={{ objectFit: 'cover' }}
+                />
             </div>
         );
     }
@@ -80,10 +90,13 @@ const ImageCarousel = ({ imageUrl, productName }) => {
                 >
                     {images.map((imgUrl, index) => (
                         <div className="carousel-slide" key={index}>
-                            <img 
+                            <Image 
                                 src={imgUrl} 
                                 alt={`${productName} - View ${index + 1}`} 
-                                loading={index === 0 ? "eager" : "lazy"} 
+                                width={600}
+                                height={600}
+                                priority={index === 0}
+                                style={{ objectFit: 'cover' }}
                             />
                         </div>
                     ))}

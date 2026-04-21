@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useContext, useState, useEffect } from 'react';
 import config from '../config';
 import { formatPrice } from '../utils/formatPrice';
@@ -14,20 +16,27 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }) => {
-    const [cartItems, setCartItems] = useState(() => {
-        try {
-            const savedCart = localStorage.getItem('whoami_cart');
-            return savedCart ? JSON.parse(savedCart) : [];
-        } catch (e) {
-            console.warn('Failed to parse cart from localStorage:', e);
-            return [];
-        }
-    });
+    const [cartItems, setCartItems] = useState([]);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [toast, setToast] = useState(null);
 
+    // Initial load from localStorage
     useEffect(() => {
-        localStorage.setItem('whoami_cart', JSON.stringify(cartItems));
+        try {
+            const savedCart = localStorage.getItem('whoami_cart');
+            if (savedCart) {
+                setCartItems(JSON.parse(savedCart));
+            }
+        } catch (e) {
+            console.warn('Failed to parse cart from localStorage:', e);
+        }
+    }, []);
+
+    // Persist to localStorage on change
+    useEffect(() => {
+        if (cartItems.length > 0 || localStorage.getItem('whoami_cart')) {
+            localStorage.setItem('whoami_cart', JSON.stringify(cartItems));
+        }
     }, [cartItems]);
 
     const showToast = (message, type = 'success') => {

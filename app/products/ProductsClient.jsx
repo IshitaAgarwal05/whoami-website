@@ -1,20 +1,49 @@
-import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import { getApiUrl } from '../../config';
-import ProductCard from '../../components/ProductCard/ProductCard';
-import './Products.css';
+'use client';
 
-const Products = () => {
-    const [products, setProducts] = useState([]);
-    const [combos, setCombos] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+import { useState, useEffect, useRef } from 'react';
+import ProductCard from '../../src/components/ProductCard/ProductCard';
+import '../../src/legacy-pages/Products/Products.css';
+
+const ProductsClient = ({ initialProducts, initialHasMore, combos, forcedCategory = 'All' }) => {
+    const [products, setProducts] = useState(initialProducts);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [sortBy, setSortBy] = useState('default');
     const [activeTab, setActiveTab] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
-    const [activeCategory, setActiveCategory] = useState('All');
+    const [activeCategory, setActiveCategory] = useState(forcedCategory);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [showOnlyWithImages, setShowOnlyWithImages] = useState(true);
+    const [offset, setOffset] = useState(0);
+    const [hasMore, setHasMore] = useState(initialHasMore);
     const dropdownRef = useRef(null);
+
+    const INITIAL_LIMIT = 20;
+    const LOAD_MORE_LIMIT = 10;
+
+    const fetchMoreData = async () => {
+        try {
+            setLoadingMore(true);
+            const currentOffset = offset + (offset === 0 ? INITIAL_LIMIT : LOAD_MORE_LIMIT);
+            
+            const baseUrl = (typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_API_BASE_URL : '') || '';
+            const response = await fetch(`${baseUrl}/api/products?limit=${LOAD_MORE_LIMIT}&offset=${currentOffset}`);
+            const data = await response.json();
+
+            if (data.success) {
+                setProducts(prev => [...prev, ...data.data]);
+                setHasMore(data.has_more);
+                setOffset(currentOffset);
+            }
+        } catch (err) {
+            console.error('Error fetching more data:', err);
+        } finally {
+            setLoadingMore(false);
+        }
+    };
+
+    const handleLoadMore = () => {
+        fetchMoreData();
+    };
 
     const tabs = [
         { id: 'store-99', label: 'Under ₹99', subtext: 'Small price. Big personality.' },
@@ -29,39 +58,11 @@ const Products = () => {
     ];
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const [productsRes, combosRes] = await Promise.all([
-                    axios.get(getApiUrl('/api/products')),
-                    axios.get(getApiUrl('/api/products/combos'))
-                ]);
-
-                if (productsRes.data.success) {
-                    setProducts(productsRes.data.data);
-                }
-                if (combosRes.data.success) {
-                    setCombos(combosRes.data.data);
-                }
-            } catch (err) {
-                console.error('Error fetching data:', err);
-                setError('Failed to connect to the server');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    // Close dropdown when clicking outside
-    useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsDropdownOpen(false);
             }
         };
-
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
@@ -71,23 +72,18 @@ const Products = () => {
         setIsDropdownOpen(false);
     };
 
-    // Get categories for current tab
     const getCategories = () => {
         const data = activeTab === 'combos' ? combos : products;
         const rawCats = [...new Set(data.map(p => p.Category))].filter(Boolean);
-        
         const preferredOrder = ['Collectibles', 'Keychains', 'Book Accessories', 'Decor'];
-        
         const sortedCats = rawCats.sort((a, b) => {
             const indexA = preferredOrder.indexOf(a);
             const indexB = preferredOrder.indexOf(b);
-            
             if (indexA !== -1 && indexB !== -1) return indexA - indexB;
             if (indexA !== -1) return -1;
             if (indexB !== -1) return 1;
             return a.localeCompare(b);
         });
-
         return ['All', ...sortedCats];
     };
 
@@ -101,12 +97,18 @@ const Products = () => {
             data = products;
         }
 
-        // Apply Category Filter
+        if (showOnlyWithImages) {
+            data = data.filter(p => 
+                p.ImageURL && 
+                p.ImageURL !== '/products/placeholder.webp' && 
+                !p.ImageURL.includes('placehold.co')
+            );
+        }
+
         if (activeCategory !== 'All') {
             data = data.filter(p => p.Category === activeCategory);
         }
 
-        // Apply Search Filter
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
             data = data.filter(p =>
@@ -116,7 +118,6 @@ const Products = () => {
             );
         }
 
-        // Apply Sort
         return [...data].sort((a, b) => {
             if (sortBy === 'price-asc') return a.Price - b.Price;
             if (sortBy === 'price-desc') return b.Price - a.Price;
@@ -128,32 +129,6 @@ const Products = () => {
     const activeTabData = tabs.find(t => t.id === activeTab);
     const displayItems = getActiveData();
     const categories = getCategories();
-
-    if (loading) {
-        return (
-            <div className="products-page">
-                <div className="container">
-                    <div className="loading-state">
-                        <div className="loading"></div>
-                        <p>Loading your identity...</p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="products-page">
-                <div className="container">
-                    <div className="error-state">
-                        <h2>Oops!</h2>
-                        <p>{error}</p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className={`products-page ${activeTab}`}>
@@ -172,7 +147,7 @@ const Products = () => {
                                     className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`}
                                     onClick={() => {
                                         setActiveTab(tab.id);
-                                        setActiveCategory('All'); // Reset category on tab change
+                                        setActiveCategory('All');
                                     }}
                                 >
                                     {tab.label}
@@ -207,6 +182,18 @@ const Products = () => {
                             ))}
                         </div>
 
+                        <div className="filter-toggle">
+                            <label className="toggle-switch">
+                                <input
+                                    type="checkbox"
+                                    checked={showOnlyWithImages}
+                                    onChange={(e) => setShowOnlyWithImages(e.target.checked)}
+                                />
+                                <span className="toggle-slider"></span>
+                            </label>
+                            <span className="toggle-label">Hide items without images</span>
+                        </div>
+
                         <div className="custom-dropdown" ref={dropdownRef}>
                             <span className="dropdown-label">Sort by:</span>
                             <div
@@ -236,8 +223,7 @@ const Products = () => {
                     </div>
                 </div>
 
-                <div className={`products-grid ${activeTab === 'store-99' ? '' : ''}`}>
-                {/* <div className={`products-grid ${activeTab === 'store-99' ? 'dense' : ''}`}> */}
+                <div className="products-grid">
                     {displayItems.map((item) => (
                         <ProductCard
                             key={`${activeTab}-${item.ID}`}
@@ -246,6 +232,22 @@ const Products = () => {
                         />
                     ))}
                 </div>
+
+                {hasMore && (
+                    <div className="load-more-container">
+                        <button 
+                            className={`load-more-btn ${loadingMore ? 'loading' : ''}`}
+                            onClick={handleLoadMore}
+                            disabled={loadingMore}
+                        >
+                            {loadingMore ? (
+                                <div className="btn-spinner"></div>
+                            ) : (
+                                'Load More Products'
+                            )}
+                        </button>
+                    </div>
+                )}
 
                 {displayItems.length === 0 && (
                     <div className="empty-state">
@@ -260,4 +262,4 @@ const Products = () => {
     );
 };
 
-export default Products;
+export default ProductsClient;

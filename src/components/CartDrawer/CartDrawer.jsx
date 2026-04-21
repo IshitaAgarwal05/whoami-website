@@ -1,5 +1,7 @@
+'use client';
+
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { useCart } from '../../context/CartContext';
 import './CartDrawer.css';
 
@@ -99,7 +101,7 @@ const CartDrawer = () => {
                             ))}
 
                             <div className="view-full-cart">
-                                <Link to="/cart" onClick={toggleDrawer}>View Full Bag &rarr;</Link>
+                                <Link href="/cart" onClick={toggleDrawer}>View Full Bag &rarr;</Link>
                             </div>
 
                             {/* Upsell Suggestion */}

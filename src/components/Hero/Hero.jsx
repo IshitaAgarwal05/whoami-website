@@ -1,9 +1,12 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import './Hero.css';
 
 const Hero = () => {
     const [isVisible, setIsVisible] = useState(true);
+    const [isMounted, setIsMounted] = useState(false);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const heroRef = useRef(null);
     const logoRef = useRef(null);
@@ -19,6 +22,7 @@ const Hero = () => {
         );
 
         if (heroRef.current) observer.observe(heroRef.current);
+        setIsMounted(true);
         return () => observer.disconnect();
     }, []);
 
@@ -62,7 +66,6 @@ const Hero = () => {
         `;
     }, [mousePosition, isVisible]);
 
-    const particleCount = typeof window !== 'undefined' && window.innerWidth < 768 ? 4 : 8;
 
     return (
         <section className="hero-immersive" ref={heroRef}>
@@ -102,10 +105,10 @@ const Hero = () => {
 
                     {/* CTA Buttons */}
                     <div className="hero-cta-immersive">
-                        <Link to="/products" className="btn-immersive btn-primary-glow">
+                        <Link href="/products" className="btn-immersive btn-primary-glow">
                             Explore Products
                         </Link>
-                        <Link to="/about" className="btn-immersive btn-secondary-glow">
+                        <Link href="/about" className="btn-immersive btn-secondary-glow">
                             Our Story
                         </Link>
                     </div>
@@ -130,10 +133,9 @@ const Hero = () => {
                 </div>
             </div>
 
-            {/* Floating particles - REDUCED COUNT & Visibility Optimized */}
-            {isVisible && (
+            {isMounted && isVisible && (
                 <div className="hero-particles">
-                    {[...Array(particleCount)].map((_, i) => (
+                    {[...Array(typeof window !== 'undefined' && window.innerWidth < 768 ? 4 : 8)].map((_, i) => (
                         <div key={i} className="particle" style={{
                             left: `${Math.random() * 100}%`,
                             animationDelay: `${Math.random() * 5}s`,
