@@ -2,42 +2,49 @@ const supabase = require('../db/supabaseClient');
 const cachingService = require('./cachingService');
 
 class ProductService {
-    async getAllProducts() {
-        if (!supabase) return [];
+    async getAllProducts(limit = null, offset = 0) {
+        if (!supabase) return { data: [], has_more: false };
         
         try {
-            const cacheKey = 'products:all';
-            const cached = await cachingService.get(cacheKey);
-            if (cached) return cached;
-            
-            const { data, error } = await supabase
+            // For now, bypass cache if paginating to ensure accuracy, or cache by params
+            let query = supabase
                 .from('products')
-                .select('*')
+                .select('*', { count: 'exact' })
                 .order('created_at', { ascending: true });
+
+            if (limit !== null) {
+                query = query.range(offset, offset + limit - 1);
+            }
+
+            const { data, error, count } = await query;
                 
             if (error) throw error;
             
-            // Map the Supabase data to match the old format to prevent frontend breakage
             const formattedData = data.map(p => ({
                 ID: isNaN(parseInt(p.internal_id)) ? p.internal_id : parseInt(p.internal_id),
                 Name: p.name,
                 Description: p.description,
                 Price: p.price,
-                OriginalPrice: p.original_price, // Added
+                OriginalPrice: p.original_price,
                 Category: p.category,
                 Material: p.material,
                 ImageURL: p.image_url,
                 Stock: p.stock,
-                UseCase: p.use_case, // Added
-                Dimensions: p.dimensions, // Added
-                Weight: p.weight // Added
+                UseCase: p.use_case,
+                Dimensions: p.dimensions,
+                Weight: p.weight
             }));
 
-            await cachingService.set(cacheKey, formattedData, 3600); // Cache for 1 hour
-            return formattedData;
+            const has_more = limit !== null ? (offset + data.length < count) : false;
+
+            return {
+                data: formattedData,
+                has_more,
+                total: count
+            };
         } catch (error) {
             console.error('Error fetching products from Supabase:', error);
-            return [];
+            return { data: [], has_more: false, total: 0 };
         }
     }
 
@@ -78,10 +85,12 @@ class ProductService {
     async getProductById(id) {
         if (!supabase) return null;
         
-        const [products, combos] = await Promise.all([
+        const [productsRes, combos] = await Promise.all([
             this.getAllProducts(),
             this.getAllCombos()
         ]);
+        
+        const products = productsRes.data;
         
         // Support both numeric and string IDs
         const numericId = parseInt(id);

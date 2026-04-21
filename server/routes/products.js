@@ -21,11 +21,16 @@ const requireApiKey = (req, res, next) => {
  */
 router.get('/', async (req, res) => {
     try {
-        const products = await productService.getAllProducts();
+        const limit = req.query.limit ? parseInt(req.query.limit) : null;
+        const offset = req.query.offset ? parseInt(req.query.offset) : 0;
+        
+        const { data, has_more, total } = await productService.getAllProducts(limit, offset);
         res.json({
             success: true,
-            count: products.length,
-            data: products
+            count: data.length,
+            total,
+            has_more,
+            data
         });
     } catch (error) {
         console.error('Error fetching products:', error);
