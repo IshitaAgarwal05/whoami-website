@@ -10,6 +10,7 @@ lerna-debug.log*
 # Dependencies
 node_modules
 server/node_modules
+.next/ 
 
 # Production builds
 dist
