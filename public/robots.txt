@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+Allow: /products
+Allow: /categories
+Allow: /search
+Allow: /blog
+Allow: /static/
+Allow: /assets/
+Allow: *.css
+Allow: *.js
+Allow: *.png
+Allow: *.jpg
+Allow: *.svg
+
+Disallow: /api/
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /checkout/
+Disallow: /cart/
+Disallow: /user/
+Disallow: /internal/
+Disallow: /tmp/
+Disallow: /*?*
+
+Sitemap: https://whoami.com/sitemap.xml
