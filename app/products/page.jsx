@@ -4,8 +4,8 @@ import Breadcrumbs from '../../src/components/Breadcrumbs/Breadcrumbs';
 async function getData() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
   const [productsRes, combosRes] = await Promise.all([
-    fetch(`${baseUrl}/api/products?limit=20&offset=0`, { next: { revalidate: 3600 } }),
-    fetch(`${baseUrl}/api/products/combos`, { next: { revalidate: 3600 } })
+    fetch(`${baseUrl}/api/products?limit=20&offset=0`, { next: { revalidate: 60 } }),
+    fetch(`${baseUrl}/api/products/combos`, { next: { revalidate: 60 } })
   ]);
 
   const products = await productsRes.json();

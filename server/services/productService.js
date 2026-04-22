@@ -71,7 +71,8 @@ class ProductService {
                 Price: c.price,
                 OriginalPrice: c.original_price,
                 ImageURL: c.image_url,
-                Items: c.items // Array of string IDs
+                Items: c.items, // Array of string IDs
+                Category: 'Combos'
             }));
 
             await cachingService.set(cacheKey, formattedData, 3600);

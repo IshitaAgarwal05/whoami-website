@@ -7,7 +7,7 @@ import '../../src/legacy-pages/Home/Home.css';
 async function getFeaturedProducts() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
   const res = await fetch(`${baseUrl}/api/products?limit=6`, {
-    next: { revalidate: 3600 } // ISR: Revalidate every hour
+    next: { revalidate: 60 } // ISR: Revalidate every minute
   });
   
   if (!res.ok) {
