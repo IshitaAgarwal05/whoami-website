@@ -10,7 +10,8 @@ class ProductService {
             let query = supabase
                 .from('products')
                 .select('*', { count: 'exact' })
-                .order('created_at', { ascending: true });
+                .order('created_at', { ascending: true })
+                .order('internal_id', { ascending: true });
 
             if (limit !== null) {
                 query = query.range(offset, offset + limit - 1);

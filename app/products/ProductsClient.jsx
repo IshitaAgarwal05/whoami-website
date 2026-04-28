@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import ProductCard from '../../src/components/ProductCard/ProductCard';
-import '../../src/legacy-pages/Products/Products.css';
+import ProductCard from '../../components/ProductCard/ProductCard';
+import '../../styles/Products.css';
 
 const ProductsClient = ({ initialProducts, initialHasMore, combos, forcedCategory = 'All' }) => {
     const [products, setProducts] = useState(initialProducts);
@@ -47,7 +47,7 @@ const ProductsClient = ({ initialProducts, initialHasMore, combos, forcedCategor
 
     const tabs = [
         { id: 'store-99', label: 'Under ₹99', subtext: 'Small price. Big personality.' },
-        { id: 'all', label: 'Explore Identity', subtext: 'Find what represents you' },
+        { id: 'all', label: 'Curated For You', subtext: 'Find what represents you' },
         { id: 'combos', label: 'Curated Combos', subtext: 'Save more. Gift better.' }
     ];
 

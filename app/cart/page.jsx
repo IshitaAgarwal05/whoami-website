@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useCart } from '../../src/context/CartContext';
-import '../../src/legacy-pages/Cart/Cart.css';
+import { useCart } from '../../context/CartContext';
+import '../../styles/Cart.css';
 
 export default function CartPage() {
     const {

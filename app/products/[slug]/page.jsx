@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import ProductDetailClient from './ProductDetailClient';
-import { slugify } from '../../../src/utils/slugify';
+import { slugify } from '../../../utils/slugify';
 
 async function getProductAndRelated(slug) {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
@@ -36,7 +36,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
-  const { slug } = params;
+  const { slug } = await params;
   const { product } = await getProductAndRelated(slug);
   
   if (!product) return { title: 'Product Not Found | WhoAmI' };
@@ -76,7 +76,7 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function ProductPage({ params }) {
-  const { slug } = params;
+  const { slug } = await params;
   const { product, related } = await getProductAndRelated(slug);
   
   if (!product) {

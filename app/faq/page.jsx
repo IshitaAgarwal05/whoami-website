@@ -1,4 +1,4 @@
-import '../../src/legacy-pages/FAQ/FAQ.css';
+import '../../styles/FAQ.css';
 
 export const metadata = {
   title: 'FAQ | WhoAmI',

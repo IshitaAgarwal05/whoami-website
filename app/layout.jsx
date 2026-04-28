@@ -1,8 +1,8 @@
 import './globals.css';
 import { ClientProviders } from './ClientProviders';
-import Navbar from '../src/components/Navbar/Navbar';
-import Footer from '../src/components/Footer/Footer';
-import CartDrawer from '../src/components/CartDrawer/CartDrawer';
+import Navbar from '../components/Navbar/Navbar';
+import Footer from '../components/Footer/Footer';
+import CartDrawer from '../components/CartDrawer/CartDrawer';
 
 export const metadata = {
   title: 'WhoAmI | Identity, crafted.',

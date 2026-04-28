@@ -1,4 +1,4 @@
-import { slugify } from '../src/utils/slugify';
+import { slugify } from '../utils/slugify';
 
 export default async function sitemap() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://whoami.vercel.app';

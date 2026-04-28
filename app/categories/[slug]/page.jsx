@@ -1,6 +1,6 @@
 import ProductsClient from '../../products/ProductsClient';
-import Breadcrumbs from '../../../src/components/Breadcrumbs/Breadcrumbs';
-import { slugify } from '../../../src/utils/slugify';
+import Breadcrumbs from '../../../components/Breadcrumbs/Breadcrumbs';
+import { slugify } from '../../../utils/slugify';
 import { notFound } from 'next/navigation';
 
 async function getData() {
@@ -34,7 +34,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
-  const { slug } = params;
+  const { slug } = await params;
   const { allProducts } = await getData();
   
   const category = [...new Set(allProducts.map(p => p.Category))].find(c => slugify(c) === slug);
@@ -66,7 +66,7 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function CategoryPage({ params }) {
-  const { slug } = params;
+  const { slug } = await params;
   const { allProducts, combos } = await getData();
   
   const category = [...new Set(allProducts.map(p => p.Category))].find(c => slugify(c) === slug);

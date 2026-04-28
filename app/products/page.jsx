@@ -1,5 +1,5 @@
 import ProductsClient from './ProductsClient';
-import Breadcrumbs from '../../src/components/Breadcrumbs/Breadcrumbs';
+import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
 
 async function getData() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';

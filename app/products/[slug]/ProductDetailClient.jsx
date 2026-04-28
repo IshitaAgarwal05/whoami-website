@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useCart } from '../../../src/context/CartContext';
-import { formatPrice } from '../../../src/utils/formatPrice';
-import { slugify } from '../../../src/utils/slugify';
-import ImageCarousel from '../../../src/components/ImageCarousel/ImageCarousel';
-import Breadcrumbs from '../../../src/components/Breadcrumbs/Breadcrumbs';
-import ProductCard from '../../../src/components/ProductCard/ProductCard';
-import '../../../src/legacy-pages/ProductDetail/ProductDetail.css';
+import { useCart } from '../../../context/CartContext';
+import { formatPrice } from '../../../utils/formatPrice';
+import { slugify } from '../../../utils/slugify';
+import ImageCarousel from '../../../components/ImageCarousel/ImageCarousel';
+import Breadcrumbs from '../../../components/Breadcrumbs/Breadcrumbs';
+import ProductCard from '../../../components/ProductCard/ProductCard';
+import '../../../styles/ProductDetail.css';
 
 const ProductDetailClient = ({ product, relatedProducts, whatsappNumber }) => {
     const { addToCart } = useCart();

@@ -46,3 +46,5 @@ server/data/*.xlsx.bak
 # Cache
 .cache
 .eslintcache
+
+archive_temp

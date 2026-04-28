@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import ValuesCarousel from '../../src/components/ValuesCarousel/ValuesCarousel';
-import '../../src/legacy-pages/About/About.css';
+import ValuesCarousel from '../../components/ValuesCarousel/ValuesCarousel';
+import '../../styles/About.css';
 
 const AboutClient = () => {
     const heroRef = useRef(null);

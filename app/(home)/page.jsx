@@ -1,8 +1,8 @@
-import Hero from '../../src/components/Hero/Hero';
-import ProductCarousel from '../../src/components/ProductCarousel/ProductCarousel';
-import TestimonialCarousel from '../../src/components/TestimonialCarousel/TestimonialCarousel';
-import FaqFolders from '../../src/components/FaqFolders/FaqFolders';
-import '../../src/legacy-pages/Home/Home.css';
+import Hero from '../../components/Hero/Hero';
+import ProductCarousel from '../../components/ProductCarousel/ProductCarousel';
+import TestimonialCarousel from '../../components/TestimonialCarousel/TestimonialCarousel';
+import FaqFolders from '../../components/FaqFolders/FaqFolders';
+import '../../styles/Home.css';
 
 async function getFeaturedProducts() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
