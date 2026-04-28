@@ -233,7 +233,7 @@ const ProductsClient = ({ initialProducts, initialHasMore, combos, forcedCategor
                     ))}
                 </div>
 
-                {hasMore && (
+                {hasMore && activeTab !== 'combos' && (
                     <div className="load-more-container">
                         <button 
                             className={`load-more-btn ${loadingMore ? 'loading' : ''}`}
