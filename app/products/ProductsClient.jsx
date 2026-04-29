@@ -25,7 +25,7 @@ const ProductsClient = ({ initialProducts, initialHasMore, combos, forcedCategor
             setLoadingMore(true);
             const currentOffset = offset + (offset === 0 ? INITIAL_LIMIT : LOAD_MORE_LIMIT);
             
-            const baseUrl = (typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_API_BASE_URL : '') || '';
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5001';
             const response = await fetch(`${baseUrl}/api/products?limit=${LOAD_MORE_LIMIT}&offset=${currentOffset}`);
             const data = await response.json();
 

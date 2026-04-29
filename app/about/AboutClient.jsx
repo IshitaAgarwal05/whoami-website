@@ -52,7 +52,7 @@ const AboutClient = () => {
                                 We are a student-led startup built on the belief that the things we keep around us should reflect who we are becoming.
                             </p>
                             <p>
-                                Every piece we craft in our Jaipur workshop is designed to be more than an object; it's a reminder of the worlds and ideas that shape us.
+                                Every piece we craft in our workshop is designed to be more than an object; it's a reminder of the worlds and ideas that shape us.
                             </p>
                             <p>
                                 We're starting small, experimenting, building in public, and learning as we go. But our vision is simple,

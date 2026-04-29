@@ -1,0 +1,70 @@
+.review-carousel-section {
+    position: relative;
+    padding: var(--spacing-xl) 0 0 0;
+}
+
+.review-carousel {
+    display: flex;
+    overflow-x: auto;
+    gap: var(--spacing-lg);
+    padding-bottom: var(--spacing-xl);
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Firefox */
+}
+
+.review-carousel::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.review-carousel-item {
+    flex: 0 0 calc(25% - 16px);
+    min-width: 260px;
+    scroll-snap-align: start;
+}
+
+.review-image-wrapper {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.review-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transition: transform 0.4s ease;
+}
+
+.review-image-wrapper:hover img {
+    transform: scale(1.02);
+}
+
+@media (max-width: 1024px) {
+    .review-carousel-item {
+        flex: 0 0 calc(33.333% - 16px);
+        min-width: 240px;
+    }
+}
+
+@media (max-width: 768px) {
+    .review-carousel-item {
+        flex: 0 0 calc(50% - 12px);
+        min-width: 220px;
+    }
+}
+
+@media (max-width: 480px) {
+    .review-carousel-item {
+        flex: 0 0 calc(75% - 12px);
+        min-width: 240px;
+    }
+}

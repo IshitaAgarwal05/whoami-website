@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { CartProvider } from '../context/CartContext';
 import LoaderIntro from '../components/LoaderIntro/LoaderIntro';
 
 export function ClientProviders({ children }) {
-  const [showSite, setShowSite] = useState(false);
+  const pathname = usePathname();
+  const [showSite, setShowSite] = useState(pathname !== '/');
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
