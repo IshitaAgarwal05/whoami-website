@@ -16,7 +16,7 @@ app.set('trust proxy', 1);
 // -------------------------------------------------------------------
 // CORS — restrict to allowed origins
 // -------------------------------------------------------------------
-const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173, http://127.0.0.1:5173')
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000, http://127.0.0.1:3000')
     .split(',')
     .map(o => o.trim());
 

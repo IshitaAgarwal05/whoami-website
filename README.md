@@ -52,7 +52,6 @@ Typography: **Inter** (Google Fonts)
 ```
 web/
 ├── app/                  # Next.js Server & Client Pages (Routes)
-├── archive_temp/         # Deprecated Vite/React SPA files
 ├── components/           # Reusable React components (Navbar, Footer, Hero)
 ├── config/               # App configuration files
 ├── context/              # React Context Providers (CartContext)
@@ -94,7 +93,7 @@ npm install
 
 ### Running the Application
 
-Open **two terminals**:
+Open **two terminals** (or use `npm run dev` which runs both via concurrently):
 
 **Terminal 1 - Next.js Frontend:**
 ```bash
@@ -107,7 +106,7 @@ Frontend runs on: `http://localhost:3000`
 cd server
 npm start
 ```
-Backend runs on: `http://localhost:5001` (Adjusted to avoid conflicts)
+Backend runs on: `http://localhost:5001`
 
 ---
 

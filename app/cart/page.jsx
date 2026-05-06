@@ -1,5 +1,5 @@
 'use client';
-
+import { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '../../context/CartContext';
 import '../../styles/Cart.css';
@@ -13,12 +13,21 @@ export default function CartPage() {
         clearCart,
         addToCart,
         formatPrice,
-        handleCheckout
+        handleCheckout,
+        appliedPromo,
+        applyPromoCode,
+        removePromoCode
     } = useCart();
+
+    const [promoInput, setPromoInput] = useState('');
+    const [promoError, setPromoError] = useState('');
+    const [isOffersOpen, setIsOffersOpen] = useState(false);
 
     const freeDeliveryThreshold = 1000;
     const currentTotal = getCartTotal();
-    const remainingForFreeDelivery = Math.max(0, freeDeliveryThreshold - currentTotal);
+    const discountAmount = appliedPromo ? currentTotal * (appliedPromo.discountPercentage / 100) : 0;
+    const finalTotal = currentTotal - discountAmount;
+    const remainingForFreeDelivery = Math.max(0, freeDeliveryThreshold - finalTotal);
 
     if (cartItems.length === 0) {
         return (
@@ -58,7 +67,17 @@ export default function CartPage() {
                             <div key={item.ID} className="cart-page-item">
                                 <div className="item-main">
                                     <div className="item-img">
-                                        <img src={item.ImageURL} alt={item.Name} />
+                                        {item.ID === 'UPS-99' ? (
+                                            <div className="mystery-icon-placeholder">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <circle cx="12" cy="12" r="10"></circle>
+                                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                                </svg>
+                                            </div>
+                                        ) : (
+                                            <img src={item.ImageURL} alt={item.Name} />
+                                        )}
                                     </div>
                                     <div className="item-info">
                                         <h3>{item.Name}</h3>
@@ -95,11 +114,78 @@ export default function CartPage() {
                         <div className="glass-card summary-card">
                             <h2>Order Summary</h2>
 
+                            {/* Promo Section */}
+                            <div className="promo-section">
+                                <button 
+                                    className="promo-toggle-btn" 
+                                    onClick={() => setIsOffersOpen(!isOffersOpen)}
+                                >
+                                    <div className="promo-btn-left">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                                            <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                                        </svg>
+                                        <span>Offers & Promos</span>
+                                        {appliedPromo && <span className="active-dot"></span>}
+                                    </div>
+                                    <svg className={`chevron ${isOffersOpen ? 'open' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
+                                
+                                {isOffersOpen && (
+                                    <div className="promo-content">
+                                        {appliedPromo ? (
+                                            <div className="applied-promo">
+                                                <div className="promo-badge">
+                                                    <span className="promo-code-text">{appliedPromo.code}</span>
+                                                    <span className="promo-discount-text">-{appliedPromo.discountPercentage}% OFF</span>
+                                                </div>
+                                                <button className="remove-promo-btn" onClick={removePromoCode}>Remove</button>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div className="promo-input-group">
+                                                    <input 
+                                                        type="text" 
+                                                        placeholder="Enter promo code" 
+                                                        value={promoInput}
+                                                        onChange={(e) => {
+                                                            setPromoInput(e.target.value.toUpperCase());
+                                                            setPromoError('');
+                                                        }}
+                                                    />
+                                                    <button 
+                                                        onClick={() => {
+                                                            if (!promoInput) return;
+                                                            const res = applyPromoCode(promoInput);
+                                                            if (!res.success) setPromoError(res.message);
+                                                            else setPromoInput('');
+                                                        }}
+                                                    >
+                                                        Apply
+                                                    </button>
+                                                </div>
+                                                {promoError && <p className="promo-error">{promoError}</p>}
+                                            </>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
                             <div className="summary-details">
                                 <div className="summary-row">
                                     <span>Subtotal</span>
                                     <span>{formatPrice(currentTotal)}</span>
                                 </div>
+                                
+                                {appliedPromo && (
+                                    <div className="summary-row discount-row">
+                                        <span>Discount ({appliedPromo.code})</span>
+                                        <span>-{formatPrice(discountAmount)}</span>
+                                    </div>
+                                )}
+
                                 <div className="summary-row">
                                     <span>Shipping</span>
                                     <span className={remainingForFreeDelivery === 0 ? 'free-text' : ''}>
@@ -113,7 +199,7 @@ export default function CartPage() {
                                         <div className="promo-progress">
                                             <div
                                                 className="promo-fill"
-                                                style={{ width: `${Math.min(100, (currentTotal / freeDeliveryThreshold) * 100)}%` }}
+                                                style={{ width: `${Math.min(100, (finalTotal / freeDeliveryThreshold) * 100)}%` }}
                                             ></div>
                                         </div>
                                     </div>
@@ -123,7 +209,7 @@ export default function CartPage() {
                             <div className="summary-total">
                                 <div className="summary-row final">
                                     <span>Total</span>
-                                    <span>{formatPrice(currentTotal)}</span>
+                                    <span>{formatPrice(finalTotal)}</span>
                                 </div>
                                 <p className="tax-inclusive">Inclusive of all taxes</p>
                             </div>
@@ -140,7 +226,7 @@ export default function CartPage() {
                                             Name: 'Mystery Keychain Bundle',
                                             Price: 99,
                                             Material: 'PLA/Resin',
-                                            ImageURL: '/products/sorting-hat/sorting-hat.webp'
+                                            ImageURL: null
                                         })}
                                     >
                                         + Add to Bag

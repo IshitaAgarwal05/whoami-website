@@ -1,24 +1,15 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-import { getProductImages } from '../../utils/imageUtils';
 import './ImageCarousel.css';
 
-const ImageCarousel = ({ imageUrl, productName }) => {
-    const [images, setImages] = useState([]);
+const ImageCarousel = ({ images = [], productName }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [touchStart, setTouchStart] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
-    const trackRef = useRef(null);
 
     const minSwipeDistance = 50;
-
-    useEffect(() => {
-        const fetchedImages = getProductImages(imageUrl);
-        setImages(fetchedImages);
-        setCurrentIndex(0);
-    }, [imageUrl]);
 
     const nextSlide = () => {
         if (images.length <= 1) return;
@@ -85,7 +76,6 @@ const ImageCarousel = ({ imageUrl, productName }) => {
             >
                 <div 
                     className="carousel-track" 
-                    ref={trackRef}
                     style={{ transform: `translateX(-${currentIndex * 100}%)` }}
                 >
                     {images.map((imgUrl, index) => (

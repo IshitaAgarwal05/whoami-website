@@ -30,6 +30,7 @@ const nextConfig = {
       }
     ],
   },
+  allowedDevOrigins: ['localhost:3000', '*.trycloudflare.com']
 };
 
 export default nextConfig;

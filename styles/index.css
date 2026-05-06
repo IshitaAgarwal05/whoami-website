@@ -353,10 +353,7 @@ select {
   }
 }
 
-/* Scroll behavior */
-html {
-  scroll-behavior: smooth;
-}
+
 
 /* Selection */
 ::selection {

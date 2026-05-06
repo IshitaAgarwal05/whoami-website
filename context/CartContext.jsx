@@ -19,6 +19,7 @@ export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [toast, setToast] = useState(null);
+    const [appliedPromo, setAppliedPromo] = useState(null);
 
     // Initial load from localStorage
     useEffect(() => {
@@ -96,6 +97,39 @@ export const CartProvider = ({ children }) => {
         return cartItems.reduce((total, item) => total + (item.Price * item.quantity), 0);
     };
 
+    const VALID_PROMO_CODES = ['KAY20', 'NEW10', 'WHO15'];
+
+    const applyPromoCode = (code) => {
+        const upperCode = code.trim().toUpperCase();
+        
+        // Check if code is in the valid list
+        if (!VALID_PROMO_CODES.includes(upperCode)) {
+            return { success: false, message: 'Invalid or expired promo code.' };
+        }
+
+        // Validate code format: exactly 3 letters followed by exactly 2 digits
+        const regex = /^[A-Z]{3}(\d{2})$/;
+        const match = upperCode.match(regex);
+        
+        if (!match) {
+            return { success: false, message: 'Invalid promo code format.' };
+        }
+        
+        const discountPercentage = parseInt(match[1], 10);
+        
+        setAppliedPromo({
+            code: code.trim().toUpperCase(),
+            discountPercentage
+        });
+        showToast(`Promo code ${code.trim().toUpperCase()} applied!`);
+        return { success: true, message: `Applied ${discountPercentage}% discount!` };
+    };
+
+    const removePromoCode = () => {
+        setAppliedPromo(null);
+        showToast('Promo code removed', 'info');
+    };
+
     const handleCheckout = () => {
         if (cartItems.length === 0) return;
 
@@ -105,7 +139,18 @@ export const CartProvider = ({ children }) => {
         });
 
         const total = getCartTotal();
-        message += `\nTotal: ${formatPrice(total)}`;
+        let finalTotal = total;
+        
+        message += `\nSubtotal: ${formatPrice(total)}`;
+        
+        if (appliedPromo) {
+            const discountAmount = total * (appliedPromo.discountPercentage / 100);
+            finalTotal = total - discountAmount;
+            message += `\nPromo Code Applied: ${appliedPromo.code} (-${appliedPromo.discountPercentage}%)`;
+            message += `\nDiscount: -${formatPrice(discountAmount)}`;
+        }
+
+        message += `\nFinal Total: ${formatPrice(finalTotal)}`;
         message += `\n\nName:\nCity:`;
 
         const encodedMessage = encodeURIComponent(message);
@@ -130,7 +175,10 @@ export const CartProvider = ({ children }) => {
         toggleDrawer,
         setIsDrawerOpen,
         formatPrice,
-        handleCheckout
+        handleCheckout,
+        appliedPromo,
+        applyPromoCode,
+        removePromoCode
     };
 
     return (

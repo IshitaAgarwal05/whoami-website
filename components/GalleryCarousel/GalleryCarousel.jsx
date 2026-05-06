@@ -44,22 +44,7 @@ const GalleryCarousel = ({ images, categoryName }) => {
         <div className="gallery-carousel-section">
             <div className="carousel-header">
                 <h2 className="carousel-title">{categoryName}</h2>
-                <div className="carousel-controls">
-                    <button
-                        className={`carousel-arrow carousel-arrow-left ${!showLeftArrow ? 'hidden' : ''}`}
-                        onClick={() => scroll('left')}
-                        aria-label="Scroll left"
-                    >
-                        ←
-                    </button>
-                    <button
-                        className={`carousel-arrow carousel-arrow-right ${!showRightArrow ? 'hidden' : ''}`}
-                        onClick={() => scroll('right')}
-                        aria-label="Scroll right"
-                    >
-                        →
-                    </button>
-                </div>
+                
             </div>
 
             <div

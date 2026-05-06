@@ -1,11 +1,11 @@
-// API Configuration
-// In development: uses Vite proxy to localhost:5000
-// In production: uses VITE_API_URL environment variable
+// API Configuration for Next.js
+// In development: uses NEXT_PUBLIC_API_BASE_URL from .env
+// In production: uses NEXT_PUBLIC_API_BASE_URL environment variable
 
 const config = {
-    API_BASE_URL: (typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_API_BASE_URL : '') || (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_API_BASE_URL : '') || '',
-    WHATSAPP_NUMBER: (typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_WHATSAPP_NUMBER : '') || (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_WHATSAPP_NUMBER : '') || '',
-    GOOGLE_SCRIPT_URL: (typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL : '') || (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_GOOGLE_SCRIPT_URL : '') || '',
+    API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:5000',
+    WHATSAPP_NUMBER: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '',
+    GOOGLE_SCRIPT_URL: process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL || '',
 };
 
 export default config;

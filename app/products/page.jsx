@@ -1,21 +1,32 @@
 import ProductsClient from './ProductsClient';
-import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
+import config from '../../config';
 
 async function getData() {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
-  const [productsRes, combosRes] = await Promise.all([
-    fetch(`${baseUrl}/api/products?limit=20&offset=0`, { next: { revalidate: 60 } }),
-    fetch(`${baseUrl}/api/products/combos`, { next: { revalidate: 60 } })
-  ]);
+  const baseUrl = config.API_BASE_URL;
 
-  const products = await productsRes.json();
-  const combos = await combosRes.json();
+  try {
+    const [allProductsRes, combosRes] = await Promise.all([
+      fetch(`${baseUrl}/api/products`, { next: { revalidate: 60 } }),
+      fetch(`${baseUrl}/api/products/combos`, { next: { revalidate: 60 } })
+    ]);
 
-  return {
-    initialProducts: products.success ? products.data : [],
-    initialHasMore: products.success ? products.has_more : false,
-    combos: combos.success ? combos.data : []
-  };
+    const allProducts = allProductsRes.ok ? await allProductsRes.json() : { success: false };
+    const combos = combosRes.ok ? await combosRes.json() : { success: false };
+
+    // Extract all categories from the full product list
+    const allCategories = allProducts.success
+      ? [...new Set(allProducts.data.map(p => p.Category))].filter(Boolean)
+      : [];
+
+    return {
+      allProducts: allProducts.success ? allProducts.data : [],
+      combos: combos.success ? combos.data : [],
+      allCategories
+    };
+  } catch (error) {
+    console.error('Error fetching product data:', error);
+    return { allProducts: [], combos: [], allCategories: [] };
+  }
 }
 
 export const generateMetadata = () => {
@@ -45,7 +56,7 @@ export const generateMetadata = () => {
 };
 
 export default async function ProductsPage() {
-  const { initialProducts, initialHasMore, combos } = await getData();
+  const { allProducts, combos, allCategories } = await getData();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://whoami.vercel.app';
 
   const breadcrumbLd = {
@@ -73,12 +84,12 @@ export default async function ProductsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-      <Breadcrumbs items={[{ label: 'Products' }]} />
       <ProductsClient 
-        initialProducts={initialProducts}
-        initialHasMore={initialHasMore}
+        allProducts={allProducts}
         combos={combos}
+        allCategories={allCategories}
       />
     </>
   );
 }
+

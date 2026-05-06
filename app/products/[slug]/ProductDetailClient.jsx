@@ -2,37 +2,35 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCart } from '../../../context/CartContext';
 import { formatPrice } from '../../../utils/formatPrice';
 import { slugify } from '../../../utils/slugify';
 import ImageCarousel from '../../../components/ImageCarousel/ImageCarousel';
-import Breadcrumbs from '../../../components/Breadcrumbs/Breadcrumbs';
 import ProductCard from '../../../components/ProductCard/ProductCard';
 import '../../../styles/ProductDetail.css';
 
-const ProductDetailClient = ({ product, relatedProducts, whatsappNumber }) => {
-    const { addToCart } = useCart();
-    const [quantity, setQuantity] = useState(1);
+const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, productImages = [] }) => {
+    const { addToCart, cartItems, updateQuantity } = useCart();
+    const router = useRouter();
 
-    const handleBuyNow = () => {
-        const message = `Hi, I want to order:\n\n1. ${product.Name} – ${formatPrice(product.Price)} x ${quantity}\n\nTotal: ${formatPrice(product.Price * quantity)}\n\nName:\nCity:`;
-        const encodedMessage = encodeURIComponent(message);
-        window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
-    };
-
-    const breadcrumbItems = [
-        { label: product.Category || 'Products', href: `/categories/${slugify(product.Category || 'Products')}` },
-        { label: product.Name }
-    ];
+    // Derive "added to cart" state from actual cart contents
+    const cartItem = cartItems.find(item => item.ID === product.ID);
+    const isInCart = !!cartItem;
+    const cartQuantity = cartItem ? cartItem.quantity : 0;
 
     return (
         <div className="product-detail-page">
-            <Breadcrumbs items={breadcrumbItems} />
             
             <div className="container">
-                <div className="product-detail-nav-minimal">
-                    <Link href={`/categories/${slugify(product.Category || 'Products')}`} className="back-link">
-                        &larr; Back to {product.Category || 'Collection'}
+
+                <div className="back-to-products">
+                    <Link href="/products" className="back-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M19 12H5"></path>
+                            <path d="M12 19l-7-7 7-7"></path>
+                        </svg>
+                        Back to Products
                     </Link>
                 </div>
 
@@ -40,7 +38,7 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber }) => {
                     <div className="product-image-section">
                         <div className="product-image-container">
                             <div className="product-image-glow"></div>
-                            <ImageCarousel imageUrl={product.ImageURL} productName={product.Name} />
+                            <ImageCarousel images={productImages} productName={product.Name} />
                         </div>
                     </div>
 
@@ -114,26 +112,38 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber }) => {
                             </div>
 
                             <div className="product-actions">
-                                <div className="quantity-controller">
-                                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
-                                    <span>{quantity}</span>
-                                    <button onClick={() => setQuantity(quantity + 1)}>+</button>
-                                </div>
-
-                                <div className="action-buttons-group">
+                                {!isInCart ? (
                                     <button
-                                        className="add-to-cart-btn"
-                                        onClick={() => addToCart(product, quantity)}
+                                        className="add-to-cart-btn primary-action"
+                                        onClick={() => addToCart(product, 1)}
                                     >
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <circle cx="9" cy="21" r="1"></circle>
+                                            <circle cx="20" cy="21" r="1"></circle>
+                                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                        </svg>
                                         Add to Cart
                                     </button>
-                                    <button
-                                        className="buy-now-btn"
-                                        onClick={handleBuyNow}
-                                    >
-                                        Buy Now
-                                    </button>
-                                </div>
+                                ) : (
+                                    <>
+                                        <div className="quantity-controller">
+                                            <button onClick={() => updateQuantity(product.ID, -1)}>−</button>
+                                            <span>{cartQuantity}</span>
+                                            <button onClick={() => updateQuantity(product.ID, 1)}>+</button>
+                                        </div>
+                                        <button
+                                            className="go-to-cart-btn"
+                                            onClick={() => router.push('/cart')}
+                                        >
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <circle cx="9" cy="21" r="1"></circle>
+                                                <circle cx="20" cy="21" r="1"></circle>
+                                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                            </svg>
+                                            Go to Cart
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </div>
 

@@ -29,7 +29,7 @@ const Footer = () => {
 
                     {/* Contact Info */}
                     <div className="footer-column">
-                        <h4 className="footer-heading">Connect</h4>
+                        <h4 className="footer-heading">Connect with Us</h4>
                         <div className="social-icons">
                             <a href="mailto:studios.whoami@gmail.com" title="Email Us">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -47,13 +47,6 @@ const Footer = () => {
                             <a href="https://www.facebook.com/people/Whoami-Studios/61588942346952/" target="_blank" rel="noopener noreferrer" title="Facebook">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                                </svg>
-                            </a>
-                            <a href="https://www.pinterest.com/studioswhoami/" target="_blank" rel="noopener noreferrer" title="Pinterest">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <line x1="12" y1="8" x2="12" y2="16"></line>
-                                    <line x1="8" y1="12" x2="16" y2="12"></line>
-                                    <circle cx="12" cy="12" r="10"></circle>
                                 </svg>
                             </a>
                         </div>

@@ -227,7 +227,7 @@ const deleteCombo = async () => {
 
 const flushCache = async () => {
     const reloadKey = process.env.RELOAD_API_KEY;
-    const backendUrl = process.env.VITE_API_BASE_URL || 'http://localhost:5000';
+    const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5001';
 
     if (!reloadKey) {
         console.log('⚠️ RELOAD_API_KEY not found in .env. Cannot flush cache remotely.');

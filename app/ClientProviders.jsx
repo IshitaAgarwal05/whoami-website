@@ -7,7 +7,7 @@ import LoaderIntro from '../components/LoaderIntro/LoaderIntro';
 
 export function ClientProviders({ children }) {
   const pathname = usePathname();
-  const [showSite, setShowSite] = useState(pathname !== '/');
+  const [showSite, setShowSite] = useState(pathname ? pathname !== '/' : false);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function ClientProviders({ children }) {
       {isMounted && !showSite && (
         <LoaderIntro onComplete={() => setShowSite(true)} />
       )}
-      <div style={{ display: (isMounted && !showSite) ? 'none' : 'block' }}>
+      <div style={{ display: showSite ? 'block' : 'none' }}>
         {children}
       </div>
     </CartProvider>

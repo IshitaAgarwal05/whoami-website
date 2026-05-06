@@ -1,38 +1,81 @@
 import { notFound } from 'next/navigation';
 import ProductDetailClient from './ProductDetailClient';
 import { slugify } from '../../../utils/slugify';
+import { getProductImages } from '../../../utils/imageUtils';
+import config from '../../../config';
 
 async function getProductAndRelated(slug) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
-  const res = await fetch(`${baseUrl}/api/products`, {
-    next: { revalidate: 3600 }
-  });
+  const baseUrl = config.API_BASE_URL;
   
-  if (!res.ok) return { product: null, related: [] };
-  
-  const json = await res.json();
-  if (!json.success) return { product: null, related: [] };
-  
-  const product = json.data.find(p => slugify(p.Name) === slug);
-  if (!product) return { product: null, related: [] };
+  try {
+    const [productsRes, combosRes] = await Promise.all([
+      fetch(`${baseUrl}/api/products`, { next: { revalidate: 3600 } }),
+      fetch(`${baseUrl}/api/products/combos`, { next: { revalidate: 3600 } })
+    ]);
 
-  const related = json.data
-    .filter(p => p.Category === product.Category && p.ID !== product.ID)
-    .slice(0, 4);
+    if (!productsRes.ok && !combosRes.ok) return { product: null, related: [] };
 
-  return { product, related };
+    const productsJson = await productsRes.json();
+    const combosJson = combosRes.ok ? await combosRes.json() : { success: false };
+
+    const products = productsJson.success ? productsJson.data : [];
+    const combos = combosJson.success ? combosJson.data : [];
+
+    // Search in products first, then combos
+    let product = products.find(p => slugify(p.Name) === slug);
+    let sourceList = products;
+
+    if (!product) {
+      product = combos.find(c => slugify(c.Name) === slug);
+      sourceList = combos;
+    }
+
+    if (!product) return { product: null, related: [] };
+
+    const showOnlyWithImages = process.env.NEXT_PUBLIC_SHOW_NO_IMAGE_PRODUCTS !== 'true';
+
+    let related = sourceList
+      .filter(p => p.Category === product.Category && p.ID !== product.ID);
+
+    if (showOnlyWithImages) {
+      related = related.filter(p => 
+        p.ImageURL && 
+        p.ImageURL !== '/products/placeholder.webp' && 
+        !p.ImageURL.includes('placehold.co')
+      );
+    }
+
+    related = related.slice(0, 4);
+
+    return { product, related };
+  } catch (error) {
+    console.error('Error fetching product data:', error);
+    return { product: null, related: [] };
+  }
 }
 
 export async function generateStaticParams() {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
-  const res = await fetch(`${baseUrl}/api/products`);
-  const json = await res.json();
-  
-  if (!json.success) return [];
-  
-  return json.data.map((product) => ({
-    slug: slugify(product.Name),
-  }));
+  const baseUrl = config.API_BASE_URL;
+
+  try {
+    const [productsRes, combosRes] = await Promise.all([
+      fetch(`${baseUrl}/api/products`),
+      fetch(`${baseUrl}/api/products/combos`)
+    ]);
+
+    const productsJson = await productsRes.json();
+    const combosJson = combosRes.ok ? await combosRes.json() : { success: false };
+
+    const products = productsJson.success ? productsJson.data : [];
+    const combos = combosJson.success ? combosJson.data : [];
+
+    return [...products, ...combos].map((item) => ({
+      slug: slugify(item.Name),
+    }));
+  } catch (error) {
+    console.error('Error generating static params for products:', error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }) {
@@ -64,7 +107,7 @@ export async function generateMetadata({ params }) {
         },
       ],
       locale: 'en_IN',
-      type: 'og:product',
+      type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
@@ -82,6 +125,9 @@ export default async function ProductPage({ params }) {
   if (!product) {
     notFound();
   }
+
+  // Get all product images on the server using fs
+  const productImages = getProductImages(product.ImageURL);
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://whoami.vercel.app';
   const jsonLd = {
@@ -117,8 +163,8 @@ export default async function ProductPage({ params }) {
       {
         '@type': 'ListItem',
         position: 2,
-        name: product.Category || 'Products',
-        item: `${siteUrl}/categories/${slugify(product.Category || 'Products')}`,
+        name: 'Products',
+        item: `${siteUrl}/products`,
       },
       {
         '@type': 'ListItem',
@@ -145,6 +191,7 @@ export default async function ProductPage({ params }) {
         product={product} 
         relatedProducts={related}
         whatsappNumber={whatsappNumber}
+        productImages={productImages}
       />
     </>
   );

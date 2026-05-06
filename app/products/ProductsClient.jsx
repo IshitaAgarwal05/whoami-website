@@ -4,45 +4,25 @@ import { useState, useEffect, useRef } from 'react';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import '../../styles/Products.css';
 
-const ProductsClient = ({ initialProducts, initialHasMore, combos, forcedCategory = 'All' }) => {
-    const [products, setProducts] = useState(initialProducts);
-    const [loadingMore, setLoadingMore] = useState(false);
+const ProductsClient = ({ allProducts = [], combos, forcedCategory = 'All', allCategories = [] }) => {
     const [sortBy, setSortBy] = useState('default');
     const [activeTab, setActiveTab] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [activeCategory, setActiveCategory] = useState(forcedCategory);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [showOnlyWithImages, setShowOnlyWithImages] = useState(true);
-    const [offset, setOffset] = useState(0);
-    const [hasMore, setHasMore] = useState(initialHasMore);
+    const [visibleCount, setVisibleCount] = useState(16);
+    const showOnlyWithImages = process.env.NEXT_PUBLIC_SHOW_NO_IMAGE_PRODUCTS !== 'true';
     const dropdownRef = useRef(null);
 
-    const INITIAL_LIMIT = 20;
-    const LOAD_MORE_LIMIT = 10;
+    const ITEMS_PER_PAGE = 16;
 
-    const fetchMoreData = async () => {
-        try {
-            setLoadingMore(true);
-            const currentOffset = offset + (offset === 0 ? INITIAL_LIMIT : LOAD_MORE_LIMIT);
-            
-            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5001';
-            const response = await fetch(`${baseUrl}/api/products?limit=${LOAD_MORE_LIMIT}&offset=${currentOffset}`);
-            const data = await response.json();
-
-            if (data.success) {
-                setProducts(prev => [...prev, ...data.data]);
-                setHasMore(data.has_more);
-                setOffset(currentOffset);
-            }
-        } catch (err) {
-            console.error('Error fetching more data:', err);
-        } finally {
-            setLoadingMore(false);
-        }
-    };
+    // Reset visible count when tab, category, or search changes
+    useEffect(() => {
+        setVisibleCount(ITEMS_PER_PAGE);
+    }, [activeTab, activeCategory, searchQuery]);
 
     const handleLoadMore = () => {
-        fetchMoreData();
+        setVisibleCount(prev => prev + ITEMS_PER_PAGE);
     };
 
     const tabs = [
@@ -73,8 +53,15 @@ const ProductsClient = ({ initialProducts, initialHasMore, combos, forcedCategor
     };
 
     const getCategories = () => {
-        const data = activeTab === 'combos' ? combos : products;
-        const rawCats = [...new Set(data.map(p => p.Category))].filter(Boolean);
+        let rawCats;
+        if (activeTab === 'combos') {
+            rawCats = [...new Set(combos.map(p => p.Category))].filter(Boolean);
+        } else if (allCategories.length > 0) {
+            // Use the complete category list provided by the server
+            rawCats = [...allCategories];
+        } else {
+            rawCats = [...new Set(allProducts.map(p => p.Category))].filter(Boolean);
+        }
         const preferredOrder = ['Collectibles', 'Keychains', 'Book Accessories', 'Decor'];
         const sortedCats = rawCats.sort((a, b) => {
             const indexA = preferredOrder.indexOf(a);
@@ -87,14 +74,14 @@ const ProductsClient = ({ initialProducts, initialHasMore, combos, forcedCategor
         return ['All', ...sortedCats];
     };
 
-    const getActiveData = () => {
+    const getFilteredData = () => {
         let data = [];
         if (activeTab === 'store-99') {
-            data = products.filter(p => p.Price <= 99);
+            data = allProducts.filter(p => p.Price <= 99);
         } else if (activeTab === 'combos') {
             data = combos;
         } else {
-            data = products;
+            data = allProducts;
         }
 
         if (showOnlyWithImages) {
@@ -127,7 +114,9 @@ const ProductsClient = ({ initialProducts, initialHasMore, combos, forcedCategor
 
     const currentSortLabel = sortOptions.find(opt => opt.value === sortBy)?.label;
     const activeTabData = tabs.find(t => t.id === activeTab);
-    const displayItems = getActiveData();
+    const allFilteredItems = getFilteredData();
+    const displayItems = allFilteredItems.slice(0, visibleCount);
+    const hasMore = visibleCount < allFilteredItems.length;
     const categories = getCategories();
 
     return (
@@ -182,17 +171,6 @@ const ProductsClient = ({ initialProducts, initialHasMore, combos, forcedCategor
                             ))}
                         </div>
 
-                        <div className="filter-toggle">
-                            <label className="toggle-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={showOnlyWithImages}
-                                    onChange={(e) => setShowOnlyWithImages(e.target.checked)}
-                                />
-                                <span className="toggle-slider"></span>
-                            </label>
-                            <span className="toggle-label">Hide items without images</span>
-                        </div>
 
                         <div className="custom-dropdown" ref={dropdownRef}>
                             <span className="dropdown-label">Sort by:</span>
@@ -233,18 +211,13 @@ const ProductsClient = ({ initialProducts, initialHasMore, combos, forcedCategor
                     ))}
                 </div>
 
-                {hasMore && activeTab !== 'combos' && (
+                {hasMore && (
                     <div className="load-more-container">
                         <button 
-                            className={`load-more-btn ${loadingMore ? 'loading' : ''}`}
+                            className="load-more-btn"
                             onClick={handleLoadMore}
-                            disabled={loadingMore}
                         >
-                            {loadingMore ? (
-                                <div className="btn-spinner"></div>
-                            ) : (
-                                'Load More Products'
-                            )}
+                            Load More Products
                         </button>
                     </div>
                 )}
