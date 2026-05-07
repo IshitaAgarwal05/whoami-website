@@ -10,7 +10,8 @@ class ProductService {
             let query = supabase
                 .from('products')
                 .select('*', { count: 'exact' })
-                .order('created_at', { ascending: true });
+                .order('created_at', { ascending: true })
+                .order('internal_id', { ascending: true });
 
             if (limit !== null) {
                 query = query.range(offset, offset + limit - 1);
@@ -71,7 +72,8 @@ class ProductService {
                 Price: c.price,
                 OriginalPrice: c.original_price,
                 ImageURL: c.image_url,
-                Items: c.items // Array of string IDs
+                Items: c.items, // Array of string IDs
+                Category: 'Combos'
             }));
 
             await cachingService.set(cacheKey, formattedData, 3600);

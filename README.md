@@ -1,8 +1,8 @@
-# WhoAmI - Fandom Merchandise Showcase
+# WhoAmI - Identity Artifacts
 
 > **Identity, crafted.** 🇮🇳
 
-A minimalistic, premium product showcase website for **WhoAmI** - India's home for handcrafted fandom merchandise. 3D-printed and laser-cut desk accessories, collectibles, and personalized gifts for fans of legendary sagas, cinematic universes, and iconic characters.
+A minimalistic, premium product showcase and storefront for **WhoAmI** - India's home for handcrafted fandom merchandise. 3D-printed and laser-cut desk accessories, collectibles, and personalized gifts for fans of legendary sagas, cinematic universes, and iconic characters.
 
 ---
 
@@ -15,28 +15,25 @@ WhoAmI is an Indian D2C brand that creates handcrafted merchandise for dedicated
 - **Gift with meaning** - Find personalized gifts that resonate with fellow fans.
 
 **Latest Features:**
+- **Next.js App Router**: Lightning-fast Server Components and optimized routing.
+- **Supabase Integration**: Live inventory and product management backed by PostgreSQL.
+- **Image Optimization**: Fully optimized WebP assets for premium performance.
 - **Identity-First Design**: A premium, "glassmorphism" UI with gold accents throughout.
-- **Unified FAQ System**: Foldable, themed FAQ categories to help customers discover more about the brand.
 - **Community Proof**: Dedicated testimonials section featuring real stories from our community.
-- **Technical Specs**: Detailed product dimensions and weight information for all artifacts.
-- **Optimized Assets**: Continuous performance monitoring for a snappy, high-end experience.
-
-**This is a showcase website** - displaying products, designs, use-cases, and pricing. No e-commerce functionality (no cart, checkout, or payment).
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React** with Vite
-- **React Router DOM** for multi-page navigation
-- **Axios** for API requests
-- **Vanilla CSS** with custom design system
+- **Next.js (App Router)** for fast, SEO-friendly React rendering
+- **CSS Modules / Vanilla CSS** with custom design system
+- **React Context API** for global state management (Shopping Bag)
 
-### Backend
-- **Node.js** + **Express**
-- **xlsx** for Excel file parsing
-- **CORS** for cross-origin requests
+### Backend & Database
+- **Node.js + Express** (Legacy APIs, preserved for backward compatibility)
+- **Supabase (PostgreSQL)** for dynamic inventory management
+- **Redis** for rate-limiting and caching
 
 ### Design System
 | Color | Hex | Usage |
@@ -54,38 +51,17 @@ Typography: **Inter** (Google Fonts)
 
 ```
 web/
-├── src/
-│   ├── components/
-│   │   ├── Navbar/          # Navigation bar
-│   │   ├── Footer/          # Footer with brand info
-│   │   ├── ProductCard/     # Product display cards
-│   │   ├── CollectionGrid/  # Filterable product grid
-│   │   └── Hero/            # Hero section
-│   ├── pages/
-│   │   ├── Home/            # Landing page
-│   │   ├── Products/        # Product listing
-│   │   ├── ProductDetail/   # Single product view
-│   │   ├── About/           # Brand story
-│   │   └── Contact/         # Contact form
-│   ├── styles/
-│   │   └── theme.js         # Design tokens
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── index.css
-├── server/
-│   ├── data/
-│   │   ├── products.xlsx    # Product data (edit this!)
-│   │   └── generateExcel.js # Sample data generator
-│   ├── routes/
-│   │   └── products.js      # API routes
-│   ├── services/
-│   │   └── excelService.js  # Excel parser
-│   └── index.js             # Express server
-├── screenshots/             # Website screenshots
-├── .gitignore
-├── package.json
-├── vite.config.js
-└── README.md
+├── app/                  # Next.js Server & Client Pages (Routes)
+├── components/           # Reusable React components (Navbar, Footer, Hero)
+├── config/               # App configuration files
+├── context/              # React Context Providers (CartContext)
+├── public/               # Static assets, WebP product images
+├── server/               # Express Backend API & DB Scripts
+├── styles/               # Global CSS and module styles
+├── utils/                # Helper utilities (slugify, formatPrice)
+├── .env.example          # Environment variable template
+├── next.config.mjs       # Next.js configuration
+└── package.json          # Dependency manifest
 ```
 
 ---
@@ -93,116 +69,82 @@ web/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v14 or higher)
+- Node.js (v18 or higher recommended)
 - npm
 
 ### Installation
 
-**1. Install Frontend Dependencies**
+**1. Clone and Install Dependencies**
 ```bash
 npm install
 ```
 
-**2. Install Backend Dependencies**
+**2. Setup Environment Variables**
+Copy `.env.example` to `.env.local` and fill in your Supabase credentials:
+```bash
+cp .env.example .env.local
+```
+
+**3. Install Backend Dependencies (Optional)**
 ```bash
 cd server
 npm install
-cd ..
 ```
 
 ### Running the Application
 
-Open **two terminals**:
+Open **two terminals** (or use `npm run dev` which runs both via concurrently):
 
-**Terminal 1 - Backend Server:**
+**Terminal 1 - Next.js Frontend:**
+```bash
+npm run dev
+```
+Frontend runs on: `http://localhost:3000`
+
+**Terminal 2 - Express Backend:**
 ```bash
 cd server
-npm run dev
+npm start
 ```
-Backend runs on: `http://localhost:5000`
-
-**Terminal 2 - Frontend Server:**
-```bash
-cd server
-npm run dev
-```
-Wait, the frontend should be `npm run dev` in the root. 
-Actually, I'll fix this in the README too while I'm at it.
-Wait, let me check the original README carefully.
-Line 148: `npm run dev` in root.
-
-Wait, looking at the original README again (Line 135-150):
-```bash
-Terminal 2 - Frontend Server:
-cd .. (if in server)
-npm run dev
-```
-I'll make it clearer.
+Backend runs on: `http://localhost:5001`
 
 ---
 
-## 📊 Product Data (Excel)
+## 📊 Product Data (Supabase)
 
-Products are stored in `server/data/products.xlsx`. 
+Products are dynamically managed via **Supabase**. The old Excel workflow is deprecated.
 
-### Excel Columns
-
-| Column | Description | Example |
-|--------|-------------|---------|
-| ID | Unique product ID | 1 |
-| Name | Product name | Iconic Hero Desk Stand |
-| Description | Detailed description | Premium handcrafted desk accessory... |
-| Price | Price in INR | 899 |
-| Material | Material used | Birch Wood |
-| UseCase | How to use/gift | Display your fandom pride... |
-| Category | Product category | Collectibles |
-| ImageURL | Image URL | https://... |
-| Dimensions | Product size | 15cm x 12cm x 3cm |
-| Weight | Product weight | 120g |
-
-### Updating Products
-
-1. Edit `server/data/products.xlsx` in Excel/Google Sheets
-2. Restart the backend server
-3. Or call `POST /api/products/reload` to refresh without restart
+### Inventory Scripts
+To manage inventory programmatically, utilize the scripts in the `server/scripts/` directory:
+- `node server/scripts/inventory.js` - Interactive CLI to add/edit/delete products.
+- `node server/scripts/update_db_to_webp.js` - Optimizes DB URLs to point to WebP variants.
 
 ---
 
 ## 🌐 API Endpoints
 
-Base URL: `http://localhost:5000/api`
+Base URL: `http://localhost:5001/api`
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/products` | GET | Get all products |
 | `/products/:id` | GET | Get single product |
-| `/products/category/:category` | GET | Filter by category |
-| `/products/categories` | GET | Get all categories |
-| `/products/reload` | POST | Reload from Excel |
+| `/products/combos` | GET | Get curated product combos |
+| `/products/reload` | POST | Clear Redis cache |
 | `/health` | GET | Server health check |
 
 ---
 
-## 📄 Pages
+## 📄 Core Routes
 
 | Page | Route | Description |
 |------|-------|-------------|
 | Home | `/` | Hero, fandoms showcase, featured products, testimonials |
 | Products | `/products` | All products with category filters |
-| Product Detail | `/product/:id` | Individual product information |
+| Product Detail | `/products/:slug` | SEO-friendly individual product pages |
+| Categories | `/categories/:slug` | Dynamic category-specific collections |
+| Cart | `/cart` | Shopping bag and checkout summary |
 | About | `/about` | Brand story, values, Made in India |
-| Contact | `/contact` | Contact form with custom validation |
-
----
-
-## 🎨 Design Philosophy
-
-- **Minimalistic** - Clean, Apple/Tesla-inspired simplicity
-- **Premium Feel** - Glassmorphism, golden accents, smooth transitions
-- **Fandom Focused** - Celebrates iconic realms and beloved characters
-- **Indian Identity** - "Proudly Made in India" messaging throughout
-- **No E-commerce** - Showcase only, no purchase flow
-- **Responsive** - Works on mobile, tablet, and desktop
 
 ---
 
@@ -216,32 +158,17 @@ WhoAmI is proudly designed, crafted, and shipped from India. We support local ma
 
 **Frontend:**
 ```bash
-npm run dev      # Start dev server
-npm run build    # Build for production
-npm run preview  # Preview production build
-```
-
-**Backend:**
-```bash
-cd server
-npm run dev    # Start with nodemon (auto-restart)
-npm start      # Start production server
+npm run dev      # Start Next.js dev server
+npm run build    # Build optimized production bundle
+npm start        # Start Next.js production server
 ```
 
 ---
 
 ## 🔒 Important Notes
 
-- ⚠️ **This is NOT an e-commerce site** - No purchasing functionality
-- 📧 Contact form includes real-time validation (no empty fields, no specific special characters)
-- 🖼️ Product images use placeholders - update `ImageURL` in Excel for real images
-- 🇮🇳 Brand messaging emphasizes Indian origin throughout
-
----
-
-## 📜 License
-
-This project is for showcase purposes.
+- 📧 Contact form includes real-time validation.
+- 🖼️ Product images are optimized continuously into `.webp` format in `public/products/`.
 
 ---
 
