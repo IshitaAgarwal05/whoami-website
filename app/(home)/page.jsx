@@ -1,4 +1,5 @@
 import Hero from '../../components/Hero/Hero';
+import Link from 'next/link';
 import GalleryCarousel from '../../components/GalleryCarousel/GalleryCarousel';
 import ReviewCarousel from '../../components/ReviewCarousel/ReviewCarousel';
 import TestimonialCarousel from '../../components/TestimonialCarousel/TestimonialCarousel';
@@ -276,6 +277,31 @@ export default async function HomePage() {
 
             <TestimonialCarousel testimonials={testimonials} />
             <ReviewCarousel categoryName="Reactions Unfiltered" images={reviewImages} />
+
+            {/* Dual Careers & Blog CTAs */}
+            <div className="home-ctas-container">
+              <div className="home-cta-card">
+                <div>
+                  <span className="blog-badge" style={{ marginBottom: '12px' }}>Careers</span>
+                  <h3>Want to Build the Next Universe?</h3>
+                  <p style={{ marginTop: '8px' }}>We are always looking for creative developers, crochets, and 3D modeling artists to join our Jaipur studio.</p>
+                </div>
+                <Link href="/careers" className="home-cta-btn" style={{ marginTop: '15px' }}>
+                  See Open Roles &rarr;
+                </Link>
+              </div>
+
+              <div className="home-cta-card">
+                <div>
+                  <span className="blog-badge" style={{ marginBottom: '12px' }}>Journal</span>
+                  <h3>Go Behind the Scenes</h3>
+                  <p style={{ marginTop: '8px' }}>Read about our artisan casting, Jaipur workshop process, 3D printing parameters, and modern desk setups.</p>
+                </div>
+                <Link href="/blog" className="home-cta-btn" style={{ marginTop: '15px' }}>
+                  Read Our Journal &rarr;
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
       </div>

@@ -12,7 +12,7 @@
 
 .footer-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2fr 1.2fr 1.2fr;
     gap: var(--spacing-4xl);
 }
 
@@ -135,6 +135,32 @@
 
 .footer-made-by a:hover {
     color: var(--color-warm-gold);
+}
+
+.footer-links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.footer-links-list li {
+    margin: 0;
+}
+
+.footer-links-list a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    transition: color var(--transition-base), transform var(--transition-base);
+    display: inline-block;
+}
+
+.footer-links-list a:hover {
+    color: var(--color-warm-gold);
+    transform: translateX(4px);
 }
 
 /* Responsive Design */

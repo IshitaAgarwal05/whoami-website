@@ -300,6 +300,13 @@ const InteractiveCTA = ({ products = [] }) => {
             )}
           </AnimatePresence>
         </div>
+
+        {/* Setup Inspiration CTA */}
+        <div className="quiz-inspo-wrapper">
+          <Link href="/blog?category=Desk+Setup" className="quiz-inspo-link">
+            Get setup inspo from the experts &rarr;
+          </Link>
+        </div>
       </div>
     </section>
   );

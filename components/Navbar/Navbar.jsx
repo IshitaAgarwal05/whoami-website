@@ -13,8 +13,14 @@ const Navbar = () => {
     const navLinks = [
         { path: '/', label: 'HOME' },
         { path: '/products', label: 'PRODUCTS' },
-        { path: '/about', label: 'ABOUT' },
-        { path: '/blog', label: 'JOURNAL' },
+        { 
+            label: 'ABOUT', 
+            dropdown: [
+                { path: '/about', label: 'OUR STORY' },
+                { path: '/blog', label: 'JOURNAL' },
+                { path: '/careers', label: 'CAREERS' }
+            ] 
+        },
         { path: '/contact', label: 'CONTACT' },
     ];
 
@@ -42,14 +48,34 @@ const Navbar = () => {
                 <div className="navbar-content">
                     <ul className="navbar-menu">
                         {navLinks.map((link) => (
-                            <li key={link.path}>
-                                <Link
-                                    href={link.path}
-                                    className={`navbar-link ${isActive(link.path) ? 'active' : ''}`}
-                                >
-                                    {link.label}
-                                </Link>
-                            </li>
+                            link.dropdown ? (
+                                <li key={link.label} className="navbar-dropdown-wrapper">
+                                    <span className="navbar-link dropdown-trigger">
+                                        {link.label} <span className="dropdown-caret">▼</span>
+                                    </span>
+                                    <ul className="navbar-dropdown-menu">
+                                        {link.dropdown.map((subLink) => (
+                                            <li key={subLink.path}>
+                                                <Link
+                                                    href={subLink.path}
+                                                    className={`navbar-dropdown-link ${isActive(subLink.path) ? 'active' : ''}`}
+                                                >
+                                                    {subLink.label}
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </li>
+                            ) : (
+                                <li key={link.path}>
+                                    <Link
+                                        href={link.path}
+                                        className={`navbar-link ${isActive(link.path) ? 'active' : ''}`}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                </li>
+                            )
                         ))}
                     </ul>
 

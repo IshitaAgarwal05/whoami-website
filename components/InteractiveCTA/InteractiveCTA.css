@@ -276,6 +276,7 @@
   font-family: var(--font-primary), sans-serif;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -392,4 +393,33 @@
 
 .quiz-reset-btn:hover {
   color: #ffffff;
+}
+
+/* Setup Inspiration Link */
+.quiz-inspo-wrapper {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.quiz-inspo-link {
+  display: inline-block;
+  padding: 10px 24px;
+  border-radius: 9999px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: var(--color-warm-gold, #FFB84D);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.25s ease;
+  background: rgba(212, 175, 55, 0.02);
+}
+
+.quiz-inspo-link:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--color-warm-gold, #FFB84D);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+  transform: translateY(-2px);
 }
