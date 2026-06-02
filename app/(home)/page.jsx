@@ -3,6 +3,8 @@ import GalleryCarousel from '../../components/GalleryCarousel/GalleryCarousel';
 import ReviewCarousel from '../../components/ReviewCarousel/ReviewCarousel';
 import TestimonialCarousel from '../../components/TestimonialCarousel/TestimonialCarousel';
 import FaqFolders from '../../components/FaqFolders/FaqFolders';
+import InteractiveCTA from '../../components/InteractiveCTA/InteractiveCTA';
+import config from '../../config';
 import '../../styles/Home.css';
 
 import fs from 'fs';
@@ -72,7 +74,21 @@ export const generateMetadata = () => {
   };
 };
 
+async function getProducts() {
+  const baseUrl = config.API_BASE_URL;
+  try {
+    const res = await fetch(`${baseUrl}/api/products`, { next: { revalidate: 60 } });
+    if (!res.ok) throw new Error('API fetch failed');
+    const data = await res.json();
+    return data.success ? data.data : [];
+  } catch (error) {
+    console.error('Error fetching product data for quiz:', error);
+    return [];
+  }
+}
+
 export default async function HomePage() {
+  const products = await getProducts();
   const galleryImages = await getGalleryImages();
   const reviewImages = await getReviewImages();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://whoami.vercel.app';
@@ -177,6 +193,9 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Desk Alignment Personality Quiz */}
+        <InteractiveCTA products={products} />
 
         {/* Gallery Section */}
         <section className="section gallery-section">
