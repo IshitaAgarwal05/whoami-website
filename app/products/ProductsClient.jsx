@@ -201,12 +201,21 @@ const ProductsClient = ({ allProducts = [], combos, forcedCategory = 'All', allC
                     </div>
                 </div>
 
+                {activeTab === 'combos' && (
+                    <div className="combo-general-note" style={{ textAlign: 'center', marginBottom: 'var(--spacing-2xl)', padding: '0 var(--spacing-lg)' }}>
+                        <p style={{ color: 'var(--color-warm-gold)', fontStyle: 'italic', fontSize: 'var(--font-size-sm)' }}>
+                            * Please Note: Books shown in the product images are for styling purposes only and are not included in the combos.
+                        </p>
+                    </div>
+                )}
+
                 <div className="products-grid">
                     {displayItems.map((item) => (
                         <ProductCard
                             key={`${activeTab}-${item.ID}`}
                             product={item}
                             compact={activeTab === 'store-99'}
+                            isCombo={activeTab === 'combos'}
                         />
                     ))}
                 </div>

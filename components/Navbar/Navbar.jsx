@@ -50,8 +50,8 @@ const Navbar = () => {
                         {navLinks.map((link) => (
                             link.dropdown ? (
                                 <li key={link.label} className="navbar-dropdown-wrapper">
-                                    <span className="navbar-link dropdown-trigger">
-                                        {link.label} <span className="dropdown-caret">▼</span>
+                                    <span className="navbar-link navbar-dropdown-trigger">
+                                        {link.label} <span className="navbar-dropdown-caret">▼</span>
                                     </span>
                                     <ul className="navbar-dropdown-menu">
                                         {link.dropdown.map((subLink) => (

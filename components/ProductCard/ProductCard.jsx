@@ -7,7 +7,7 @@ import { formatPrice } from '../../utils/formatPrice';
 import { slugify } from '../../utils/slugify';
 import './ProductCard.css';
 
-const ProductCard = ({ product, compact = false }) => {
+const ProductCard = ({ product, compact = false, isCombo = false }) => {
     const { addToCart, cartItems, updateQuantity, removeFromCart } = useCart();
     const FALLBACK_IMAGE = 'https://placehold.co/400x400';
 
@@ -69,11 +69,18 @@ const ProductCard = ({ product, compact = false }) => {
                 </div>
 
                 {!compact && (
-                    <p className="product-card-description">
-                        {(product.Description || '').length > 80
-                            ? `${product.Description.substring(0, 80)}...`
-                            : product.Description || ''}
-                    </p>
+                    <>
+                        <p className="product-card-description">
+                            {(product.Description || '').length > 80
+                                ? `${product.Description.substring(0, 80)}...`
+                                : product.Description || ''}
+                        </p>
+                        {isCombo && (
+                            <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontStyle: 'italic', marginTop: '4px' }}>
+                                * Note: Books featured in images are for styling only and are not included.
+                            </p>
+                        )}
+                    </>
                 )}
 
                 <div className="product-card-footer">

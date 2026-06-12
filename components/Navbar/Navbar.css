@@ -74,6 +74,7 @@
 /* Navigation Menu */
 .navbar-menu {
     display: flex;
+    align-items: center;
     list-style: none;
     gap: var(--spacing-3xl);
     margin: 0;
@@ -81,6 +82,8 @@
 }
 
 .navbar-link {
+    display: inline-flex;
+    align-items: center;
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-medium);
     color: var(--color-text-secondary);
@@ -182,18 +185,18 @@
     cursor: pointer;
 }
 
-.dropdown-trigger {
+.navbar-dropdown-trigger {
     display: inline-flex;
     align-items: center;
     gap: 4px;
 }
 
-.dropdown-caret {
+.navbar-dropdown-caret {
     font-size: 8px;
     transition: transform 0.25s ease;
 }
 
-.navbar-dropdown-wrapper:hover .dropdown-caret {
+.navbar-dropdown-wrapper:hover .navbar-dropdown-caret {
     transform: rotate(180deg);
 }
 
@@ -209,15 +212,27 @@
     padding: var(--spacing-sm) 0;
     margin: var(--spacing-sm) 0 0 0;
     min-width: 140px;
-    display: none;
+    visibility: hidden;
+    pointer-events: none;
     z-index: 1001;
     opacity: 0;
     transform: translateY(10px);
-    transition: opacity 0.25s, transform 0.25s;
+    transition: opacity 0.25s, transform 0.25s, visibility 0.25s;
+}
+
+/* Invisible bridge to maintain hover state over the margin gap */
+.navbar-dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: calc(-1 * var(--spacing-sm));
+    left: 0;
+    width: 100%;
+    height: var(--spacing-sm);
 }
 
 .navbar-dropdown-wrapper:hover .navbar-dropdown-menu {
-    display: block;
+    visibility: visible;
+    pointer-events: auto;
     opacity: 1;
     transform: translateY(0);
 }
