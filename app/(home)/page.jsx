@@ -1,8 +1,11 @@
 import Hero from '../../components/Hero/Hero';
+import Link from 'next/link';
 import GalleryCarousel from '../../components/GalleryCarousel/GalleryCarousel';
 import ReviewCarousel from '../../components/ReviewCarousel/ReviewCarousel';
 import TestimonialCarousel from '../../components/TestimonialCarousel/TestimonialCarousel';
 import FaqFolders from '../../components/FaqFolders/FaqFolders';
+import InteractiveCTA from '../../components/InteractiveCTA/InteractiveCTA';
+import config from '../../config';
 import '../../styles/Home.css';
 
 import fs from 'fs';
@@ -72,7 +75,21 @@ export const generateMetadata = () => {
   };
 };
 
+async function getProducts() {
+  const baseUrl = config.API_BASE_URL;
+  try {
+    const res = await fetch(`${baseUrl}/api/products`, { next: { revalidate: 60 } });
+    if (!res.ok) throw new Error('API fetch failed');
+    const data = await res.json();
+    return data.success ? data.data : [];
+  } catch (error) {
+    console.error('Error fetching product data for quiz:', error);
+    return [];
+  }
+}
+
 export default async function HomePage() {
+  const products = await getProducts();
   const galleryImages = await getGalleryImages();
   const reviewImages = await getReviewImages();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://whoami.vercel.app';
@@ -178,6 +195,9 @@ export default async function HomePage() {
           </div>
         </section>
 
+        {/* Desk Alignment Personality Quiz */}
+        <InteractiveCTA products={products} />
+
         {/* Gallery Section */}
         <section className="section gallery-section">
           <div className="container">
@@ -257,6 +277,31 @@ export default async function HomePage() {
 
             <TestimonialCarousel testimonials={testimonials} />
             <ReviewCarousel categoryName="Reactions Unfiltered" images={reviewImages} />
+
+            {/* Dual Careers & Blog CTAs */}
+            <div className="home-ctas-container">
+              <div className="home-cta-card">
+                <div>
+                  <span className="blog-badge" style={{ marginBottom: '12px' }}>Careers</span>
+                  <h3>Want to Build the Next Universe?</h3>
+                  <p style={{ marginTop: '8px' }}>We are always looking for creative developers, crochets, and 3D modeling artists to join our Jaipur studio.</p>
+                </div>
+                <Link href="/careers" className="home-cta-btn" style={{ marginTop: '15px' }}>
+                  See Open Roles &rarr;
+                </Link>
+              </div>
+
+              <div className="home-cta-card">
+                <div>
+                  <span className="blog-badge" style={{ marginBottom: '12px' }}>Journal</span>
+                  <h3>Go Behind the Scenes</h3>
+                  <p style={{ marginTop: '8px' }}>Read about our artisan casting, Jaipur workshop process, 3D printing parameters, and modern desk setups.</p>
+                </div>
+                <Link href="/blog" className="home-cta-btn" style={{ marginTop: '15px' }}>
+                  Read Our Journal &rarr;
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
       </div>

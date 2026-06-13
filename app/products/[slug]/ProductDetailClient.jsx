@@ -154,6 +154,11 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
                                     <strong>Handcrafted Item:</strong> Shipped within 3-5 business days.
                                     For inquiries, visit our <Link href="/contact">Contact</Link> page.
                                 </p>
+                                {product.Category?.toLowerCase().includes('combo') && (
+                                    <p style={{ marginTop: '8px' }}>
+                                        <strong>Note:</strong> Books featured in the product images are for styling purposes only and are not included in this combo.
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>

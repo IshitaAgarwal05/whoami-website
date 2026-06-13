@@ -27,6 +27,19 @@ const Footer = () => {
                         <p className="footer-india">🇮🇳 Crafted in Jaipur, India</p>
                     </div>
 
+                    {/* Quick Links */}
+                    <div className="footer-column">
+                        <h4 className="footer-heading">Quick Links</h4>
+                        <ul className="footer-links-list">
+                            <li><Link href="/">Home</Link></li>
+                            <li><Link href="/products">Products</Link></li>
+                            <li><Link href="/about">About Us</Link></li>
+                            <li><Link href="/contact">Contact</Link></li>
+                            <li><Link href="/blog">Journal</Link></li>
+                            <li><Link href="/careers">Careers</Link></li>
+                        </ul>
+                    </div>
+
                     {/* Contact Info */}
                     <div className="footer-column">
                         <h4 className="footer-heading">Connect with Us</h4>

@@ -1,0 +1,35 @@
+[
+    {
+        "id": "behind-the-build-3d-printing-jaipur",
+        "title": "Behind the Build: 3D Printing in Jaipur",
+        "category": "Behind the Build",
+        "excerpt": "A look at our design process, from concept sketches to finished products. How technology meets tradition in our Jaipur studio to create premium collectibles.",
+        "content": "<p>In our Jaipur workshop, we believe that modern digital tools and historic handcrafted arts should not exist in isolation. This article takes you on a deep dive into the design and craftsmanship process of our latest fandom collectibles.</p>\n<h3>From Pixels to Clay: The Sculpting Process</h3>\n<p>Every piece starts with digital 3D modeling. We focus on low-poly and geometric structures to give our figures a signature high-end aesthetic. Rather than copying screen designs exactly, we reinterpret them as modern abstract art. We adjust lines, geometric facets, and weight distributions until they fit on your desk perfectly.</p>\n<h3>The Art of the 3D Print</h3>\n<p>We use high-fidelity, industrial-grade PLA and SLA printers. Printing a single Vader helmet or Grogu figure takes between 12 to 24 hours of continuous layer-by-layer deposition. We carefully tune layer height, print temperature, and retraction settings to ensure smooth surfaces and clean angles.</p>\n<h3>Hand-Finishing: The Jaipur Touch</h3>\n<p>Printing is only half the battle. Once off the build plate, each model goes through multiple stages of hand-sanding, priming, and detailed painting. We use local paints and techniques to give our products their rich, matte textures and metallic gold gradients. It's this fusion of technology and tradition that turns a simple print into a premium desk artifact.</p>",
+        "image": "/products/grogu/grogu-1.webp",
+        "date": "February 2026",
+        "tags": ["3D Printing", "Jaipur Workshops", "Behind the Build"],
+        "readingTime": "4 min read"
+    },
+    {
+        "id": "subtle-expressions-art-of-desk-collectibles",
+        "title": "Subtle Expressions: The Art of Desk Collectibles",
+        "category": "Collectibles",
+        "excerpt": "In a world of loud merchandise and branding, we explore the power of quiet expression for desktop decor.",
+        "content": "<p>Your desk is more than just a place to work; it is a canvas of your identity. The artifacts you choose to place on it say everything about the universes you love, your creative values, and your personal style.</p>\n<h3>The Shift Towards Minimalist Collectibles</h3>\n<p>Traditional fandom merchandise is often loud, colorful, and stands out in a way that disrupts a clean workspace. Recently, there has been a significant shift towards subtle, architectural, and geometric desk decor. Collectibles should blend seamlessly into your setup while remaining recognizable to fellow fans.</p>\n<h3>Why Geometry Matters</h3>\n<p>Geometric design strips away the unnecessary detail, leaving only the iconic form. A low-poly Sorting Hat or a stylized Millennium Falcon doesn't look like a toy—it looks like a sculpture. It matches clean monitors, mechanical keyboards, and modern desk mats, elevating your workspace into a gallery of your interests.</p>\n<h3>Choosing Your Setup Identity</h3>\n<p>When selecting desk artifacts, focus on a unified color theme. A black-and-gold color palette adds a cosmic, premium aesthetic, while natural wood and warm white tones feel grounded. Select one or two focal pieces that tell your story without cluttering your thinking space.</p>",
+        "image": "/products/sorting-hat/sorting-hat.webp",
+        "date": "January 2026",
+        "tags": ["Desk Setup", "Collectibles", "Design Philosphy"],
+        "readingTime": "5 min read"
+    },
+    {
+        "id": "desk-setup-inspiration-minimalist-fandom-workspace",
+        "title": "Desk Setup Inspiration: The Minimalist Fandom Workspace",
+        "category": "Desk Setup",
+        "excerpt": "How to design a premium, distraction-free desk setup that celebrates your favorite pop culture universes.",
+        "content": "<p>A premium desk setup balances utility, comfort, and character. For geek culture enthusiasts, showing off your favorite fandoms without creating clutter can be a difficult challenge. Here is our guide to organizing a professional, fandom-inspired desk setup.</p>\n<h3>1. The Foundation: Desktop and Lighting</h3>\n<p>Start with a clean surface—a solid wood table top or a high-quality matte black desk mat. Lighting is crucial: use a monitor lightbar to illuminate your workspace without glare, and place subtle RGB or warm yellow LED strips behind your desk to create a premium ambient glow.</p>\n<h3>2. The Power of Focal Points</h3>\n<p>Instead of crowding your desk with dozens of action figures, choose a single high-quality statement piece. Our custom-designed geometric Groot or Darth Vader bust is perfect for this. Place it offset to your monitor where it can catch the light and serve as an inspiring focal point.</p>\n<h3>3. Functional Decor</h3>\n<p>Combine utility with fandom. Choose phone stands, cable holders, or bookends that double as collectibles. A Deathly Hallows phone stand or a Star Wars bookend serves a clear functional purpose while adding a touch of your favorite universe to your desk.</p>",
+        "image": "/products/vader/vader-1.webp",
+        "date": "December 2025",
+        "tags": ["Desk Setup", "Inspiration", "Gifting"],
+        "readingTime": "3 min read"
+    }
+]

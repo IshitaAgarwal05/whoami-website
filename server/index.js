@@ -6,6 +6,7 @@ const rateLimit = require('express-rate-limit');
 const { RedisStore } = require('rate-limit-redis');
 const cachingService = require('./services/cachingService');
 const productRoutes = require('./routes/products');
+const blogRoutes = require('./routes/blog');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -95,6 +96,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/products/reload', reloadLimiter);
 app.use('/api/products', productRoutes);
+app.use('/api/blog', blogRoutes);
 
 // Health check — useful for verifying Redis status on Render
 app.get('/api/health', (req, res) => {
