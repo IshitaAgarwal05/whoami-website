@@ -28,7 +28,8 @@ const ProductsClient = ({ allProducts = [], combos, forcedCategory = 'All', allC
     const tabs = [
         { id: 'store-99', label: 'Under ₹99', subtext: 'Small price. Big personality.' },
         { id: 'all', label: 'Curated For You', subtext: 'Find what represents you' },
-        { id: 'combos', label: 'Curated Combos', subtext: 'Save more. Gift better.' }
+        { id: 'combos', label: 'Curated Combos', subtext: 'Save more. Gift better.' },
+        { id: 'charms', label: 'Charms', subtext: 'Collect your charms' }
     ];
 
     const sortOptions = [
@@ -80,6 +81,8 @@ const ProductsClient = ({ allProducts = [], combos, forcedCategory = 'All', allC
             data = allProducts.filter(p => p.Price <= 99);
         } else if (activeTab === 'combos') {
             data = combos;
+        } else if (activeTab === 'charms') {
+            data = allProducts.filter(p => p.Category === 'Keychains' || p.Category === 'Charms');
         } else {
             data = allProducts;
         }
@@ -159,19 +162,6 @@ const ProductsClient = ({ allProducts = [], combos, forcedCategory = 'All', allC
                             />
                         </div>
 
-                        <div className="category-filters">
-                            {categories.map(cat => (
-                                <button
-                                    key={cat}
-                                    className={`cat-btn ${activeCategory === cat ? 'active' : ''}`}
-                                    onClick={() => setActiveCategory(cat)}
-                                >
-                                    {cat}
-                                </button>
-                            ))}
-                        </div>
-
-
                         <div className="custom-dropdown" ref={dropdownRef}>
                             <span className="dropdown-label">Sort by:</span>
                             <div
@@ -198,6 +188,22 @@ const ProductsClient = ({ allProducts = [], combos, forcedCategory = 'All', allC
                                 </ul>
                             )}
                         </div>
+
+                        {!(activeTab === 'combos' || activeTab === 'charms') && (
+                            <div className="category-filters">
+                                {categories.map(cat => (
+                                    <button
+                                        key={cat}
+                                        className={`cat-btn ${activeCategory === cat ? 'active' : ''}`}
+                                        onClick={() => setActiveCategory(cat)}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+
                     </div>
                 </div>
 
