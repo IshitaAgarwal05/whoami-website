@@ -97,7 +97,7 @@ export const CartProvider = ({ children }) => {
         return cartItems.reduce((total, item) => total + (item.Price * item.quantity), 0);
     };
 
-    const VALID_PROMO_CODES = ['KAY20', 'NEW10', 'WHO15'];
+    const VALID_PROMO_CODES = ['KAY20', 'NEW10', 'WHO15', 'RAI20'];
 
     const applyPromoCode = (code) => {
         const upperCode = code.trim().toUpperCase();
@@ -130,6 +130,24 @@ export const CartProvider = ({ children }) => {
         showToast('Promo code removed', 'info');
     };
 
+    const getDiscountAmount = () => {
+        if (!appliedPromo) return 0;
+        
+        if (appliedPromo.code === 'RAI20') {
+            const RAI20_ELIGIBLE_IDS = ['2', '3', '4', '5', '6', '7', '8', '9', '11', '13', '17', '18', '21', '31', '32', '34'];
+            const applicableTotal = cartItems.reduce((total, item) => {
+                const isApplicable = RAI20_ELIGIBLE_IDS.includes(String(item.ID));
+                if (isApplicable) {
+                    return total + (item.Price * item.quantity);
+                }
+                return total;
+            }, 0);
+            return applicableTotal * (appliedPromo.discountPercentage / 100);
+        }
+
+        return getCartTotal() * (appliedPromo.discountPercentage / 100);
+    };
+
     const handleCheckout = () => {
         if (cartItems.length === 0) return;
 
@@ -144,7 +162,7 @@ export const CartProvider = ({ children }) => {
         message += `\nSubtotal: ${formatPrice(total)}`;
         
         if (appliedPromo) {
-            const discountAmount = total * (appliedPromo.discountPercentage / 100);
+            const discountAmount = getDiscountAmount();
             finalTotal = total - discountAmount;
             message += `\nPromo Code Applied: ${appliedPromo.code} (-${appliedPromo.discountPercentage}%)`;
             message += `\nDiscount: -${formatPrice(discountAmount)}`;
@@ -178,7 +196,8 @@ export const CartProvider = ({ children }) => {
         handleCheckout,
         appliedPromo,
         applyPromoCode,
-        removePromoCode
+        removePromoCode,
+        getDiscountAmount
     };
 
     return (

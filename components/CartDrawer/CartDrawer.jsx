@@ -18,7 +18,8 @@ const CartDrawer = () => {
         handleCheckout,
         appliedPromo,
         applyPromoCode,
-        removePromoCode
+        removePromoCode,
+        getDiscountAmount
     } = useCart();
 
     const [promoInput, setPromoInput] = useState('');
@@ -38,7 +39,7 @@ const CartDrawer = () => {
 
     const freeDeliveryThreshold = 1000;
     const currentTotal = getCartTotal();
-    const discountAmount = appliedPromo ? currentTotal * (appliedPromo.discountPercentage / 100) : 0;
+    const discountAmount = getDiscountAmount();
     const finalTotal = currentTotal - discountAmount;
     const remainingForFreeDelivery = Math.max(0, freeDeliveryThreshold - finalTotal);
 
