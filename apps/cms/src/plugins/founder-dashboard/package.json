@@ -1,0 +1,11 @@
+{
+  "name": "founder-dashboard",
+  "version": "1.0.0",
+  "description": "Founder Dashboard for WhoAmI Studios",
+  "strapi": {
+    "name": "founder-dashboard",
+    "description": "Founder Dashboard for WhoAmI Studios",
+    "kind": "plugin"
+  },
+  "dependencies": {}
+}

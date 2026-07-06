@@ -1,67 +1,49 @@
-# WhoAmI - Identity Artifacts
+# WhoAmI - Identity Artifacts Monorepo
 
 > **Identity, crafted.** 🇮🇳
 
-A minimalistic, premium product showcase and storefront for **WhoAmI** - India's home for handcrafted fandom merchandise. 3D-printed and laser-cut desk accessories, collectibles, and personalized gifts for fans of legendary sagas, cinematic universes, and iconic characters.
+A minimalistic, premium storefront and operations platform for **WhoAmI** - India's home for handcrafted fandom merchandise. 3D-printed and laser-cut desk accessories, collectibles, and personalized gifts.
 
 ---
 
-## 🎯 About WhoAmI
+## 🎯 Project Architecture
 
-WhoAmI is an Indian D2C brand that creates handcrafted merchandise for dedicated fans. Our products help fans:
+This project is structured as an npm workspaces monorepo:
 
-- **Prove their identity** - Display your favorite universe, your iconic heroes, or your legendary allegiances.
-- **Decorate their desks** - Transform workspaces into fandom shrines with premium, 3D-printed desk accessories.
-- **Gift with meaning** - Find personalized gifts that resonate with fellow fans.
-
-**Latest Features:**
-- **Next.js App Router**: Lightning-fast Server Components and optimized routing.
-- **Supabase Integration**: Live inventory and product management backed by PostgreSQL.
-- **Image Optimization**: Fully optimized WebP assets for premium performance.
-- **Identity-First Design**: A premium, "glassmorphism" UI with gold accents throughout.
-- **Community Proof**: Dedicated testimonials section featuring real stories from our community.
+*   **`apps/web`**: Next.js App Router frontend. Beautiful glassmorphism design system, optimized image rendering, shopping cart context, and product pages.
+*   **`apps/cms`**: Strapi v5 Community Edition Headless CMS (PostgreSQL database). Manages the product catalog, categories, combos, blogs, navigation menus, and homepage content. Includes the custom **Founder Dashboard** plugin.
+*   **`services/api`**: Express.js transactional server. Handles checkout operations, customer records, inventory transaction ledger, audit logs, contact form submissions, and newsletter subscriptions on PostgreSQL. Acts as a backwards-compatibility layer for the Next.js frontend.
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **Next.js (App Router)** for fast, SEO-friendly React rendering
-- **CSS Modules / Vanilla CSS** with custom design system
-- **React Context API** for global state management (Shopping Bag)
+*   **Next.js (App Router)** & React 19
+*   **CSS / Vanilla CSS** with custom design system
+*   **React Context API** for Shopping Bag state
 
-### Backend & Database
-- **Node.js + Express** (Legacy APIs, preserved for backward compatibility)
-- **Supabase (PostgreSQL)** for dynamic inventory management
-- **Redis** for rate-limiting and caching
-
-### Design System
-| Color | Hex | Usage |
-|-------|-----|-------|
-| Charcoal Black | `#0F0F0F` | Primary text, headers |
-| Warm White | `#F5F5F3` | Backgrounds |
-| Graphite Grey | `#2B2B2B` | Secondary text |
-| Deep Blue-Grey | `#1E2A33` | Accent color |
-
-Typography: **Inter** (Google Fonts)
+### Backend & Headless CMS
+*   **Strapi v5 Community Edition** (Catalog/Content Management)
+*   **Node.js + Express** (Transactional Business Logic)
+*   **PostgreSQL** (Shared database with `tx_` prefixed tables for Express transaction data)
+*   **Redis** (Optional caching layer)
 
 ---
 
-## 📁 Project Structure
+## 📁 Monorepo Structure
 
 ```
-web/
-├── app/                  # Next.js Server & Client Pages (Routes)
-├── components/           # Reusable React components (Navbar, Footer, Hero)
-├── config/               # App configuration files
-├── context/              # React Context Providers (CartContext)
-├── public/               # Static assets, WebP product images
-├── server/               # Express Backend API & DB Scripts
-├── styles/               # Global CSS and module styles
-├── utils/                # Helper utilities (slugify, formatPrice)
-├── .env.example          # Environment variable template
-├── next.config.mjs       # Next.js configuration
-└── package.json          # Dependency manifest
+whoami-website/
+├── apps/
+│   ├── web/               # Next.js Frontend
+│   └── cms/               # Strapi v5 CMS (with custom founder-dashboard plugin)
+├── services/
+│   └── api/               # Express Transactional API (Compatibility Layer)
+├── scripts/               # Migration and database bootstrap scripts
+├── .env.example           # Workspace environment example
+├── package.json           # Workspace root package config
+└── README.md              # Monorepo documentation
 ```
 
 ---
@@ -69,106 +51,73 @@ web/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v18 or higher recommended)
-- npm
+*   Node.js (v20 or higher recommended)
+*   PostgreSQL running locally (e.g., `postgresql://postgres:postgres@localhost:5432/whoami`)
 
 ### Installation
 
-**1. Clone and Install Dependencies**
-```bash
-npm install
-```
+1.  **Install Workspace Dependencies:**
+    From the root directory, run:
+    ```bash
+    npm install
+    ```
 
-**2. Setup Environment Variables**
-Copy `.env.example` to `.env.local` and fill in your Supabase credentials:
-```bash
-cp .env.example .env.local
-```
+2.  **Configure Environment Variables:**
+    Copy `.env.example` to `.env.local` in the root:
+    ```bash
+    cp .env.example .env.local
+    ```
+    Also configure local environment variables for the Next.js app:
+    ```bash
+    cp apps/web/.env.local apps/web/.env.local
+    ```
 
-**3. Install Backend Dependencies (Optional)**
-```bash
-cd server
-npm install
-```
+3.  **Bootstrap the Strapi Database & Migrate Data:**
+    If database schema is empty, run migration script to seed categories, products, combos, and blogs into Strapi:
+    ```bash
+    node scripts/migrate_to_strapi.js
+    ```
+
+4.  **Build the CMS Admin Panel:**
+    Compile the Strapi typescript codebase and custom Founder Dashboard plugin:
+    ```bash
+    npm run build -w apps/cms
+    ```
 
 ### Running the Application
 
-Open **two terminals** (or use `npm run dev` which runs both via concurrently):
-
-**Terminal 1 - Next.js Frontend:**
+To start all services concurrently (Frontend, Express API, Strapi CMS) in development mode:
 ```bash
 npm run dev
 ```
-Frontend runs on: `http://localhost:3000`
 
-**Terminal 2 - Express Backend:**
-```bash
-cd server
-npm start
-```
-Backend runs on: `http://localhost:5001`
+The services will run on the following local addresses:
+*   **Frontend (Next.js)**: `http://localhost:3000`
+*   **Headless CMS (Strapi)**: `http://localhost:1337`
+*   **Express API Backend**: `http://localhost:5001`
 
 ---
 
-## 📊 Product Data (Supabase)
+## 🌐 API Directory
 
-Products are dynamically managed via **Supabase**. The old Excel workflow is deprecated.
-
-### Inventory Scripts
-To manage inventory programmatically, utilize the scripts in the `server/scripts/` directory:
-- `node server/scripts/inventory.js` - Interactive CLI to add/edit/delete products.
-- `node server/scripts/update_db_to_webp.js` - Optimizes DB URLs to point to WebP variants.
-
----
-
-## 🌐 API Endpoints
-
-Base URL: `http://localhost:5001/api`
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/products` | GET | Get all products |
-| `/products/:id` | GET | Get single product |
-| `/products/combos` | GET | Get curated product combos |
-| `/products/reload` | POST | Clear Redis cache |
-| `/health` | GET | Server health check |
+### Express Transactional API (`http://localhost:5001/api/v1`)
+*   `GET /products` - Get mapped product list (from Strapi)
+*   `GET /products/:id` - Get single product detail
+*   `GET /products/combos` - Get combo catalog
+*   `POST /orders` - Place new order (updates stock in Strapi, inserts to `tx_orders` & `tx_inventory_transactions` in Postgres)
+*   `POST /reviews` - Submit review
+*   `POST /contact` - Submit contact form
+*   `POST /newsletter/subscribe` - Newsletter subscription
 
 ---
 
-## 📄 Core Routes
+## 📊 Founder Dashboard
 
-| Page | Route | Description |
-|------|-------|-------------|
-| Home | `/` | Hero, fandoms showcase, featured products, testimonials |
-| Products | `/products` | All products with category filters |
-| Product Detail | `/products/:slug` | SEO-friendly individual product pages |
-| Categories | `/categories/:slug` | Dynamic category-specific collections |
-| Cart | `/cart` | Shopping bag and checkout summary |
-| About | `/about` | Brand story, values, Made in India |
-
----
-
-## 🇮🇳 Made in India
-
-WhoAmI is proudly designed, crafted, and shipped from India. We support local manufacturing while creating world-class fandom merchandise for fans across the country.
-
----
-
-## 📝 Development Scripts
-
-**Frontend:**
-```bash
-npm run dev      # Start Next.js dev server
-npm run build    # Build optimized production bundle
-npm start        # Start Next.js production server
-```
-
----
-
-## 🔒 Important Notes
-
-- 📧 Contact form includes real-time validation.
-- 🖼️ Product images are optimized continuously into `.webp` format in `public/products/`.
+Accessible within the Strapi Admin Panel (`http://localhost:1337/admin`). Provides the Founder with real-time operations overview directly from PostgreSQL and Strapi Document Services:
+*   **Sales & Orders metrics**
+*   **Low Stock Alerts** with email notification triggers
+*   **Security & Operations Audit Logs**
+*   **System Actions** (Cache invalidation, generating weekly reports)
 
 ---
 

@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "applications",
+  "info": {
+    "singularName": "application",
+    "pluralName": "applications",
+    "displayName": "Application",
+    "description": "Schema for application"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "string",
+      "required": true
+    },
+    "phone": {
+      "type": "string"
+    },
+    "cover_letter": {
+      "type": "text"
+    },
+    "resume": {
+      "type": "media",
+      "allowedTypes": [
+        "files"
+      ],
+      "multiple": false
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "applied",
+        "reviewing",
+        "interviewed",
+        "accepted",
+        "rejected"
+      ],
+      "default": "applied"
+    },
+    "career": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::career.career",
+      "inversedBy": "applications"
+    }
+  }
+}

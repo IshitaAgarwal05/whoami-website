@@ -1,0 +1,40 @@
+{
+  "kind": "singleType",
+  "collectionName": "site_configuration",
+  "info": {
+    "singularName": "site-configuration",
+    "pluralName": "site-configurations",
+    "displayName": "Site Configuration",
+    "description": "Schema for site-configuration"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "social_links": {
+      "type": "json"
+    },
+    "whatsapp_number": {
+      "type": "string"
+    },
+    "brand_email": {
+      "type": "string"
+    },
+    "shipping_policy": {
+      "type": "text"
+    },
+    "return_policy": {
+      "type": "text"
+    },
+    "privacy_policy": {
+      "type": "text"
+    },
+    "terms_and_conditions": {
+      "type": "text"
+    },
+    "seo_defaults": {
+      "type": "json"
+    }
+  }
+}

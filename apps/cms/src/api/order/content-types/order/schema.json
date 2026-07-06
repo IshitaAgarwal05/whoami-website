@@ -1,0 +1,79 @@
+{
+  "kind": "collectionType",
+  "collectionName": "orders",
+  "info": {
+    "singularName": "order",
+    "pluralName": "orders",
+    "displayName": "Order",
+    "description": "Schema for order"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "order_number": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "status": {
+      "type": "string",
+      "default": "unfulfilled"
+    },
+    "payment_status": {
+      "type": "string",
+      "default": "pending"
+    },
+    "payment_method": {
+      "type": "string"
+    },
+    "payment_reference_id": {
+      "type": "string"
+    },
+    "shipping_address": {
+      "type": "json"
+    },
+    "billing_address": {
+      "type": "json"
+    },
+    "tax_breakdown": {
+      "type": "json"
+    },
+    "shipping_charges": {
+      "type": "decimal",
+      "default": 0
+    },
+    "discount_applied": {
+      "type": "decimal",
+      "default": 0
+    },
+    "coupon_used": {
+      "type": "string"
+    },
+    "invoice_number": {
+      "type": "string"
+    },
+    "packing_status": {
+      "type": "string",
+      "default": "pending"
+    },
+    "timeline": {
+      "type": "json"
+    },
+    "internal_notes": {
+      "type": "text"
+    },
+    "customer_notes": {
+      "type": "text"
+    },
+    "items": {
+      "type": "json",
+      "required": true
+    },
+    "total_amount": {
+      "type": "decimal",
+      "required": true
+    }
+  }
+}

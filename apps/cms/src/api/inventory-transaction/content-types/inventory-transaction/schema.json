@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "inventory_transactions",
+  "info": {
+    "singularName": "inventory-transaction",
+    "pluralName": "inventory-transactions",
+    "displayName": "Inventory Transaction",
+    "description": "Schema for inventory-transaction"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "product_sku": {
+      "type": "string",
+      "required": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "incoming",
+        "outgoing",
+        "manual_adjustment",
+        "sale",
+        "return"
+      ],
+      "required": true
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true
+    },
+    "reference_id": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "text"
+    }
+  }
+}

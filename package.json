@@ -1,35 +1,27 @@
 {
-  "name": "web",
+  "name": "whoami-studios-monorepo",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "concurrently \"npm run dev:web\" \"npm run dev:server\"",
-    "dev:web": "next dev",
-    "dev:server": "npm run dev --prefix server",
-    "build": "next build",
-    "start": "concurrently \"npm run start:web\" \"npm run start:server\"",
-    "start:web": "next start",
-    "start:server": "npm start --prefix server",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "axios": "^1.13.4",
-    "framer-motion": "^12.40.0",
-    "next": "^16.2.4",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "dev:web": "npm run dev -w apps/web",
+    "dev:api": "npm run dev -w services/api",
+    "dev:cms": "npm run dev -w apps/cms",
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:api\" \"npm run dev:cms\"",
+    "build:web": "npm run build -w apps/web",
+    "build:api": "npm run build -w services/api",
+    "build:cms": "npm run build -w apps/cms",
+    "build": "npm run build -w apps/web && npm run build -w services/api",
+    "install:all": "npm install"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.0",
-    "@types/react": "^19.2.5",
-    "@types/react-dom": "^19.2.3",
-    "autoprefixer": "^10.5.0",
-    "concurrently": "^9.1.2",
-    "eslint": "^9.27.0",
-    "eslint-config-next": "^16.2.4",
-    "postcss": "^8.5.15",
-    "sass": "^1.99.0",
-    "tailwindcss": "^4.3.0"
+    "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "ajv": "^8.20.0"
   }
 }

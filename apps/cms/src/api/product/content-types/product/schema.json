@@ -1,0 +1,150 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "singularName": "product",
+    "pluralName": "products",
+    "displayName": "Product",
+    "description": "Schema for product"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "mrp": {
+      "type": "decimal"
+    },
+    "selling_price": {
+      "type": "decimal",
+      "required": true
+    },
+    "cost_price": {
+      "type": "decimal"
+    },
+    "sku": {
+      "type": "string",
+      "unique": true,
+      "required": true
+    },
+    "stock": {
+      "type": "integer",
+      "default": 0
+    },
+    "low_stock_threshold": {
+      "type": "integer",
+      "default": 5
+    },
+    "material": {
+      "type": "string"
+    },
+    "weight": {
+      "type": "decimal"
+    },
+    "dimensions": {
+      "type": "string"
+    },
+    "printing_time": {
+      "type": "string"
+    },
+    "dispatch_time": {
+      "type": "string"
+    },
+    "delivery_estimate": {
+      "type": "string"
+    },
+    "color_options": {
+      "type": "json"
+    },
+    "material_options": {
+      "type": "json"
+    },
+    "customizable": {
+      "type": "boolean",
+      "default": false
+    },
+    "seo_title": {
+      "type": "string"
+    },
+    "seo_description": {
+      "type": "text"
+    },
+    "seo_keywords": {
+      "type": "string"
+    },
+    "search_keywords": {
+      "type": "text"
+    },
+    "featured_order": {
+      "type": "integer",
+      "default": 0
+    },
+    "rating": {
+      "type": "decimal",
+      "default": 5
+    },
+    "review_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "draft",
+        "published",
+        "archived"
+      ],
+      "default": "published"
+    },
+    "soft_deleted": {
+      "type": "boolean",
+      "default": false
+    },
+    "thumbnail": {
+      "type": "media",
+      "allowedTypes": [
+        "images"
+      ],
+      "multiple": false
+    },
+    "gallery": {
+      "type": "media",
+      "allowedTypes": [
+        "images"
+      ],
+      "multiple": true
+    },
+    "variants": {
+      "type": "json"
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "products"
+    },
+    "collection": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::collection.collection",
+      "inversedBy": "products"
+    },
+    "related_products": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::product.product"
+    }
+  }
+}
