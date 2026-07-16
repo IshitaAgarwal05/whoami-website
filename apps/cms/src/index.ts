@@ -85,6 +85,69 @@ export default {
           }
         }
       }
+      
+      // Bootstrap Customs category
+      const categorySvc = strapi.documents('api::category.category');
+      let cat = await categorySvc.findFirst({
+        filters: { name: 'Customs' }
+      });
+      
+      if (!cat) {
+        cat = await categorySvc.create({
+          data: {
+            name: 'Customs',
+            slug: 'customs',
+            description: 'Customizable products made just for you by WhoAmI Studios'
+          },
+          status: 'published'
+        });
+        console.log('✅ Bootstrapped Customs category!');
+      } else {
+        await categorySvc.publish({ documentId: cat.documentId });
+      }
+
+      if (cat) {
+        const productSvc = strapi.documents('api::product.product');
+        const sampleProducts = [
+          {
+            name: 'NFC Name Products',
+            sku: 'PERS-007',
+            description: 'Personalized desk stand equipped with an embedded NFC chip linked directly to your social profile or portfolio.',
+            selling_price: 799,
+            mrp: 999,
+            customizable: true,
+            material: 'PLA / Hybrid NFC',
+            stock: 40,
+            category: cat.documentId || cat.id
+          }
+        ];
+
+        for (const sp of sampleProducts) {
+          const existing = await productSvc.findFirst({
+            filters: { sku: sp.sku }
+          });
+          if (!existing) {
+            await productSvc.create({
+              data: {
+                ...sp,
+                slug: sp.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+              },
+              status: 'published'
+            });
+            console.log(`   - Seeded personalized product: "${sp.name}"`);
+          } else {
+            await productSvc.update({
+              documentId: existing.documentId,
+              data: {
+                ...sp,
+                slug: sp.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+              }
+            });
+            await productSvc.publish({ documentId: existing.documentId });
+          }
+        }
+      }
+
       console.log('✅ Public permissions bootstrap completed!');
     } catch (err: any) {
       console.error('❌ Failed to bootstrap public permissions:', err.message);

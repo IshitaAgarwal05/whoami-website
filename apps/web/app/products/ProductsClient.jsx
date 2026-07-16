@@ -26,10 +26,12 @@ const ProductsClient = ({ allProducts = [], combos, forcedCategory = 'All', allC
     };
 
     const tabs = [
+        { id: 'all', label: 'All Products', subtext: 'Find what represents you' },
         { id: 'store-99', label: 'Under ₹99', subtext: 'Small price. Big personality.' },
-        { id: 'all', label: 'Curated For You', subtext: 'Find what represents you' },
+        { id: 'charms', label: 'Charms', subtext: 'Collect your charms' },
+        { id: 'keychains', label: 'Keychains', subtext: 'Carry your identity' },
         { id: 'combos', label: 'Curated Combos', subtext: 'Save more. Gift better.' },
-        { id: 'charms', label: 'Charms', subtext: 'Collect your charms' }
+        { id: 'personalized', label: 'Customs', subtext: 'Your Name. Your Story. Your Creation.' }
     ];
 
     const sortOptions = [
@@ -63,7 +65,7 @@ const ProductsClient = ({ allProducts = [], combos, forcedCategory = 'All', allC
         } else {
             rawCats = [...new Set(allProducts.map(p => p.Category))].filter(Boolean);
         }
-        const preferredOrder = ['Collectibles', 'Keychains', 'Book Accessories', 'Decor'];
+        const preferredOrder = ['Collectibles', 'Keychains', 'Charms', 'Book Accessories', 'Book Nooks', 'Decor', 'Customs'];
         const sortedCats = rawCats.sort((a, b) => {
             const indexA = preferredOrder.indexOf(a);
             const indexB = preferredOrder.indexOf(b);
@@ -82,9 +84,13 @@ const ProductsClient = ({ allProducts = [], combos, forcedCategory = 'All', allC
         } else if (activeTab === 'combos') {
             data = combos;
         } else if (activeTab === 'charms') {
-            data = allProducts.filter(p => p.Category === 'Keychains' || p.Category === 'Charms');
+            data = allProducts.filter(p => p.Category === 'Charms');
+        } else if (activeTab === 'keychains') {
+            data = allProducts.filter(p => p.Category === 'Keychains');
+        } else if (activeTab === 'personalized') {
+            data = allProducts.filter(p => p.Category === 'Customs');
         } else {
-            data = allProducts;
+            data = allProducts.filter(p => p.Category !== 'Combos');
         }
 
         if (showOnlyWithImages) {
@@ -116,7 +122,7 @@ const ProductsClient = ({ allProducts = [], combos, forcedCategory = 'All', allC
     };
 
     const currentSortLabel = sortOptions.find(opt => opt.value === sortBy)?.label;
-    const activeTabData = tabs.find(t => t.id === activeTab);
+    const activeTabData = tabs.find(t => t.id === activeTab) || tabs[0];
     const allFilteredItems = getFilteredData();
     const displayItems = allFilteredItems.slice(0, visibleCount);
     const hasMore = visibleCount < allFilteredItems.length;
@@ -126,9 +132,11 @@ const ProductsClient = ({ allProducts = [], combos, forcedCategory = 'All', allC
         <div className={`products-page ${activeTab}`}>
             <div className="container">
                 <div className="products-header">
-                    <h1 className="reveal-text">Discover Your Identity</h1>
+                    <h1 className="reveal-text">
+                        {activeTab === 'personalized' ? 'Your Name. Your Story. Your Creation.' : 'Discover Your Identity'}
+                    </h1>
                     <p className="products-subtitle">
-                        {activeTabData.subtext}
+                        {activeTab === 'personalized' ? 'Made Just For You.' : activeTabData.subtext}
                     </p>
 
                     <div className="products-tabs-container">
@@ -189,7 +197,7 @@ const ProductsClient = ({ allProducts = [], combos, forcedCategory = 'All', allC
                             )}
                         </div>
 
-                        {!(activeTab === 'combos' || activeTab === 'charms') && (
+                        {!(activeTab === 'combos' || activeTab === 'charms' || activeTab === 'personalized' || activeTab === 'keychains') && (
                             <div className="category-filters">
                                 {categories.map(cat => (
                                     <button
