@@ -7,7 +7,7 @@ import Toast from '../components/Toast/Toast';
 
 const CartContext = createContext();
 
-const RAI20_ELIGIBLE_IDS = ['2', '3', '4', '5', '6', '7', '8', '9', '11', '13', '17', '18', '21', '31', '32', '34'];
+// const RAI20_ELIGIBLE_IDS = ['2', '3', '4', '5', '6', '7', '8', '9', '11', '13', '17', '18', '21', '31', '32', '34'];
 
 export const useCart = () => {
     const context = useContext(CartContext);
@@ -99,7 +99,7 @@ export const CartProvider = ({ children }) => {
         return cartItems.reduce((total, item) => total + (item.Price * item.quantity), 0);
     };
 
-    const VALID_PROMO_CODES = ['KAY20', 'NEW10', 'WHO15', 'RAI20'];
+    const VALID_PROMO_CODES = ['KAY20', 'NEW10', 'WHO15'];
 
     const applyPromoCode = (code) => {
         const upperCode = code.trim().toUpperCase();
@@ -119,12 +119,12 @@ export const CartProvider = ({ children }) => {
         
         const discountPercentage = parseInt(match[1], 10);
         
-        if (upperCode === 'RAI20') {
-            const hasEligibleProduct = cartItems.some(item => RAI20_ELIGIBLE_IDS.includes(String(item.ID)));
-            if (!hasEligibleProduct) {
-                return { success: false, message: 'This code is only valid for Harry Potter and Stranger Things products.' };
-            }
-        }
+        // if (upperCode === 'RAI20') {
+        //     const hasEligibleProduct = cartItems.some(item => RAI20_ELIGIBLE_IDS.includes(String(item.ID)));
+        //     if (!hasEligibleProduct) {
+        //         return { success: false, message: 'This code is only valid for Harry Potter and Stranger Things products.' };
+        //     }
+        // }
         
         setAppliedPromo({
             code: code.trim().toUpperCase(),
@@ -142,16 +142,16 @@ export const CartProvider = ({ children }) => {
     const getDiscountAmount = () => {
         if (!appliedPromo) return 0;
         
-        if (appliedPromo.code === 'RAI20') {
-            const applicableTotal = cartItems.reduce((total, item) => {
-                const isApplicable = RAI20_ELIGIBLE_IDS.includes(String(item.ID));
-                if (isApplicable) {
-                    return total + (item.Price * item.quantity);
-                }
-                return total;
-            }, 0);
-            return applicableTotal * (appliedPromo.discountPercentage / 100);
-        }
+        // if (appliedPromo.code === 'RAI20') {
+        //     const applicableTotal = cartItems.reduce((total, item) => {
+        //         const isApplicable = RAI20_ELIGIBLE_IDS.includes(String(item.ID));
+        //         if (isApplicable) {
+        //             return total + (item.Price * item.quantity);
+        //         }
+        //         return total;
+        //     }, 0);
+        //     return applicableTotal * (appliedPromo.discountPercentage / 100);
+        // }
 
         return getCartTotal() * (appliedPromo.discountPercentage / 100);
     };
