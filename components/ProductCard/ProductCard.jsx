@@ -21,7 +21,7 @@ const ProductCard = ({ product, compact = false, isCombo = false }) => {
     const imageUrl = product.ImageURL || FALLBACK_IMAGE;
 
     // Determine tag
-    const tag = product.Tag || (product.Price === 99 ? 'Identity' : null);
+    const tag = product.Tag || null;
 
     const handleAddToCart = (e) => {
         e.preventDefault();
