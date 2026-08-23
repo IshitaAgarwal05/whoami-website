@@ -15,12 +15,12 @@ import path from 'path';
 export const getProductImages = (mainImageUrl) => {
     if (!mainImageUrl) return [];
 
-    // Parse folder name from URL (e.g., /products/dema-bm/img.webp -> dema-bm)
-    const match = mainImageUrl.match(/^\/products\/([^/]+)\//);
+    // Parse folder name from URL (e.g., /products/dema-bm/img.webp -> dema-bm, or /products/charms/duck/img.webp -> charms/duck)
+    const match = mainImageUrl.match(/^\/products\/(.+)\/[^/]+$/);
     if (!match) return [mainImageUrl];
 
     const folderName = match[1];
-    const folderPath = path.join(process.cwd(), 'public', 'products', folderName);
+    const folderPath = path.join(process.cwd(), 'public', 'products', ...folderName.split('/'));
 
     try {
         const files = fs.readdirSync(folderPath)
