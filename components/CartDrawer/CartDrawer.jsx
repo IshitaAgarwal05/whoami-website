@@ -40,8 +40,10 @@ const CartDrawer = () => {
     const freeDeliveryThreshold = 1000;
     const currentTotal = getCartTotal();
     const discountAmount = getDiscountAmount();
-    const finalTotal = currentTotal - discountAmount;
-    const remainingForFreeDelivery = Math.max(0, freeDeliveryThreshold - finalTotal);
+    const subtotal = currentTotal - discountAmount;
+    const remainingForFreeDelivery = Math.max(0, freeDeliveryThreshold - subtotal);
+    const shippingCharge = remainingForFreeDelivery > 0 ? 100 : 0;
+    const finalTotal = subtotal + shippingCharge;
 
     return (
         <>
@@ -234,6 +236,12 @@ const CartDrawer = () => {
                                     <span>-{formatPrice(discountAmount)}</span>
                                 </div>
                             )}
+                            <div className="summary-row">
+                                <span>Shipping</span>
+                                <span className={remainingForFreeDelivery === 0 ? 'free-text' : ''}>
+                                    {remainingForFreeDelivery === 0 ? 'FREE' : formatPrice(shippingCharge)}
+                                </span>
+                            </div>
                             <div className="summary-row total">
                                 <span>Total Estimated</span>
                                 <span>{formatPrice(finalTotal)}</span>

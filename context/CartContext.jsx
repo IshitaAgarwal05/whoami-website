@@ -165,19 +165,26 @@ export const CartProvider = ({ children }) => {
         });
 
         const total = getCartTotal();
-        let finalTotal = total;
+        let subtotal = total;
         
         message += `\nSubtotal: ${formatPrice(total)}`;
         
         if (appliedPromo) {
             const discountAmount = getDiscountAmount();
-            finalTotal = total - discountAmount;
+            subtotal = total - discountAmount;
             message += `\nPromo Code Applied: ${appliedPromo.code} (-${appliedPromo.discountPercentage}%)`;
             message += `\nDiscount: -${formatPrice(discountAmount)}`;
         }
 
+        const shippingCharge = subtotal < 1000 ? 100 : 0;
+        if (shippingCharge > 0) {
+            message += `\nDelivery Charge: ${formatPrice(shippingCharge)}`;
+        } else {
+            message += `\nDelivery Charge: FREE`;
+        }
+
+        const finalTotal = subtotal + shippingCharge;
         message += `\nFinal Total: ${formatPrice(finalTotal)}`;
-        message += `\n\nName:\nCity:`;
 
         const encodedMessage = encodeURIComponent(message);
         window.open(`https://wa.me/${config.WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');

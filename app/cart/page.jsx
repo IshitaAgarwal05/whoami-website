@@ -27,8 +27,10 @@ export default function CartPage() {
     const freeDeliveryThreshold = 1000;
     const currentTotal = getCartTotal();
     const discountAmount = getDiscountAmount();
-    const finalTotal = currentTotal - discountAmount;
-    const remainingForFreeDelivery = Math.max(0, freeDeliveryThreshold - finalTotal);
+    const subtotal = currentTotal - discountAmount;
+    const remainingForFreeDelivery = Math.max(0, freeDeliveryThreshold - subtotal);
+    const shippingCharge = remainingForFreeDelivery > 0 ? 100 : 0;
+    const finalTotal = subtotal + shippingCharge;
 
     if (cartItems.length === 0) {
         return (
@@ -190,7 +192,7 @@ export default function CartPage() {
                                 <div className="summary-row">
                                     <span>Shipping</span>
                                     <span className={remainingForFreeDelivery === 0 ? 'free-text' : ''}>
-                                        {remainingForFreeDelivery === 0 ? 'FREE' : 'Calculated at checkout'}
+                                        {remainingForFreeDelivery === 0 ? 'FREE' : formatPrice(shippingCharge)}
                                     </span>
                                 </div>
 
