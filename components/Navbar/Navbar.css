@@ -1,3 +1,26 @@
+/* Announcement Bar */
+.announcement-bar {
+    background-color: var(--color-dark-gold);
+    text-align: center;
+    padding: 8px 12px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.announcement-bar a {
+    color: var(--color-warm-white);
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    transition: opacity var(--transition-base);
+}
+
+.announcement-bar a:hover {
+    opacity: 0.8;
+}
+
 /* Navbar Styles */
 .navbar {
     position: sticky;

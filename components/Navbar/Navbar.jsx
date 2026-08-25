@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCart } from '../../context/CartContext';
+import config from '../../config';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -28,8 +29,17 @@ const Navbar = () => {
         return pathname === path;
     };
 
+    const showAnnouncement = pathname === '/products' || pathname.startsWith('/products/');
+
     return (
         <nav className="navbar">
+            {showAnnouncement && (
+                <div className="announcement-bar">
+                    <Link href={`https://wa.me/${config.WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi, I am interested in bulk orders / wholesale rates.')}`} target="_blank" rel="noopener noreferrer">
+                        BULK ORDERS? GET SPECIAL WHOLESALE RATES — CONTACT US ON WHATSAPP
+                    </Link>
+                </div>
+            )}
             <div className="navbar-container container">
                 <Link href="/" className="navbar-logo">
                     <img
