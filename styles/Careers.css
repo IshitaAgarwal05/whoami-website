@@ -145,8 +145,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 100;
+    z-index: 1000;
     padding: var(--spacing-md);
+    /* Ensure the overlay itself starts below any sticky navbar on page, but covers it */
+    padding-top: max(var(--spacing-md), env(safe-area-inset-top));
 }
 
 /* Modal Content Card */
@@ -156,33 +158,46 @@
     border-radius: var(--radius-2xl);
     width: 100%;
     max-width: 580px;
-    max-height: 90vh;
-    overflow-y: auto;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
     position: relative;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
     box-sizing: border-box;
 }
 
 .modal-close-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: none;
-    border: none;
-    color: var(--color-text-secondary);
-    font-size: 28px;
-    cursor: pointer;
+    /* Sticks to the top of the modal card — never scrolls away */
+    position: sticky;
+    top: 0;
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin: 16px 16px 0 auto;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 50%;
+    color: #ffffff;
+    font-size: 22px;
     line-height: 1;
+    cursor: pointer;
     z-index: 10;
-    transition: color 0.2s;
+    transition: background 0.2s, color 0.2s;
+    flex-shrink: 0;
 }
 
 .modal-close-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
     color: #ffffff;
 }
 
 .modal-inner {
-    padding: var(--spacing-3xl);
+    padding: var(--spacing-md) var(--spacing-3xl) var(--spacing-3xl);
+    overflow-y: auto;
+    flex: 1;
 }
 
 .modal-inner h2 {

@@ -16,11 +16,6 @@ const OPEN_POSITIONS = [
         desc: 'Combine vintage handcrafted textile arts with modern pop-culture icons. Bring tactile softness to high-fantasy figurines.'
     },
     {
-        id: 'social-media',
-        title: 'Social Media Intern',
-        desc: 'Tell our story. Create engaging behind-the-scenes content, showcases, and reels highlighting our Jaipur artisan workshops.'
-    },
-    {
         id: 'robotics',
         title: 'Robotics Intern',
         desc: 'Infuse motion and automation. Work on micro-servos, custom lighting components, and interactive mechanical desk accessories.'
@@ -191,6 +186,7 @@ export default function CareersClient() {
                             exit={{ scale: 0.95, y: 15 }}
                             onClick={(e) => e.stopPropagation()}
                         >
+                            {/* Close button is outside modal-inner so it never scrolls away */}
                             <button
                                 className="modal-close-btn"
                                 onClick={() => {
@@ -200,6 +196,7 @@ export default function CareersClient() {
                                     }
                                 }}
                                 disabled={loading}
+                                aria-label="Close"
                             >
                                 &times;
                             </button>
