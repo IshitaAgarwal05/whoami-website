@@ -1,70 +1,149 @@
+/* Review Carousel — Infinite Marquee */
+
 .review-carousel-section {
-    position: relative;
-    padding: var(--spacing-xl) 0 0 0;
+    padding: var(--spacing-2xl) 0 0;
 }
 
-.review-carousel {
-    display: flex;
-    overflow-x: auto;
-    gap: var(--spacing-lg);
-    padding-bottom: var(--spacing-xl);
-    scroll-behavior: smooth;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none; /* Firefox */
+.review-carousel-header {
+    padding: 0 var(--spacing-xl);
+    margin-bottom: var(--spacing-2xl);
 }
 
-.review-carousel::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+.review-carousel-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    letter-spacing: -0.01em;
+    margin: 0;
 }
 
-.review-carousel-item {
-    flex: 0 0 calc(25% - 16px);
-    min-width: 260px;
-    scroll-snap-align: start;
-}
-
-.review-image-wrapper {
+/* Marquee wrapper — fades edges */
+.review-marquee-wrapper {
     width: 100%;
-    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+}
+
+.review-marquee-track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+    /* Slightly slower than the custom orders strip for variety */
+    animation: review-scroll 35s linear infinite;
+}
+
+.review-marquee-wrapper:hover .review-marquee-track {
+    animation-play-state: paused;
+}
+
+@keyframes review-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+.review-marquee-item {
+    flex-shrink: 0;
+    width: 280px;
+    height: 200px;
     border-radius: var(--radius-xl);
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.06);
     background: #000;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.review-image-wrapper img {
+.review-marquee-item:hover {
+    transform: scale(1.04) translateY(-4px);
+    border-color: rgba(212, 175, 55, 0.35);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.08);
+}
+
+.review-marquee-item img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
-    transition: transform 0.4s ease;
-}
-
-.review-image-wrapper:hover img {
-    transform: scale(1.02);
-}
-
-@media (max-width: 1024px) {
-    .review-carousel-item {
-        flex: 0 0 calc(33.333% - 16px);
-        min-width: 240px;
-    }
+    display: block;
 }
 
 @media (max-width: 768px) {
-    .review-carousel-item {
-        flex: 0 0 calc(50% - 12px);
-        min-width: 220px;
+    .review-marquee-item {
+        width: 220px;
+        height: 160px;
     }
 }
 
-@media (max-width: 480px) {
-    .review-carousel-item {
-        flex: 0 0 calc(75% - 12px);
-        min-width: 240px;
-    }
+/* ── Lightbox ─────────────────────────────────────────────── */
+.review-lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    animation: lightbox-fade-in 0.2s ease;
+    cursor: zoom-out;
 }
+
+@keyframes lightbox-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.review-lightbox-close {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2001;
+    transition: background 0.2s ease;
+}
+
+.review-lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.review-lightbox-content {
+    cursor: default;
+    max-width: min(480px, 90vw);
+    max-height: 65vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: lightbox-scale-in 0.2s ease;
+}
+
+@keyframes lightbox-scale-in {
+    from { transform: scale(0.93); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+}
+
+.review-lightbox-content img {
+    max-width: 100%;
+    max-height: 65vh;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+}
+
+/* Make items look clickable */
+.review-marquee-item {
+    cursor: pointer;
+}
+

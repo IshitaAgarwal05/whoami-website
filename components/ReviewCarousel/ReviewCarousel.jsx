@@ -1,67 +1,83 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './ReviewCarousel.css';
 
 const ReviewCarousel = ({ images, categoryName }) => {
-    const carouselRef = useRef(null);
-    const [showLeftArrow, setShowLeftArrow] = useState(false);
-    const [showRightArrow, setShowRightArrow] = useState(true);
+    const [lightboxSrc, setLightboxSrc] = useState(null);
 
-    const scroll = (direction) => {
-        const container = carouselRef.current;
-        if (!container) return;
+    const closeLightbox = useCallback(() => setLightboxSrc(null), []);
 
-        const scrollAmount = container.clientWidth * 0.8;
-        const newScrollLeft = direction === 'left'
-            ? container.scrollLeft - scrollAmount
-            : container.scrollLeft + scrollAmount;
-
-        container.scrollTo({
-            left: newScrollLeft,
-            behavior: 'smooth'
-        });
-    };
-
-    const throttleTimer = useRef(null);
-
-    const handleScroll = () => {
-        if (throttleTimer.current) return;
-
-        throttleTimer.current = setTimeout(() => {
-            const container = carouselRef.current;
-            if (container) {
-                setShowLeftArrow(container.scrollLeft > 10);
-                setShowRightArrow(
-                    container.scrollLeft < container.scrollWidth - container.clientWidth - 10
-                );
-            }
-            throttleTimer.current = null;
-        }, 100); 
-    };
+    // Close on Escape key
+    useEffect(() => {
+        if (!lightboxSrc) return;
+        const onKey = (e) => { if (e.key === 'Escape') closeLightbox(); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [lightboxSrc, closeLightbox]);
 
     if (!images || images.length === 0) return null;
 
+    // Duplicate for seamless infinite loop
+    const doubled = [...images, ...images];
+
     return (
-        <div className="review-carousel-section">
-            <div className="carousel-header">
-                {categoryName && <h2 className="carousel-title">{categoryName}</h2>}
+        <>
+            <div className="review-carousel-section">
+                {categoryName && (
+                    <div className="review-carousel-header">
+                        <h2 className="review-carousel-title">{categoryName}</h2>
+                    </div>
+                )}
+
+                <div className="review-marquee-wrapper" aria-label="Customer reviews">
+                    <div className="review-marquee-track">
+                        {doubled.map((image, index) => (
+                            <div
+                                key={index}
+                                className="review-marquee-item"
+                                onClick={() => setLightboxSrc(image)}
+                                role="button"
+                                tabIndex={index < images.length ? 0 : -1}
+                                aria-label={`View review image ${(index % images.length) + 1}`}
+                                onKeyDown={(e) => e.key === 'Enter' && setLightboxSrc(image)}
+                            >
+                                <img
+                                    src={image}
+                                    alt={`Customer Review ${(index % images.length) + 1}`}
+                                    loading="lazy"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
 
-            <div
-                className="review-carousel"
-                ref={carouselRef}
-                onScroll={handleScroll}
-            >
-                {images.map((image, index) => (
-                    <div key={index} className="review-carousel-item">
-                        <div className="review-image-wrapper">
-                            <img src={image} alt={`Customer Review ${index + 1}`} loading="lazy" />
-                        </div>
+            {/* Lightbox */}
+            {lightboxSrc && (
+                <div
+                    className="review-lightbox-overlay"
+                    onClick={closeLightbox}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Review image"
+                >
+                    <button
+                        className="review-lightbox-close"
+                        onClick={closeLightbox}
+                        aria-label="Close"
+                    >
+                        &times;
+                    </button>
+                    <div
+                        className="review-lightbox-content"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <img src={lightboxSrc} alt="Review" />
                     </div>
-                ))}
-            </div>
-        </div>
+                </div>
+            )}
+        </>
     );
 };
 

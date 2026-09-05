@@ -31,7 +31,7 @@ async function getReviewImages() {
     if (!fs.existsSync(reviewsDir)) return [];
     const files = fs.readdirSync(reviewsDir);
     const images = files
-      .filter(f => f.endsWith('.webp'))
+      .filter(f => /\.(jpe?g|png|webp)$/i.test(f))
       .map(f => `/reviews/${f}`);
     return images;
   } catch (error) {
