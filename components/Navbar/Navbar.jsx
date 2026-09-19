@@ -33,13 +33,6 @@ const Navbar = () => {
 
     return (
         <nav className="navbar">
-            {showAnnouncement && (
-                <div className="announcement-bar">
-                    <Link href={`https://wa.me/${config.WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi, I am interested in bulk orders / wholesale rates.')}`} target="_blank" rel="noopener noreferrer">
-                        BULK ORDERS? GET SPECIAL WHOLESALE RATES — CONTACT US ON WHATSAPP
-                    </Link>
-                </div>
-            )}
             <div className="navbar-container container">
                 <Link href="/" className="navbar-logo">
                     <img
@@ -101,6 +94,13 @@ const Navbar = () => {
                     </button>
                 </div>
             </div>
+            {showAnnouncement && (
+                <div className="announcement-bar">
+                    <Link href={`https://wa.me/${config.WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi, I am interested in bulk orders / wholesale rates.')}`} target="_blank" rel="noopener noreferrer">
+                        BULK ORDERS? GET SPECIAL WHOLESALE RATES — CONTACT US ON WHATSAPP
+                    </Link>
+                </div>
+            )}
         </nav>
     );
 };
