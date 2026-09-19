@@ -23,6 +23,10 @@ export const getProductImages = (mainImageUrl) => {
     const folderPath = path.join(process.cwd(), 'public', 'products', ...folderName.split('/'));
 
     try {
+        if (!fs.existsSync(folderPath)) {
+            return [mainImageUrl];
+        }
+
         const files = fs.readdirSync(folderPath)
             .filter(f => f.endsWith('.webp'))
             .map(f => `/products/${folderName}/${f}`);
@@ -35,19 +39,22 @@ export const getProductImages = (mainImageUrl) => {
         // Example: bm.webp -> 0, bm_1.webp -> 1, bm_2.webp -> 2
         files.sort((a, b) => {
             const getSuffix = (url) => {
-                const numMatch = url.match(/_(\\d+)\\.[a-zA-Z0-9]+$/);
+                const numMatch = url.match(/_(\d+)\.[a-zA-Z0-9]+$/);
                 return numMatch ? parseInt(numMatch[1], 10) : 0;
             };
             return getSuffix(a) - getSuffix(b);
         });
 
-        // Ensure the main image is included if fs somehow missed it
+        // Ensure the main image is included if fs missed it and it exists on disk
         if (!files.includes(mainImageUrl)) {
-            const numMatch = mainImageUrl.match(/_(\\d+)\\.[a-zA-Z0-9]+$/);
-            if (!numMatch) {
-                files.unshift(mainImageUrl);
-            } else {
-                files.push(mainImageUrl);
+            const mainFullPath = path.join(process.cwd(), 'public', mainImageUrl.replace(/^\//, ''));
+            if (fs.existsSync(mainFullPath)) {
+                const numMatch = mainImageUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
+                if (!numMatch) {
+                    files.unshift(mainImageUrl);
+                } else {
+                    files.push(mainImageUrl);
+                }
             }
         }
 
