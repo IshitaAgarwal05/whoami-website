@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import ProductDetailClient from './ProductDetailClient';
 import { slugify } from '../../../utils/slugify';
-import { getProductImages } from '../../../utils/imageUtils';
+import { getProductImages, getFirstProductImage } from '../../../utils/imageUtils';
 import config from '../../../config';
 
 async function getProductAndRelated(slug) {

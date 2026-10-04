@@ -168,7 +168,6 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
                     <div className="related-products-section">
                         <div className="section-header">
                             <h2>You Might Also Like</h2>
-                            <p>Handpicked artifacts from the same universe.</p>
                         </div>
                         <div className="products-grid">
                             {relatedProducts.map((p) => (
