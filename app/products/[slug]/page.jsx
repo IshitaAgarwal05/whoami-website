@@ -32,10 +32,17 @@ async function getProductAndRelated(slug) {
 
     if (!product) return { product: null, related: [] };
 
+    // Resolve ImageURL for meta tags
+    product.ImageURL = getFirstProductImage(product.FolderURL || product.ImageURL) || product.ImageURL;
+
     const showOnlyWithImages = process.env.NEXT_PUBLIC_SHOW_NO_IMAGE_PRODUCTS !== 'true';
 
     let related = sourceList
-      .filter(p => p.Category === product.Category && p.ID !== product.ID);
+      .filter(p => p.Category === product.Category && p.ID !== product.ID)
+      .map(p => ({
+        ...p,
+        ImageURL: getFirstProductImage(p.FolderURL || p.ImageURL) || p.ImageURL
+      }));
 
     if (showOnlyWithImages) {
       related = related.filter(p => 

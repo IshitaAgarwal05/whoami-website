@@ -1,5 +1,6 @@
 import ProductsClient from './ProductsClient';
 import config from '../../config';
+import { getFirstProductImage } from '../../utils/imageUtils';
 
 async function getData() {
   const baseUrl = config.API_BASE_URL;
@@ -78,6 +79,16 @@ export default async function ProductsPage() {
     ],
   };
 
+  const resolvedProducts = allProducts.map(p => ({
+    ...p,
+    ImageURL: getFirstProductImage(p.FolderURL || p.ImageURL) || p.ImageURL
+  }));
+
+  const resolvedCombos = combos.map(c => ({
+    ...c,
+    ImageURL: getFirstProductImage(c.FolderURL || c.ImageURL) || c.ImageURL
+  }));
+
   return (
     <>
       <script
@@ -85,8 +96,8 @@ export default async function ProductsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       <ProductsClient 
-        allProducts={allProducts}
-        combos={combos}
+        allProducts={resolvedProducts}
+        combos={resolvedCombos}
         allCategories={allCategories}
       />
     </>

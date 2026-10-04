@@ -2,7 +2,6 @@ import Hero from '../../components/Hero/Hero';
 import Link from 'next/link';
 import GalleryCarousel from '../../components/GalleryCarousel/GalleryCarousel';
 import ReviewCarousel from '../../components/ReviewCarousel/ReviewCarousel';
-import TestimonialCarousel from '../../components/TestimonialCarousel/TestimonialCarousel';
 import FaqFolders from '../../components/FaqFolders/FaqFolders';
 import InteractiveCTA from '../../components/InteractiveCTA/InteractiveCTA';
 import config from '../../config';
@@ -103,8 +102,14 @@ async function getProducts() {
   }
 }
 
+import { getFirstProductImage } from '../../utils/imageUtils';
+
 export default async function HomePage() {
-  const products = await getProducts();
+  const rawProducts = await getProducts();
+  const products = rawProducts.map(p => ({
+    ...p,
+    ImageURL: getFirstProductImage(p.FolderURL || p.ImageURL) || p.ImageURL
+  }));
   const galleryImages = await getGalleryImages();
   const reviewImages = await getReviewImages();
   const customOrderImages = await getCustomOrderImages();
@@ -126,33 +131,6 @@ export default async function HomePage() {
     },
   };
 
-  const testimonials = [
-    {
-      text: "I ordered a desk piece from WhoAmI and honestly, it doesn’t feel like a typical 3D printed object. It feels like something designed with thought. It’s subtle, aesthetic, and people actually ask me about it when they see my desk.",
-      author: "Aayush",
-      role: "Architecture Student"
-    },
-    {
-      text: "I bought this as a gift for a friend who is a huge Harry Potter fan, and the reaction was priceless. It didn’t look mass-produced at all. It felt personal and unique. That’s very rare to find these days.",
-      author: "Riya",
-      role: "MBA Student"
-    },
-    {
-      text: "Most desk decor items online look very generic, but WhoAmI pieces are different. They feel like identity pieces rather than just decor. It’s a small thing, but it changes how my desk feels.",
-      author: "Kunal",
-      role: "Software Engineer"
-    },
-    {
-      text: "The finish, the weight, the detailing — everything was much better than what I expected from a student startup. If this is their starting quality, I’m excited to see what they build next.",
-      author: "Mehul",
-      role: "Product Designer"
-    },
-    {
-      text: "What I liked the most is the idea behind the brand — that the things on your desk represent you. That thought stayed with me, and that’s why I bought it. The product just made that idea real.",
-      author: "Sneha",
-      role: "Psychology Student"
-    }
-  ];
 
   return (
     <>
@@ -330,10 +308,21 @@ export default async function HomePage() {
               </p>
             </div>
 
-            <TestimonialCarousel testimonials={testimonials} />
             <ReviewCarousel categoryName="Reactions Unfiltered" images={reviewImages} />
+          </div>
+        </section>
 
-            {/* Dual Careers & Blog CTAs */}
+        {/* Dual Careers & Blog CTAs Section */}
+        <section className="section explore-more-section">
+          <div className="container">
+            <div className="section-header-centered">
+              <span className="section-label">Explore More</span>
+              <h2>Beyond the Artifacts</h2>
+              <p className="section-description">
+                Discover how we bring these universes to life, or join our team to help build the next one.
+              </p>
+            </div>
+
             <div className="home-ctas-container">
               <div className="home-cta-card">
                 <div>

@@ -12,7 +12,7 @@ const Footer = () => {
                 <div className="footer-grid">
 
                     {/* Brand Column */}
-                    <div className="footer-column">
+                    <div className="footer-column brand-column">
                         <div className="footer-brand-container">
                             <img src="/whoami_logo.png" alt="WhoAmI Logo" className="footer-logo" />
                             <div>
@@ -22,27 +22,9 @@ const Footer = () => {
                         </div>
                         <p className="footer-description">
                             3D Printed Artifacts for the quietly expressive. Crafted for those who refuse
-                            to blend in. Kidults Focused. Not merchandise, your identity, made tangible.
+                            to blend in. Not merchandise, your identity, made tangible.
                         </p>
-                        <p className="footer-india">🇮🇳 Crafted in Jaipur, India</p>
-                    </div>
-
-                    {/* Quick Links */}
-                    <div className="footer-column">
-                        <h4 className="footer-heading">Quick Links</h4>
-                        <ul className="footer-links-list">
-                            <li><Link href="/">Home</Link></li>
-                            <li><Link href="/products">Products</Link></li>
-                            <li><Link href="/about">About Us</Link></li>
-                            <li><Link href="/contact">Contact</Link></li>
-                            <li><Link href="/blog">Journal</Link></li>
-                            <li><Link href="/careers">Careers</Link></li>
-                        </ul>
-                    </div>
-
-                    {/* Contact Info */}
-                    <div className="footer-column">
-                        <h4 className="footer-heading">Connect with Us</h4>
+                        
                         <div className="social-icons">
                             <a href="mailto:studios.whoami@gmail.com" title="Email Us">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -63,6 +45,46 @@ const Footer = () => {
                                 </svg>
                             </a>
                         </div>
+                    </div>
+
+                    {/* Shop Links */}
+                    <div className="footer-column">
+                        <h4 className="footer-heading">Shop</h4>
+                        <ul className="footer-links-list">
+                            <li><Link href="/products">All Products</Link></li>
+                            <li><Link href="/products">Combos</Link></li>
+                            <li><Link href="/products">Decor</Link></li>
+                            <li><Link href="/products">Bookmarks</Link></li>
+                            <li><Link href="/products">Charms</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* Company Links */}
+                    <div className="footer-column">
+                        <h4 className="footer-heading">Explore</h4>
+                        <ul className="footer-links-list">
+                            <li><Link href="/about">About Us</Link></li>
+                            <li><Link href="/blog">Journal</Link></li>
+                            <li><Link href="/careers">Careers</Link></li>
+                            <li><Link href="/contact">Contact</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* Custom Orders CTA */}
+                    <div className="footer-column">
+                        <h4 className="footer-heading">Custom Orders</h4>
+                        <p className="footer-text">
+                            Looking for something uniquely yours? We craft personalized 3D identity artifacts.
+                        </p>
+                        <a 
+                            href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '917891063938'}?text=Hi%2C%20I%20want%20to%20place%20a%20custom%20order!`}
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="footer-cta-btn"
+                        >
+                            Request Custom Piece
+                        </a>
+                        <p className="footer-india">🇮🇳 Crafted in Jaipur, India</p>
                     </div>
 
                 </div>
