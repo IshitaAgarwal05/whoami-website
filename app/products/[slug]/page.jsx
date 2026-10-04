@@ -127,7 +127,8 @@ export default async function ProductPage({ params }) {
   }
 
   // Get all product images on the server using fs
-  const productImages = getProductImages(product.ImageURL);
+  // Use FolderURL (folder path) for gallery — falls back to ImageURL for legacy records
+  const productImages = getProductImages(product.FolderURL || product.ImageURL);
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://whoami.vercel.app';
   const jsonLd = {

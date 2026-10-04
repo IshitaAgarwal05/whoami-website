@@ -360,26 +360,36 @@ const handleEditProduct = async () => {
             }
         } else if (editType === 'image') {
             const imgVal = await askEditable(
-                'Image Path (e.g. /products/folder/image.webp):',
+                'Image Folder (e.g. /products/folder/):',
                 current.image_url || ''
             );
-            const trimmedImg = imgVal.trim();
+            let trimmedImg = imgVal.trim();
+            // Normalise: ensure it ends with a slash
+            if (trimmedImg && !trimmedImg.endsWith('/') && !trimmedImg.includes('.')) {
+                trimmedImg = trimmedImg + '/';
+            }
             if (trimmedImg) {
-                const diskPath = path.join(rootDir, 'public', trimmedImg.replace(/^\//, ''));
+                const folderUrl = trimmedImg.replace(/\/$/, '');
+                const diskPath = path.join(rootDir, 'public', ...folderUrl.split('/').filter(Boolean));
                 if (!fs.existsSync(diskPath)) {
-                    console.log(`\n${c.yellow}⚠️ Warning: File not found at "public${trimmedImg}".${c.reset}`);
-                    const folderPart = trimmedImg.split('/')[2];
+                    console.log(`\n${c.yellow}⚠️ Warning: Folder not found at "public${folderUrl}".${c.reset}`);
+                    const folderPart = folderUrl.split('/')[2];
                     if (folderPart) {
                         const productsDir = path.join(rootDir, 'public', 'products');
                         if (fs.existsSync(productsDir)) {
                             const folders = fs.readdirSync(productsDir).filter(f => f.toLowerCase().includes(folderPart.toLowerCase().slice(0, 4)));
                             if (folders.length > 0) {
-                                console.log(`${c.cyan}💡 Did you mean folder: ${folders.map(f => `/products/${f}/...`).join(', ')}?${c.reset}\n`);
+                                console.log(`${c.cyan}💡 Did you mean folder: ${folders.map(f => `/products/${f}/`).join(', ')}?${c.reset}\n`);
                             }
                         }
                     }
                 } else {
-                    console.log(`${c.green}✓ Image verified on disk.${c.reset}`);
+                    const webpFiles = fs.readdirSync(diskPath).filter(f => f.toLowerCase().endsWith('.webp'));
+                    if (webpFiles.length === 0) {
+                        console.log(`${c.yellow}⚠️ Folder exists but contains no .webp files: ${diskPath}${c.reset}`);
+                    } else {
+                        console.log(`${c.green}✓ Folder verified: ${webpFiles.length} webp image(s) found.${c.reset}`);
+                    }
                 }
             }
             updates.image_url = trimmedImg;
@@ -407,7 +417,7 @@ const handleEditProduct = async () => {
             const matVal = await askEditable('Material:', current.material || 'PLA');
             const dimVal = await askEditable('Dimensions:', current.dimensions || '');
             const weightVal = await askEditable('Weight:', current.weight || '');
-            const imgVal = await askEditable('Image Path:', current.image_url || '');
+            const imgVal = await askEditable('Image Folder (e.g. /products/folder/):', current.image_url || '');
             const stockVal = await askEditable('Stock:', (current.stock ?? 10).toString());
 
             updates = {
@@ -546,7 +556,11 @@ const handleAddProduct = async () => {
     const material = await askEditable('Material:', 'PLA');
     const dimensions = await askEditable('Dimensions (e.g. (10 x 8 x 6) cm):');
     const weight = await askEditable('Weight (e.g. 50g):');
-    const image_url = await askEditable('Image Path (e.g. /products/folder/name.webp):');
+    const image_url_val = await askEditable('Image Folder (e.g. /products/folder/):');
+    let trimmedImg = image_url_val.trim();
+    if (trimmedImg && !trimmedImg.endsWith('/') && !trimmedImg.includes('.')) {
+        trimmedImg = trimmedImg + '/';
+    }
     const stock = await askEditable('Initial Stock:', '10');
 
     const newProduct = {
@@ -560,7 +574,7 @@ const handleAddProduct = async () => {
         material: material.trim() || 'PLA',
         dimensions: dimensions.trim(),
         weight: weight.trim(),
-        image_url: image_url.trim(),
+        image_url: trimmedImg,
         stock: Number(stock) || 10,
         tags: [],
         created_at: new Date().toISOString(),

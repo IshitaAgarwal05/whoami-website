@@ -115,6 +115,19 @@ const ProductsClient = ({ allProducts = [], combos, forcedCategory = 'All', allC
         return [...data].sort((a, b) => {
             if (sortBy === 'price-asc') return a.Price - b.Price;
             if (sortBy === 'price-desc') return b.Price - a.Price;
+
+            // 'default' (Featured): Show newly added products first
+            if (a.CreatedAt && b.CreatedAt) {
+                const diff = new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime();
+                if (diff !== 0) return diff;
+            }
+
+            const idA = typeof a.ID === 'number' ? a.ID : parseInt(a.ID, 10) || 0;
+            const idB = typeof b.ID === 'number' ? b.ID : parseInt(b.ID, 10) || 0;
+            if (idA && idB && idA !== idB) {
+                return idB - idA;
+            }
+
             return 0;
         });
     };
