@@ -125,6 +125,8 @@
 }
 
 .start-shopping-btn {
+    display: inline-block;
+    text-decoration: none;
     margin-top: var(--spacing-xl);
     padding: 12px 32px;
     background: transparent;

@@ -74,9 +74,9 @@ const CartDrawer = () => {
                                 <path d="M16 10a4 4 0 0 1-8 0"></path>
                             </svg>
                             <p>Your cart is empty</p>
-                            <button className="start-shopping-btn" onClick={toggleDrawer}>
+                            <Link href="/products" className="start-shopping-btn" onClick={toggleDrawer}>
                                 Start Shopping
-                            </button>
+                            </Link>
                         </div>
                     ) : (
                         <div className="cart-items-list">
