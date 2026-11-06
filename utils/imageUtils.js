@@ -54,16 +54,10 @@ export const getProductImages = (imageUrl) => {
             return isFolderPath ? [] : [imageUrl];
         }
 
-        // Natural sort: numeric suffix first, then alphabetically
+        // Natural alphabetical sort (e.g. hoth.webp before hoth-2.webp, item-1 before item-2)
         files.sort((a, b) => {
-            const baseName = (url) => url.split('/').pop();
-            const getNum = (url) => {
-                const m = baseName(url).match(/(\d+)/);
-                return m ? parseInt(m[1], 10) : Infinity;
-            };
-            const numDiff = getNum(a) - getNum(b);
-            if (numDiff !== 0) return numDiff;
-            return baseName(a).localeCompare(baseName(b));
+            const getStem = (url) => url.split('/').pop().replace(/\.[^/.]+$/, '');
+            return getStem(a).localeCompare(getStem(b), undefined, { numeric: true, sensitivity: 'base' });
         });
 
         return [...new Set(files)];
