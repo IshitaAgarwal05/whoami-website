@@ -635,6 +635,9 @@ const handleListProducts = async () => {
         return;
     }
 
+    const hiddenProducts = cachedProducts.filter(p => (p.tags || []).includes('hidden'));
+    const activeProducts = cachedProducts.filter(p => !(p.tags || []).includes('hidden'));
+
     const { filterType } = await inquirer.prompt([
         {
             type: 'list',
@@ -642,6 +645,8 @@ const handleListProducts = async () => {
             message: 'How would you like to view products?',
             choices: [
                 { name: `📋 View all products (${cachedProducts.length} items)`, value: 'all' },
+                { name: `🟢 View only Active / Visible products (${activeProducts.length} items)`, value: 'active' },
+                { name: `🔴 View only Hidden products (${hiddenProducts.length} items)`, value: 'hidden' },
                 { name: '📁 Filter by Category', value: 'category' },
                 { name: '🔍 Search by Name / Keyword', value: 'search' }
             ]
@@ -650,7 +655,15 @@ const handleListProducts = async () => {
 
     let displayList = cachedProducts;
 
-    if (filterType === 'category') {
+    if (filterType === 'hidden') {
+        displayList = hiddenProducts;
+        if (displayList.length === 0) {
+            console.log(`\n${c.yellow}ℹ️ There are currently no hidden products. All products are active on the website!${c.reset}\n`);
+            return;
+        }
+    } else if (filterType === 'active') {
+        displayList = activeProducts;
+    } else if (filterType === 'category') {
         const categories = [...new Set(cachedProducts.map(p => p.category).filter(Boolean))];
         const { chosenCat } = await inquirer.prompt([
             {
@@ -669,14 +682,18 @@ const handleListProducts = async () => {
     }
 
     console.log(`\n${c.cyan}─── Found ${displayList.length} Products ───${c.reset}`);
-    const tableData = displayList.map(p => ({
-        SKU: p.internal_id || '—',
-        Name: p.name.length > 25 ? p.name.slice(0, 22) + '...' : p.name,
-        Price: `₹${p.price}`,
-        Actual: p.original_price ? `₹${p.original_price}` : '—',
-        Category: p.category || 'General',
-        Stock: p.stock ?? '—'
-    }));
+    const tableData = displayList.map(p => {
+        const isHidden = (p.tags || []).includes('hidden');
+        return {
+            SKU: p.internal_id || '—',
+            Name: p.name.length > 25 ? p.name.slice(0, 22) + '...' : p.name,
+            Status: isHidden ? '🔴 Hidden' : '🟢 Visible',
+            Price: `₹${p.price}`,
+            Actual: p.original_price ? `₹${p.original_price}` : '—',
+            Category: p.category || 'General',
+            Stock: p.stock ?? '—'
+        };
+    });
 
     console.table(tableData);
     console.log('');
@@ -687,13 +704,19 @@ const handleListProducts = async () => {
             name: 'followUp',
             message: 'Next step:',
             choices: [
+                { name: '👁️ Hide / Unhide one of these products', value: 'visibility' },
                 { name: '✏️ Edit one of these products', value: 'edit' },
                 { name: '↩️ Back to main menu', value: 'back' }
             ]
         }
     ]);
 
-    if (followUp === 'edit') {
+    if (followUp === 'visibility') {
+        const selected = await pickFromList(displayList, 'Select product to Toggle Visibility:');
+        if (selected) {
+            await handleToggleVisibility(selected);
+        }
+    } else if (followUp === 'edit') {
         const selected = await pickFromList(displayList, 'Select product to edit:');
         if (selected) {
             displayProductCard(selected);
@@ -740,8 +763,38 @@ const handleDeleteProduct = async () => {
  */
 const handleToggleVisibility = async (targetProduct = null) => {
     await refreshProducts();
-    const product = targetProduct || await selectProduct('Search product to Hide / Show on Website:');
-    if (!product) return;
+
+    let product = targetProduct;
+    if (!product) {
+        const hiddenCount = cachedProducts.filter(p => (p.tags || []).includes('hidden')).length;
+        const { visMode } = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'visMode',
+                message: 'Visibility Action:',
+                choices: [
+                    { name: '🔍 Search product by Name or SKU to Hide / Show', value: 'search' },
+                    { name: `🔴 List all Hidden products to Unhide (${hiddenCount} items currently hidden)`, value: 'list_hidden' },
+                    { name: '↩️ Back to Main Menu', value: 'back' }
+                ]
+            }
+        ]);
+
+        if (visMode === 'back') return;
+
+        if (visMode === 'list_hidden') {
+            const hiddenProducts = cachedProducts.filter(p => (p.tags || []).includes('hidden'));
+            if (hiddenProducts.length === 0) {
+                console.log(`\n${c.yellow}ℹ️ No products are currently hidden.${c.reset}\n`);
+                return;
+            }
+            product = await pickFromList(hiddenProducts, 'Select hidden product to Unhide / Show:');
+            if (!product) return;
+        } else {
+            product = await selectProduct('Search product to Hide / Show on Website:');
+            if (!product) return;
+        }
+    }
 
     const currentTags = Array.isArray(product.tags) ? product.tags : [];
     const isHidden = currentTags.includes('hidden');
