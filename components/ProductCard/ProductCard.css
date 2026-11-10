@@ -61,7 +61,7 @@
 }
 
 .product-card-tag.diwali,
-.product-card-tag.diwali-special {
+.product-card-tag.diwali-offer {
     background: linear-gradient(135deg, #ff8c00 0%, #e65100 100%);
     color: #fff;
     box-shadow: 0 4px 12px rgba(230, 81, 0, 0.45);

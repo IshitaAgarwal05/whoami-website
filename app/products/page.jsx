@@ -79,10 +79,12 @@ export default async function ProductsPage() {
     ],
   };
 
-  const resolvedProducts = allProducts.map(p => ({
-    ...p,
-    ImageURL: getFirstProductImage(p.FolderURL || p.ImageURL) || p.ImageURL
-  }));
+  const resolvedProducts = allProducts
+    .filter(p => !p.Tags?.includes('hidden') && p.Tag !== 'hidden')
+    .map(p => ({
+      ...p,
+      ImageURL: getFirstProductImage(p.FolderURL || p.ImageURL) || p.ImageURL
+    }));
 
   const resolvedCombos = combos.map(c => ({
     ...c,

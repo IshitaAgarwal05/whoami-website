@@ -222,8 +222,10 @@ const pickFromList = async (productsList, message) => {
         const disc = `₹${p.price}`;
         const cat = p.category || 'General';
         const sku = p.internal_id ? `[SKU: ${p.internal_id}]` : '';
+        const isHidden = (p.tags || []).includes('hidden');
+        const visibilityTag = isHidden ? ` ${c.red}${c.bold}[HIDDEN]${c.reset}` : '';
         return {
-            name: `${p.name.padEnd(28)} ${sku.padEnd(12)} │ Price: ${disc.padEnd(6)} (Actual: ${orig.padEnd(6)}) │ ${cat}`,
+            name: `${p.name.padEnd(28)} ${sku.padEnd(12)} │ Price: ${disc.padEnd(6)} (Actual: ${orig.padEnd(6)}) │ ${cat}${visibilityTag}`,
             value: p
         };
     });
@@ -251,10 +253,15 @@ const displayProductCard = (p) => {
     const discountPercent = p.original_price && p.original_price > p.price
         ? ` (${Math.round(((p.original_price - p.price) / p.original_price) * 100)}% off)`
         : '';
+    const isHidden = (p.tags || []).includes('hidden');
+    const statusText = isHidden 
+        ? `${c.red}${c.bold}🔴 HIDDEN FROM WEBSITE${c.reset}` 
+        : `${c.green}${c.bold}🟢 VISIBLE (Active)${c.reset}`;
 
     console.log(`
 ${c.cyan}┌─────────────────────────────────────────────────────────────┐${c.reset}
 │ ${c.bold}${p.name.padEnd(59)}${c.reset} │
+│ ${c.gray}Status:${c.reset} ${statusText.padEnd(60)} │
 │ ${c.gray}SKU / ID:${c.reset} ${(p.internal_id || 'N/A').toString().padEnd(16)} ${c.gray}Category:${c.reset} ${(p.category || 'N/A').padEnd(25)} │
 │ ${c.green}Selling Price:${c.reset} ${disc.padEnd(11)} ${c.yellow}Actual Price:${c.reset} ${(orig + discountPercent).padEnd(21)} │
 │ ${c.gray}Stock:${c.reset} ${(p.stock ?? 'N/A').toString().padEnd(19)} ${c.gray}Material:${c.reset} ${(p.material || 'N/A').padEnd(25)} │
@@ -287,6 +294,11 @@ const handleEditProduct = async () => {
     while (continueEditing) {
         displayProductCard(current);
 
+        const isCurrentlyHidden = (current.tags || []).includes('hidden');
+        const visibilityLabel = isCurrentlyHidden 
+            ? '👁️ 6. Unhide Product (Make Visible on Website)' 
+            : '👁️ 6. Hide Product (Remove from Website)';
+
         const { editType } = await inquirer.prompt([
             {
                 type: 'list',
@@ -298,7 +310,8 @@ const handleEditProduct = async () => {
                     { name: '📁 3. Category', value: 'category' },
                     { name: '🖼️ 4. Image Path (image_url)', value: 'image' },
                     { name: '📦 5. Stock & Specs (Material, Dimensions, Weight, Ideal For)', value: 'specs' },
-                    { name: '📝 6. Edit ALL Fields (Full Step-by-Step)', value: 'all' },
+                    { name: visibilityLabel, value: 'visibility' },
+                    { name: '📝 7. Edit ALL Fields (Full Step-by-Step)', value: 'all' },
                     new inquirer.Separator(),
                     { name: '↩️ Finish / Back to Main Menu', value: 'back' }
                 ]
@@ -306,6 +319,12 @@ const handleEditProduct = async () => {
         ]);
 
         if (editType === 'back') break;
+
+        if (editType === 'visibility') {
+            await handleToggleVisibility(current);
+            current = cachedProducts.find(p => p.id === current.id) || current;
+            continue;
+        }
 
         let updates = {};
 
@@ -717,6 +736,58 @@ const handleDeleteProduct = async () => {
 };
 
 /**
+ * 4. Toggle Visibility (Hide / Show a Product on Website)
+ */
+const handleToggleVisibility = async (targetProduct = null) => {
+    await refreshProducts();
+    const product = targetProduct || await selectProduct('Search product to Hide / Show on Website:');
+    if (!product) return;
+
+    const currentTags = Array.isArray(product.tags) ? product.tags : [];
+    const isHidden = currentTags.includes('hidden');
+
+    displayProductCard(product);
+
+    const actionText = isHidden
+        ? `${c.green}SHOW / UNHIDE${c.reset} "${product.name}" (will be visible on website)`
+        : `${c.yellow}HIDE${c.reset} "${product.name}" (will be hidden from store catalog & search, but NOT deleted)`;
+
+    const { confirm } = await inquirer.prompt([
+        {
+            type: 'confirm',
+            name: 'confirm',
+            message: `Do you want to ${actionText}?`,
+            default: true
+        }
+    ]);
+
+    if (!confirm) {
+        console.log(`\n${c.gray}Operation cancelled.${c.reset}\n`);
+        return;
+    }
+
+    let newTags;
+    if (isHidden) {
+        newTags = currentTags.filter(t => t !== 'hidden');
+    } else {
+        newTags = [...new Set([...currentTags, 'hidden'])];
+    }
+
+    const { error } = await supabase
+        .from('products')
+        .update({ tags: newTags, updated_at: new Date().toISOString() })
+        .match({ id: product.id });
+
+    if (error) {
+        console.error(`\n${c.red}❌ Failed to update visibility:${c.reset}`, error.message);
+    } else {
+        const status = isHidden ? `${c.green}🟢 VISIBLE${c.reset}` : `${c.yellow}🔴 HIDDEN${c.reset}`;
+        console.log(`\n${c.green}✅ Done!${c.reset} Product "${product.name}" is now ${status} on the website.\n`);
+        await refreshProducts();
+    }
+};
+
+/**
  * 5. Flush Redis / Backend API Cache
  */
 const handleFlushCache = async () => {
@@ -767,8 +838,9 @@ const main = async () => {
                     { name: '🔍 1. Search & Edit Product (Fuzzy name / SKU search)', value: 'edit' },
                     { name: '➕ 2. Add New Product', value: 'add' },
                     { name: '📋 3. List & Filter Products', value: 'list' },
-                    { name: '🗑️ 4. Delete a Product', value: 'delete' },
-                    { name: '⚡ 5. Flush Server Cache', value: 'flush' },
+                    { name: '👁️ 4. Hide / Show a Product on Website (Toggle Visibility)', value: 'visibility' },
+                    { name: '🗑️ 5. Delete a Product', value: 'delete' },
+                    { name: '⚡ 6. Flush Server Cache', value: 'flush' },
                     new inquirer.Separator(),
                     { name: '🚪 Exit', value: 'exit' }
                 ]
@@ -785,6 +857,9 @@ const main = async () => {
                     break;
                 case 'list':
                     await handleListProducts();
+                    break;
+                case 'visibility':
+                    await handleToggleVisibility();
                     break;
                 case 'delete':
                     await handleDeleteProduct();
