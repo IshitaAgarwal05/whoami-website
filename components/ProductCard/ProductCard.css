@@ -60,6 +60,14 @@
     color: #fff;
 }
 
+.product-card-tag.diwali,
+.product-card-tag.diwali-special {
+    background: linear-gradient(135deg, #ff8c00 0%, #e65100 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(230, 81, 0, 0.45);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
 /* Image */
 .product-card-image {
     width: 100%;

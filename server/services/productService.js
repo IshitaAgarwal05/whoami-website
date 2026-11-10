@@ -38,6 +38,8 @@ class ProductService {
                     UseCase: p.use_case,
                     Dimensions: p.dimensions,
                     Weight: p.weight,
+                    Tag: (p.tags && p.tags.length > 0) ? p.tags[0] : null,
+                    Tags: p.tags || [],
                     CreatedAt: p.created_at
                 };
             });

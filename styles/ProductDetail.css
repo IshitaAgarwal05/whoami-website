@@ -537,3 +537,238 @@
         gap: 8px;
     }
 }
+
+/* --- Badges & Festive Tags --- */
+.product-badges-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.product-category-badge.diwali-pill {
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.2) 0%, rgba(230, 81, 0, 0.2) 100%);
+    color: #ffb74d;
+    border: 1px solid rgba(255, 140, 0, 0.45);
+    box-shadow: 0 2px 10px rgba(230, 81, 0, 0.2);
+}
+
+.info-discount-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: rgba(0, 184, 148, 0.15);
+    color: #00b894;
+    border: 1px solid rgba(0, 184, 148, 0.3);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* --- Diwali Special Offer Banner --- */
+.diwali-special-banner {
+    margin-top: var(--spacing-lg);
+    padding: 14px 18px;
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.12) 0%, rgba(230, 81, 0, 0.08) 100%);
+    border: 1px solid rgba(255, 140, 0, 0.35);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 20px rgba(230, 81, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.diwali-special-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #ff8c00, #ffd700, #ff5722);
+}
+
+.diwali-banner-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.diwali-flame-icon {
+    font-size: 1.2rem;
+    display: inline-block;
+    animation: diwaliFlicker 2s infinite ease-in-out;
+}
+
+@keyframes diwaliFlicker {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(255, 140, 0, 0.6)); }
+    50% { transform: scale(1.12); filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.9)); }
+}
+
+.diwali-banner-badge {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #ffb300;
+}
+
+.diwali-banner-desc {
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+}
+
+.diwali-banner-desc strong {
+    color: #ffd54f;
+}
+
+/* --- Variant Selector --- */
+.product-variant-section {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.variant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.variant-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.variant-selected-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-warm-gold);
+}
+
+.variant-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.variant-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: left;
+}
+
+.variant-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(212, 175, 55, 0.35);
+    transform: translateY(-1px);
+}
+
+.variant-card.selected {
+    background: rgba(212, 175, 55, 0.08);
+    border-color: var(--color-warm-gold);
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.15);
+}
+
+.variant-card-radio {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.variant-card.selected .variant-card-radio {
+    border-color: var(--color-warm-gold);
+}
+
+.radio-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-warm-gold);
+    transform: scale(0);
+    transition: transform 0.2s ease;
+}
+
+.radio-dot.active {
+    transform: scale(1);
+}
+
+.variant-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.variant-card-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.variant-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.variant-card-festive-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ff8c00, #e65100);
+    color: #fff;
+    letter-spacing: 0.03em;
+    box-shadow: 0 2px 6px rgba(230, 81, 0, 0.3);
+}
+
+.variant-card-desc {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+}
+
+.variant-card-pricing {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.variant-card-price {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.variant-card.selected .variant-card-price {
+    color: var(--color-warm-gold);
+}
+
+.variant-card-orig-price {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    text-decoration: line-through;
+    opacity: 0.7;
+}

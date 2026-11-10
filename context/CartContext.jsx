@@ -164,6 +164,15 @@ export const CartProvider = ({ children }) => {
             message += `${index + 1}. ${item.Name} – ${formatPrice(item.Price)} x ${item.quantity}\n`;
         });
 
+        const hasDiwaliOffer = cartItems.some(item => 
+            item.Name?.toLowerCase().includes('free ash catcher tray') ||
+            (item.Name?.toLowerCase().includes('chota pandit') && item.Name?.toLowerCase().includes('tray'))
+        );
+
+        if (hasDiwaliOffer) {
+            message += `\n🪔 Diwali Festive Special: Includes FREE matching Ash Catcher Tray!\n`;
+        }
+
         const total = getCartTotal();
         let subtotal = total;
         

@@ -11,44 +11,57 @@ const ProductCard = ({ product, compact = false, isCombo = false }) => {
     const { addToCart, cartItems, updateQuantity, removeFromCart } = useCart();
     const FALLBACK_IMAGE = 'https://placehold.co/400x400';
 
-    // Check if this product is already in the cart
-    const cartItem = cartItems.find(item => item.ID === product.ID);
-    const quantity = cartItem ? cartItem.quantity : 0;
+    const isChotaPandit = product.Name?.toLowerCase().includes('chota pandit');
+    const defaultId = isChotaPandit ? `${product.ID}-with-tray` : product.ID;
 
-    // formatPrice is imported from src/utils/formatPrice.js
+    // Check if this product or its default variant is in the cart
+    const cartItem = cartItems.find(item => item.ID === product.ID || item.ID === defaultId);
+    const quantity = cartItem ? cartItem.quantity : 0;
+    const activeCartId = cartItem ? cartItem.ID : defaultId;
 
     // Placeholder image if none provided
     const imageUrl = product.ImageURL || FALLBACK_IMAGE;
 
     // Determine tag
-    const tag = product.Tag || null;
+    const tag = product.Tag || (isChotaPandit ? 'Diwali Special' : null);
 
     const handleAddToCart = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        addToCart(product);
+        if (isChotaPandit) {
+            addToCart({
+                ...product,
+                ID: defaultId,
+                Name: `${product.Name} (With Free Ash Catcher Tray)`,
+                Price: product.Price,
+                OriginalPrice: product.OriginalPrice,
+                Variant: 'With Ash Catcher Tray'
+            });
+        } else {
+            addToCart(product);
+        }
     };
 
     const handleIncrement = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        updateQuantity(product.ID, 1);
+        updateQuantity(activeCartId, 1);
     };
 
     const handleDecrement = (e) => {
         e.preventDefault();
         e.stopPropagation();
         if (quantity <= 1) {
-            removeFromCart(product.ID);
+            removeFromCart(activeCartId);
         } else {
-            updateQuantity(product.ID, -1);
+            updateQuantity(activeCartId, -1);
         }
     };
 
     return (
         <Link href={`/products/${slugify(product.Name)}`} className={`product-card ${compact ? 'compact' : ''}`}>
             {tag && (
-                <div className={`product-card-tag ${tag.toLowerCase()}`}>
+                <div className={`product-card-tag ${tag.toLowerCase().replace(/\s+/g, '-')}`}>
                     {tag}
                 </div>
             )}

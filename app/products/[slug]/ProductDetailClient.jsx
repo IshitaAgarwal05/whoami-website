@@ -10,14 +10,65 @@ import ImageCarousel from '../../../components/ImageCarousel/ImageCarousel';
 import ProductCard from '../../../components/ProductCard/ProductCard';
 import '../../../styles/ProductDetail.css';
 
+const getProductVariants = (product) => {
+    const isChotaPandit = product?.Name?.toLowerCase().includes('chota pandit') || product?.ID === 48 || product?.ID === '48';
+    
+    if (isChotaPandit) {
+        return [
+            {
+                id: `${product.ID}-with-tray`,
+                name: 'With Ash Catcher Tray',
+                fullName: `${product.Name} (With Free Ash Catcher Tray)`,
+                price: 499,
+                originalPrice: 699,
+                badge: 'Diwali Offer • Free Tray! 🪔',
+                description: 'Complete Set: Chota Pandit Figurine + Custom Ash Catcher Tray (₹200 value included FREE)'
+            },
+            {
+                id: `${product.ID}-no-tray`,
+                name: 'Figurine Only (Without Tray)',
+                fullName: `${product.Name} (Without Tray)`,
+                price: 499,
+                originalPrice: null,
+                badge: null,
+                description: 'Solo Collectible: Chota Pandit Agarbatti Figurine Only'
+            }
+        ];
+    }
+    return null;
+};
+
 const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, productImages = [] }) => {
     const { addToCart, cartItems, updateQuantity } = useCart();
     const router = useRouter();
 
-    // Derive "added to cart" state from actual cart contents
-    const cartItem = cartItems.find(item => item.ID === product.ID);
+    const variants = getProductVariants(product);
+    const [selectedVariant, setSelectedVariant] = useState(variants ? variants[0] : null);
+
+    const isDiwaliProduct = product?.Name?.toLowerCase().includes('chota pandit') || 
+        product?.Tag?.toLowerCase().includes('diwali') || 
+        (product?.Tags && product.Tags.some(t => t.toLowerCase().includes('diwali')));
+
+    const activeId = selectedVariant ? selectedVariant.id : product.ID;
+    const activeName = selectedVariant ? selectedVariant.fullName : product.Name;
+    const activePrice = selectedVariant ? selectedVariant.price : product.Price;
+    const activeOriginalPrice = selectedVariant ? selectedVariant.originalPrice : product.OriginalPrice;
+
+    // Derive "added to cart" state from actual cart contents for active variant
+    const cartItem = cartItems.find(item => item.ID === activeId);
     const isInCart = !!cartItem;
     const cartQuantity = cartItem ? cartItem.quantity : 0;
+
+    const handleAddToCart = () => {
+        addToCart({
+            ...product,
+            ID: activeId,
+            Name: activeName,
+            Price: activePrice,
+            OriginalPrice: activeOriginalPrice,
+            Variant: selectedVariant ? selectedVariant.name : null
+        }, 1);
+    };
 
     return (
         <div className="product-detail-page">
@@ -44,17 +95,83 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
 
                     <div className="product-info-section">
                         <div className="glass-card product-main-info">
-                            <span className="product-category-badge">{product.Category}</span>
+                            <div className="product-badges-row">
+                                <span className="product-category-badge">{product.Category}</span>
+                                {isDiwaliProduct && (
+                                    <span className="product-category-badge diwali-pill">🪔 Diwali Special</span>
+                                )}
+                            </div>
                             <h1 className="product-title">{product.Name}</h1>
                             <div className="product-price-tag">
                                 <span className="price-label">Price</span>
                                 <div className="info-price-row">
-                                    <span className="price-value">{formatPrice(product.Price)}</span>
-                                    {product.OriginalPrice && (
-                                        <span className="info-original-price">{formatPrice(product.OriginalPrice)}</span>
+                                    <span className="price-value">{formatPrice(activePrice)}</span>
+                                    {activeOriginalPrice && activeOriginalPrice > activePrice && (
+                                        <>
+                                            <span className="info-original-price">{formatPrice(activeOriginalPrice)}</span>
+                                            <span className="info-discount-badge">
+                                                {Math.round(((activeOriginalPrice - activePrice) / activeOriginalPrice) * 100)}% OFF
+                                            </span>
+                                        </>
                                     )}
                                 </div>
                             </div>
+
+                            {/* Diwali Special Offer Banner */}
+                            {isDiwaliProduct && (
+                                <div className="diwali-special-banner">
+                                    <div className="diwali-banner-header">
+                                        <span className="diwali-flame-icon">🪔</span>
+                                        <span className="diwali-banner-badge">Diwali Festive Offer</span>
+                                    </div>
+                                    <p className="diwali-banner-desc">
+                                        <strong>Free Ash Catcher Tray Included:</strong> The custom-textured ash catcher tray (worth ₹200) is included completely <strong>FREE</strong> with your Chota Pandit figurine this festive season! Both options are <strong>₹499</strong>.
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Variant Selector */}
+                            {variants && variants.length > 0 && (
+                                <div className="product-variant-section">
+                                    <div className="variant-header">
+                                        <span className="variant-label">Choose Edition:</span>
+                                        <span className="variant-selected-name">{selectedVariant?.name}</span>
+                                    </div>
+                                    <div className="variant-cards-list">
+                                        {variants.map((v) => {
+                                            const isSelected = selectedVariant?.id === v.id;
+                                            return (
+                                                <div
+                                                    key={v.id}
+                                                    className={`variant-card ${isSelected ? 'selected' : ''}`}
+                                                    onClick={() => setSelectedVariant(v)}
+                                                    role="button"
+                                                    tabIndex={0}
+                                                >
+                                                    <div className="variant-card-radio">
+                                                        <div className={`radio-dot ${isSelected ? 'active' : ''}`} />
+                                                    </div>
+                                                    <div className="variant-card-body">
+                                                        <div className="variant-card-title-row">
+                                                            <span className="variant-card-title">{v.name}</span>
+                                                            {v.badge && (
+                                                                <span className="variant-card-festive-tag">{v.badge}</span>
+                                                            )}
+                                                        </div>
+                                                        <span className="variant-card-desc">{v.description}</span>
+                                                    </div>
+                                                    <div className="variant-card-pricing">
+                                                        <span className="variant-card-price">{formatPrice(v.price)}</span>
+                                                        {v.originalPrice && v.originalPrice > v.price && (
+                                                            <span className="variant-card-orig-price">{formatPrice(v.originalPrice)}</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className="glass-card product-details-section">
@@ -115,7 +232,7 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
                                 {!isInCart ? (
                                     <button
                                         className="add-to-cart-btn primary-action"
-                                        onClick={() => addToCart(product, 1)}
+                                        onClick={handleAddToCart}
                                     >
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <circle cx="9" cy="21" r="1"></circle>
@@ -127,9 +244,9 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
                                 ) : (
                                     <>
                                         <div className="quantity-controller">
-                                            <button onClick={() => updateQuantity(product.ID, -1)}>−</button>
+                                            <button onClick={() => updateQuantity(activeId, -1)}>−</button>
                                             <span>{cartQuantity}</span>
-                                            <button onClick={() => updateQuantity(product.ID, 1)}>+</button>
+                                            <button onClick={() => updateQuantity(activeId, 1)}>+</button>
                                         </div>
                                         <button
                                             className="go-to-cart-btn"
