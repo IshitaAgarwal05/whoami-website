@@ -23,7 +23,7 @@ const ProductCard = ({ product, compact = false, isCombo = false }) => {
     const imageUrl = product.ImageURL || FALLBACK_IMAGE;
 
     // Determine tag
-    const tag = product.Tag || (isChotaPandit ? 'Diwali Special' : null);
+    const tag = product.Tag || (isChotaPandit ? 'Diwali Offer' : null);
 
     const handleAddToCart = (e) => {
         e.preventDefault();
