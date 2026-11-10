@@ -9,8 +9,8 @@ async function getProductAndRelated(slug) {
   
   try {
     const [productsRes, combosRes] = await Promise.all([
-      fetch(`${baseUrl}/api/products`, { next: { revalidate: 3600 } }),
-      fetch(`${baseUrl}/api/products/combos`, { next: { revalidate: 3600 } })
+      fetch(`${baseUrl}/api/products`, { next: { revalidate: 60 } }),
+      fetch(`${baseUrl}/api/products/combos`, { next: { revalidate: 60 } })
     ]);
 
     if (!productsRes.ok && !combosRes.ok) return { product: null, related: [] };

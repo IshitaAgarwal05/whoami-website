@@ -343,24 +343,6 @@
       "weight": "38g"
     },
     {
-      "id": "12fb66fb-4352-4e63-a260-1e2b7c989594",
-      "internal_id": "28",
-      "name": "Isengard Diorama",
-      "description": "The shadow of Orthanc. This miniature diorama captures the dark majesty of Saruman's fortress. A detailed piece for those who appreciate the epic scale of Middle-earth.",
-      "price": 799,
-      "category": "Decor",
-      "material": "PLA",
-      "image_url": null,
-      "stock": 10,
-      "tags": [],
-      "created_at": "2026-04-16T06:25:42.067742+00:00",
-      "updated_at": "2026-04-16T06:25:42.067742+00:00",
-      "original_price": 999,
-      "use_case": "LOTR collectors, Fantasy dioramas, Gaming room decor.",
-      "dimensions": null,
-      "weight": "121.5g"
-    },
-    {
       "id": "7cf1f0fe-d8aa-4d9e-a135-12d0821ba2f0",
       "internal_id": "20",
       "name": "Booknook 2",
@@ -667,24 +649,6 @@
       "weight": ""
     },
     {
-      "id": "f667aef2-c723-4356-9fc7-33d0efe2a951",
-      "internal_id": "48",
-      "name": "Chota Pandit Incense Stick Holder",
-      "description": "Bring home Bollywood's most unforgettable comedy character with our Chota Pandit Incense Stick Holder. Detailed with his iconic orange hue, yellow garland, and quirky posture, this piece holds standard agarbatti sticks while adding an instant smile to your desk, home temple, or bookshelf. Available as a standalone collectible or with a matching ash catcher tray.",
-      "price": 499,
-      "category": "Decor",
-      "material": "PLA",
-      "image_url": "/products/wai-originals/chota-pandit/",
-      "stock": 10,
-      "tags": [],
-      "created_at": "2026-11-10T10:14:04.582+00:00",
-      "updated_at": "2026-11-10T10:14:04.601+00:00",
-      "original_price": 699,
-      "use_case": "Work desk, meditation corner, quirky home decor, housewarming & festive gifts.",
-      "dimensions": "",
-      "weight": ""
-    },
-    {
       "id": "6af8dd60-ccb0-440f-a074-d890357332c8",
       "internal_id": "37",
       "name": "Duck Charm",
@@ -773,6 +737,26 @@
       "use_case": "Collectible, Desk Decor",
       "dimensions": "(15 x 7 x 15) cm",
       "weight": null
+    },
+    {
+      "id": "f667aef2-c723-4356-9fc7-33d0efe2a951",
+      "internal_id": "48",
+      "name": "Chota Pandit Incense Stick Holder",
+      "description": "Bring home Bollywood's most unforgettable comedy character with our Chota Pandit Incense Stick Holder. Detailed with his iconic orange hue, yellow garland, and quirky posture, this piece holds standard agarbatti sticks while adding an instant smile to your desk, home temple, or bookshelf. Available as a standalone collectible or with a matching ash catcher tray.",
+      "price": 499,
+      "category": "Decor",
+      "material": "PLA",
+      "image_url": "/products/wai-originals/chota-pandit/",
+      "stock": 10,
+      "tags": [
+        "Diwali Special"
+      ],
+      "created_at": "2026-11-10T10:14:04.582+00:00",
+      "updated_at": "2026-11-10T10:14:04.601+00:00",
+      "original_price": 699,
+      "use_case": "Work desk, meditation corner, quirky home decor, housewarming & festive gifts.",
+      "dimensions": "",
+      "weight": ""
     },
     {
       "id": "a3ec34db-ccd3-491e-be74-f674c2ef7094",
