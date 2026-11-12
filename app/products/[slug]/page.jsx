@@ -18,11 +18,8 @@ async function getProductAndRelated(slug) {
     const productsJson = await productsRes.json();
     const combosJson = combosRes.ok ? await combosRes.json() : { success: false };
 
-    const rawProducts = productsJson.success ? productsJson.data : [];
+    const products = productsJson.success ? productsJson.data : [];
     const combos = combosJson.success ? combosJson.data : [];
-
-    // Filter out hidden products
-    const products = rawProducts.filter(p => !p.Tags?.includes('hidden') && p.Tag !== 'hidden');
 
     // Search in products first, then combos
     let product = products.find(p => slugify(p.Name) === slug);

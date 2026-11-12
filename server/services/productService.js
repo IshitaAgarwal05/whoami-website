@@ -23,11 +23,7 @@ class ProductService {
                 
             if (error) throw error;
             
-            // Filter out hidden products from storefront
-            const visibleData = data.filter(p => !p.tags || !p.tags.includes('hidden'));
-            
-            const formattedData = visibleData.map(p => {
-                const cleanTags = (p.tags || []).filter(t => t !== 'hidden');
+            const formattedData = data.map(p => {
                 return {
                     ID: isNaN(parseInt(p.internal_id)) ? p.internal_id : parseInt(p.internal_id),
                     Name: p.name,
@@ -42,18 +38,18 @@ class ProductService {
                     UseCase: p.use_case,
                     Dimensions: p.dimensions,
                     Weight: p.weight,
-                    Tag: cleanTags.length > 0 ? cleanTags[0] : null,
-                    Tags: cleanTags,
+                    Tag: (p.tags && p.tags.length > 0) ? p.tags[0] : null,
+                    Tags: p.tags || [],
                     CreatedAt: p.created_at
                 };
             });
 
-            const has_more = limit !== null ? (offset + visibleData.length < visibleData.length) : false;
+            const has_more = limit !== null ? (offset + data.length < count) : false;
 
             return {
                 data: formattedData,
                 has_more,
-                total: visibleData.length
+                total: count
             };
         } catch (error) {
             console.error('Error fetching products from Supabase:', error);
