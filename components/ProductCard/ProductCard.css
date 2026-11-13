@@ -61,38 +61,43 @@
 }
 
 .product-card-tag.diwali,
-.product-card-tag.diwali-offer {
+.product-card-tag.diwali-offer,
+.product-card-tag.diwali-special {
     background: linear-gradient(135deg, #ff8c00 0%, #e65100 100%);
     color: #fff;
     box-shadow: 0 4px 12px rgba(230, 81, 0, 0.45);
     border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
-.product-card-tag.sold-out,
 .product-card-tag.out-of-stock {
-    background: rgba(30, 30, 30, 0.95);
-    color: #ff6b6b;
-    border: 1px solid rgba(255, 107, 107, 0.4);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    background: rgba(15, 15, 15, 0.92);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
 }
 
-.out-of-stock-pill {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 6px 12px;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    color: #ff6b6b;
-    border: 1px solid rgba(255, 107, 107, 0.25);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+/* Grayed out / Out of Stock Product Card */
+.product-card.out-of-stock {
+    opacity: 0.75;
+    border-color: rgba(255, 255, 255, 0.04);
+}
+
+.product-card.out-of-stock .product-card-image img {
+    filter: grayscale(100%);
+    opacity: 0.45;
+    transition: filter var(--transition-base), opacity var(--transition-base);
 }
 
 .product-card.out-of-stock:hover {
-    border-color: rgba(255, 107, 107, 0.25);
+    transform: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.product-card.out-of-stock:hover .product-card-image img {
+    transform: none;
+    filter: grayscale(100%);
+    opacity: 0.55;
 }
 
 /* Image */

@@ -67,7 +67,7 @@ const ProductsClient = ({ allProducts = [], combos, forcedCategory = 'All', allC
         // Filter out Charms because it has its own main tab
         rawCats = rawCats.filter(cat => cat !== 'Charms');
         
-        const preferredOrder = ['Collectibles', 'Keychains', 'Book Accessories', 'Decor'];
+        const preferredOrder = ['Collectibles', 'Book Accessories', 'Keychains'];
         const sortedCats = rawCats.sort((a, b) => {
             const indexA = preferredOrder.indexOf(a);
             const indexB = preferredOrder.indexOf(b);

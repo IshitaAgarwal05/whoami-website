@@ -18,7 +18,7 @@ const Navbar = () => {
             label: 'ABOUT', 
             dropdown: [
                 { path: '/about', label: 'OUR STORY' },
-                { path: '/blog', label: 'JOURNAL' },
+                // { path: '/blog', label: 'JOURNAL' },
                 { path: '/careers', label: 'CAREERS' }
             ] 
         },

@@ -53,8 +53,8 @@ const Footer = () => {
                         <ul className="footer-links-list">
                             <li><Link href="/products">All Products</Link></li>
                             <li><Link href="/products">Combos</Link></li>
-                            <li><Link href="/products">Decor</Link></li>
-                            <li><Link href="/products">Bookmarks</Link></li>
+                            <li><Link href="/products">Collectibles</Link></li>
+                            <li><Link href="/products">Book Accessories</Link></li>
                             <li><Link href="/products">Charms</Link></li>
                         </ul>
                     </div>
@@ -64,7 +64,7 @@ const Footer = () => {
                         <h4 className="footer-heading">Explore</h4>
                         <ul className="footer-links-list">
                             <li><Link href="/about">About Us</Link></li>
-                            <li><Link href="/blog">Journal</Link></li>
+                            {/* <li><Link href="/blog">Journal</Link></li> */}
                             <li><Link href="/careers">Careers</Link></li>
                             <li><Link href="/contact">Contact</Link></li>
                         </ul>

@@ -90,7 +90,7 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
 
                 <div className="product-detail-grid">
                     <div className="product-image-section">
-                        <div className="product-image-container">
+                        <div className={`product-image-container ${isOutOfStock ? 'out-of-stock' : ''}`}>
                             <div className="product-image-glow"></div>
                             <ImageCarousel images={productImages} productName={product.Name} />
                         </div>
@@ -101,9 +101,9 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
                             <div className="product-badges-row">
                                 <span className="product-category-badge">{product.Category}</span>
                                 {isOutOfStock ? (
-                                    <span className="product-category-badge out-of-stock-pill">Sold Out</span>
+                                    <span className="product-category-badge out-of-stock-pill">Out of Stock</span>
                                 ) : isDiwaliProduct ? (
-                                    <span className="product-category-badge diwali-pill">🪔 Diwali Special</span>
+                                    <span className="product-category-badge diwali-pill">🪔 Diwali Offer</span>
                                 ) : null}
                             </div>
                             <h1 className="product-title">{product.Name}</h1>
@@ -233,17 +233,18 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
                                 </div>
                             </div>
 
-                            <div className="product-actions">
+                            <div className={`product-actions ${isOutOfStock ? 'out-of-stock' : ''}`}>
                                 {isOutOfStock ? (
                                     <button
-                                        className="add-to-cart-btn disabled out-of-stock-btn"
+                                        type="button"
+                                        className="add-to-cart-btn out-of-stock-btn"
                                         disabled
                                     >
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <circle cx="12" cy="12" r="10"></circle>
                                             <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
                                         </svg>
-                                        Out of Stock
+                                        <span>Out of Stock</span>
                                     </button>
                                 ) : !isInCart ? (
                                     <button

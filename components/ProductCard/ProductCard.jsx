@@ -24,8 +24,10 @@ const ProductCard = ({ product, compact = false, isCombo = false }) => {
 
     const isOutOfStock = product.Stock === 0 || product.stock === 0;
 
-    // Determine tag (prioritize Sold Out if stock is 0)
-    const tag = isOutOfStock ? 'Sold Out' : (product.Tag || (isChotaPandit ? 'Diwali Offer' : null));
+    // Determine tag (prioritize Out of Stock if stock is 0, Chota Pandit gets Diwali Offer)
+    const tag = isOutOfStock
+        ? 'Out of Stock'
+        : (isChotaPandit ? 'Diwali Offer' : (product.Tag === 'Diwali Special' ? 'Diwali Offer' : product.Tag));
 
     const handleAddToCart = (e) => {
         e.preventDefault();
@@ -110,44 +112,42 @@ const ProductCard = ({ product, compact = false, isCombo = false }) => {
                             )}
                         </div>
 
-                        {isOutOfStock ? (
-                            <span className="out-of-stock-pill" title="This product is currently out of stock">
-                                Sold Out
-                            </span>
-                        ) : quantity > 0 ? (
-                            <div className="qty-stepper">
+                        {!isOutOfStock && (
+                            quantity > 0 ? (
+                                <div className="qty-stepper">
+                                    <button
+                                        className="qty-btn qty-btn-minus"
+                                        onClick={handleDecrement}
+                                        title="Decrease quantity"
+                                    >
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                    </button>
+                                    <span className="qty-value">{quantity}</span>
+                                    <button
+                                        className="qty-btn qty-btn-plus"
+                                        onClick={handleIncrement}
+                                        title="Increase quantity"
+                                    >
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            ) : (
                                 <button
-                                    className="qty-btn qty-btn-minus"
-                                    onClick={handleDecrement}
-                                    title="Decrease quantity"
-                                >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                </button>
-                                <span className="qty-value">{quantity}</span>
-                                <button
-                                    className="qty-btn qty-btn-plus"
-                                    onClick={handleIncrement}
-                                    title="Increase quantity"
+                                    className="add-to-cart-btn-sm"
+                                    onClick={handleAddToCart}
+                                    title="Quick Add"
                                 >
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                         <line x1="12" y1="5" x2="12" y2="19"></line>
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
                                     </svg>
                                 </button>
-                            </div>
-                        ) : (
-                            <button
-                                className="add-to-cart-btn-sm"
-                                onClick={handleAddToCart}
-                                title="Quick Add"
-                            >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                            </button>
+                            )
                         )}
                     </div>
                 </div>
