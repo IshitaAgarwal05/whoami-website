@@ -222,8 +222,13 @@ const pickFromList = async (productsList, message) => {
         const disc = `₹${p.price}`;
         const cat = p.category || 'General';
         const sku = p.internal_id ? `[SKU: ${p.internal_id}]` : '';
+
+        let statusTag = '';
+        if (p.stock === -1 || p.stock < 0) statusTag = ` ${c.red}[Hidden]${c.reset}`;
+        else if (p.stock === 0) statusTag = ` ${c.yellow}[Out of Stock]${c.reset}`;
+
         return {
-            name: `${p.name.padEnd(28)} ${sku.padEnd(12)} │ Price: ${disc.padEnd(6)} (Actual: ${orig.padEnd(6)}) │ ${cat}`,
+            name: `${p.name.padEnd(28)} ${sku.padEnd(12)} │ Price: ${disc.padEnd(6)} (Actual: ${orig.padEnd(6)}) │ ${cat}${statusTag}`,
             value: p
         };
     });
@@ -252,12 +257,21 @@ const displayProductCard = (p) => {
         ? ` (${Math.round(((p.original_price - p.price) / p.original_price) * 100)}% off)`
         : '';
 
+    let stockDisplay = (p.stock ?? 'N/A').toString();
+    if (p.stock === -1 || p.stock < 0) {
+        stockDisplay = `${c.red}Hidden (-1)${c.reset}`;
+    } else if (p.stock === 0) {
+        stockDisplay = `${c.yellow}Out of Stock (0)${c.reset}`;
+    } else if (p.stock > 0) {
+        stockDisplay = `${c.green}${p.stock} (In Stock)${c.reset}`;
+    }
+
     console.log(`
 ${c.cyan}┌─────────────────────────────────────────────────────────────┐${c.reset}
 │ ${c.bold}${p.name.padEnd(59)}${c.reset} │
 │ ${c.gray}SKU / ID:${c.reset} ${(p.internal_id || 'N/A').toString().padEnd(16)} ${c.gray}Category:${c.reset} ${(p.category || 'N/A').padEnd(25)} │
 │ ${c.green}Selling Price:${c.reset} ${disc.padEnd(11)} ${c.yellow}Actual Price:${c.reset} ${(orig + discountPercent).padEnd(21)} │
-│ ${c.gray}Stock:${c.reset} ${(p.stock ?? 'N/A').toString().padEnd(19)} ${c.gray}Material:${c.reset} ${(p.material || 'N/A').padEnd(25)} │
+│ ${c.gray}Stock:${c.reset} ${stockDisplay.padEnd(19 + (stockDisplay.includes('\x1b') ? 9 : 0))} ${c.gray}Material:${c.reset} ${(p.material || 'N/A').padEnd(25)} │
 │ ${c.gray}Dimensions:${c.reset} ${(p.dimensions || 'N/A').padEnd(14)} ${c.gray}Weight:${c.reset} ${(p.weight || 'N/A').padEnd(27)} │
 │ ${c.gray}Image:${c.reset} ${(p.image_url || 'N/A').padEnd(52)} │
 │ ${c.gray}Ideal For:${c.reset} ${(p.use_case || 'N/A').padEnd(49)} │
@@ -294,11 +308,12 @@ const handleEditProduct = async () => {
                 message: `${c.bold}What would you like to update on "${current.name}"?${c.reset}`,
                 choices: [
                     { name: '💰 1. Quick Price Update (Selling Price & Actual Price)', value: 'price' },
-                    { name: '🏷️ 2. Name & Description', value: 'name_desc' },
-                    { name: '📁 3. Category', value: 'category' },
-                    { name: '🖼️ 4. Image Path (image_url)', value: 'image' },
-                    { name: '📦 5. Stock & Specs (Material, Dimensions, Weight, Ideal For)', value: 'specs' },
-                    { name: '📝 6. Edit ALL Fields (Full Step-by-Step)', value: 'all' },
+                    { name: '👁️ 2. Stock & Visibility (In Stock / Out of Stock [0] / Hide [-1])', value: 'stock_status' },
+                    { name: '🏷️ 3. Name & Description', value: 'name_desc' },
+                    { name: '📁 4. Category', value: 'category' },
+                    { name: '🖼️ 5. Image Path (image_url)', value: 'image' },
+                    { name: '📦 6. Specs (Material, Dimensions, Weight, Ideal For)', value: 'specs' },
+                    { name: '📝 7. Edit ALL Fields (Full Step-by-Step)', value: 'all' },
                     new inquirer.Separator(),
                     { name: '↩️ Finish / Back to Main Menu', value: 'back' }
                 ]
@@ -309,7 +324,44 @@ const handleEditProduct = async () => {
 
         let updates = {};
 
-        if (editType === 'price') {
+        if (editType === 'stock_status') {
+            const currentStock = current.stock ?? 10;
+            let currentStatus = `${currentStock} (In Stock)`;
+            if (currentStock < 0) currentStatus = 'Hidden (-1)';
+            else if (currentStock === 0) currentStatus = 'Out of Stock (0)';
+
+            console.log(`\n${c.cyan}Current Status:${c.reset} ${c.bold}${currentStatus}${c.reset}\n`);
+
+            const { stockChoice } = await inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'stockChoice',
+                    message: 'Select new stock status:',
+                    choices: [
+                        { name: '🟢 In Stock (Visible & Purchasable)', value: 'instock' },
+                        { name: '🟡 Out of Stock (Visible, marked Sold Out, stock = 0)', value: 'out' },
+                        { name: '🔴 Hide Product (Completely hidden from store & catalog, stock = -1)', value: 'hide' },
+                        new inquirer.Separator(),
+                        { name: '↩️ Cancel', value: 'cancel' }
+                    ]
+                }
+            ]);
+
+            if (stockChoice === 'cancel') continue;
+
+            if (stockChoice === 'hide') {
+                updates.stock = -1;
+            } else if (stockChoice === 'out') {
+                updates.stock = 0;
+            } else if (stockChoice === 'instock') {
+                const stockVal = await askEditable(
+                    'Enter stock quantity:',
+                    currentStock > 0 ? currentStock.toString() : '10',
+                    val => (!isNaN(Number(val)) && Number(val) > 0) || 'Must be a positive number'
+                );
+                updates.stock = Number(stockVal);
+            }
+        } else if (editType === 'price') {
             const priceVal = await askEditable(
                 'Selling / Discounted Price (INR ₹):',
                 current.price?.toString(),
@@ -394,7 +446,7 @@ const handleEditProduct = async () => {
             }
             updates.image_url = trimmedImg;
         } else if (editType === 'specs') {
-            const stockVal = await askEditable('Stock count:', (current.stock ?? 10).toString(), val => !isNaN(Number(val)) || 'Must be a number');
+            const stockVal = await askEditable('Stock count (0 = Out of Stock, -1 = Hide):', (current.stock ?? 10).toString(), val => !isNaN(Number(val)) || 'Must be a number');
             const matVal = await askEditable('Material (e.g. PLA):', current.material || 'PLA');
             const dimVal = await askEditable('Dimensions (e.g. (10 x 8 x 6) cm):', current.dimensions || '');
             const weightVal = await askEditable('Weight (e.g. 50g):', current.weight || '');
@@ -418,7 +470,7 @@ const handleEditProduct = async () => {
             const dimVal = await askEditable('Dimensions:', current.dimensions || '');
             const weightVal = await askEditable('Weight:', current.weight || '');
             const imgVal = await askEditable('Image Folder (e.g. /products/folder/):', current.image_url || '');
-            const stockVal = await askEditable('Stock:', (current.stock ?? 10).toString());
+            const stockVal = await askEditable('Stock (0 = Out of Stock, -1 = Hide):', (current.stock ?? 10).toString());
 
             updates = {
                 internal_id: idVal.trim(),
@@ -561,7 +613,7 @@ const handleAddProduct = async () => {
     if (trimmedImg && !trimmedImg.endsWith('/') && !trimmedImg.includes('.')) {
         trimmedImg = trimmedImg + '/';
     }
-    const stock = await askEditable('Initial Stock:', '10');
+    const stock = await askEditable('Initial Stock (0 = Out of Stock, -1 = Hide):', '10');
 
     const newProduct = {
         name: name.trim(),
@@ -616,6 +668,10 @@ const handleListProducts = async () => {
         return;
     }
 
+    const hiddenCount = cachedProducts.filter(p => p.stock === -1 || p.stock < 0).length;
+    const outOfStockCount = cachedProducts.filter(p => p.stock === 0).length;
+    const inStockCount = cachedProducts.filter(p => p.stock > 0).length;
+
     const { filterType } = await inquirer.prompt([
         {
             type: 'list',
@@ -623,6 +679,9 @@ const handleListProducts = async () => {
             message: 'How would you like to view products?',
             choices: [
                 { name: `📋 View all products (${cachedProducts.length} items)`, value: 'all' },
+                { name: `🔴 View Hidden products (${hiddenCount} items) [stock = -1]`, value: 'hidden' },
+                { name: `🟡 View Out of Stock products (${outOfStockCount} items) [stock = 0]`, value: 'outofstock' },
+                { name: `🟢 View In Stock products (${inStockCount} items)`, value: 'instock' },
                 { name: '📁 Filter by Category', value: 'category' },
                 { name: '🔍 Search by Name / Keyword', value: 'search' }
             ]
@@ -631,7 +690,13 @@ const handleListProducts = async () => {
 
     let displayList = cachedProducts;
 
-    if (filterType === 'category') {
+    if (filterType === 'hidden') {
+        displayList = cachedProducts.filter(p => p.stock === -1 || p.stock < 0);
+    } else if (filterType === 'outofstock') {
+        displayList = cachedProducts.filter(p => p.stock === 0);
+    } else if (filterType === 'instock') {
+        displayList = cachedProducts.filter(p => p.stock > 0);
+    } else if (filterType === 'category') {
         const categories = [...new Set(cachedProducts.map(p => p.category).filter(Boolean))];
         const { chosenCat } = await inquirer.prompt([
             {
@@ -650,14 +715,21 @@ const handleListProducts = async () => {
     }
 
     console.log(`\n${c.cyan}─── Found ${displayList.length} Products ───${c.reset}`);
-    const tableData = displayList.map(p => ({
-        SKU: p.internal_id || '—',
-        Name: p.name.length > 25 ? p.name.slice(0, 22) + '...' : p.name,
-        Price: `₹${p.price}`,
-        Actual: p.original_price ? `₹${p.original_price}` : '—',
-        Category: p.category || 'General',
-        Stock: p.stock ?? '—'
-    }));
+    const tableData = displayList.map(p => {
+        let stockStr = (p.stock ?? '—').toString();
+        if (p.stock === -1 || p.stock < 0) stockStr = '🔴 Hidden (-1)';
+        else if (p.stock === 0) stockStr = '🟡 Out of Stock (0)';
+        else if (p.stock > 0) stockStr = `🟢 ${p.stock}`;
+
+        return {
+            SKU: p.internal_id || '—',
+            Name: p.name.length > 25 ? p.name.slice(0, 22) + '...' : p.name,
+            Price: `₹${p.price}`,
+            Actual: p.original_price ? `₹${p.original_price}` : '—',
+            Category: p.category || 'General',
+            Stock: stockStr
+        };
+    });
 
     console.table(tableData);
     console.log('');

@@ -68,6 +68,33 @@
     border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
+.product-card-tag.sold-out,
+.product-card-tag.out-of-stock {
+    background: rgba(30, 30, 30, 0.95);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 107, 107, 0.4);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.out-of-stock-pill {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 107, 107, 0.25);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-card.out-of-stock:hover {
+    border-color: rgba(255, 107, 107, 0.25);
+}
+
 /* Image */
 .product-card-image {
     width: 100%;

@@ -106,10 +106,12 @@ import { getFirstProductImage } from '../../utils/imageUtils';
 
 export default async function HomePage() {
   const rawProducts = await getProducts();
-  const products = rawProducts.map(p => ({
-    ...p,
-    ImageURL: getFirstProductImage(p.FolderURL || p.ImageURL) || p.ImageURL
-  }));
+  const products = rawProducts
+    .filter(p => p.Stock === undefined || p.Stock === null || p.Stock >= 0)
+    .map(p => ({
+      ...p,
+      ImageURL: getFirstProductImage(p.FolderURL || p.ImageURL) || p.ImageURL
+    }));
   const galleryImages = await getGalleryImages();
   const reviewImages = await getReviewImages();
   const customOrderImages = await getCustomOrderImages();

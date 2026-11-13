@@ -18,8 +18,9 @@ export default async function sitemap() {
     const json = await res.json();
 
     if (json.success) {
-      // Product pages
-      const productRoutes = json.data.map((product) => ({
+      // Product pages (exclude hidden products where Stock === -1 or Stock < 0)
+      const visibleProducts = json.data.filter(p => p.Stock === undefined || p.Stock === null || p.Stock >= 0);
+      const productRoutes = visibleProducts.map((product) => ({
         url: `${baseUrl}/products/${slugify(product.Name)}`,
         lastModified: new Date(),
         changeFrequency: 'monthly',

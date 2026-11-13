@@ -14,13 +14,17 @@ async function getData() {
     const allProducts = allProductsRes.ok ? await allProductsRes.json() : { success: false };
     const combos = combosRes.ok ? await combosRes.json() : { success: false };
 
-    // Extract all categories from the full product list
-    const allCategories = allProducts.success
-      ? [...new Set(allProducts.data.map(p => p.Category))].filter(Boolean)
+    const rawProducts = allProducts.success ? allProducts.data : [];
+    // Filter out hidden products (Stock === -1 or Stock < 0)
+    const visibleProducts = rawProducts.filter(p => p.Stock === undefined || p.Stock === null || p.Stock >= 0);
+
+    // Extract all categories from the visible product list
+    const allCategories = visibleProducts.length > 0
+      ? [...new Set(visibleProducts.map(p => p.Category))].filter(Boolean)
       : [];
 
     return {
-      allProducts: allProducts.success ? allProducts.data : [],
+      allProducts: visibleProducts,
       combos: combos.success ? combos.data : [],
       allCategories
     };

@@ -30,7 +30,7 @@ async function getProductAndRelated(slug) {
       sourceList = combos;
     }
 
-    if (!product) return { product: null, related: [] };
+    if (!product || product.Stock < 0 || product.Stock === -1) return { product: null, related: [] };
 
     // Resolve ImageURL for meta tags
     product.ImageURL = getFirstProductImage(product.FolderURL || product.ImageURL) || product.ImageURL;
@@ -38,7 +38,7 @@ async function getProductAndRelated(slug) {
     const showOnlyWithImages = process.env.NEXT_PUBLIC_SHOW_NO_IMAGE_PRODUCTS !== 'true';
 
     let related = sourceList
-      .filter(p => p.Category === product.Category && p.ID !== product.ID)
+      .filter(p => p.Category === product.Category && p.ID !== product.ID && (p.Stock === undefined || p.Stock === null || p.Stock >= 0))
       .map(p => ({
         ...p,
         ImageURL: getFirstProductImage(p.FolderURL || p.ImageURL) || p.ImageURL
@@ -76,7 +76,9 @@ export async function generateStaticParams() {
     const products = productsJson.success ? productsJson.data : [];
     const combos = combosJson.success ? combosJson.data : [];
 
-    return [...products, ...combos].map((item) => ({
+    const visibleProducts = products.filter(p => p.Stock === undefined || p.Stock === null || p.Stock >= 0);
+
+    return [...visibleProducts, ...combos].map((item) => ({
       slug: slugify(item.Name),
     }));
   } catch (error) {

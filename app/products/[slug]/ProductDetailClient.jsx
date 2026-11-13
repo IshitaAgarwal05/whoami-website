@@ -49,6 +49,8 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
         product?.Tag?.toLowerCase().includes('diwali') || 
         (product?.Tags && product.Tags.some(t => t.toLowerCase().includes('diwali')));
 
+    const isOutOfStock = product?.Stock === 0 || product?.stock === 0;
+
     const activeId = selectedVariant ? selectedVariant.id : product.ID;
     const activeName = selectedVariant ? selectedVariant.fullName : product.Name;
     const activePrice = selectedVariant ? selectedVariant.price : product.Price;
@@ -60,6 +62,7 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
     const cartQuantity = cartItem ? cartItem.quantity : 0;
 
     const handleAddToCart = () => {
+        if (isOutOfStock) return;
         addToCart({
             ...product,
             ID: activeId,
@@ -97,9 +100,11 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
                         <div className="glass-card product-main-info">
                             <div className="product-badges-row">
                                 <span className="product-category-badge">{product.Category}</span>
-                                {isDiwaliProduct && (
+                                {isOutOfStock ? (
+                                    <span className="product-category-badge out-of-stock-pill">Sold Out</span>
+                                ) : isDiwaliProduct ? (
                                     <span className="product-category-badge diwali-pill">🪔 Diwali Special</span>
-                                )}
+                                ) : null}
                             </div>
                             <h1 className="product-title">{product.Name}</h1>
                             <div className="product-price-tag">
@@ -229,7 +234,18 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
                             </div>
 
                             <div className="product-actions">
-                                {!isInCart ? (
+                                {isOutOfStock ? (
+                                    <button
+                                        className="add-to-cart-btn disabled out-of-stock-btn"
+                                        disabled
+                                    >
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                                        </svg>
+                                        Out of Stock
+                                    </button>
+                                ) : !isInCart ? (
                                     <button
                                         className="add-to-cart-btn primary-action"
                                         onClick={handleAddToCart}

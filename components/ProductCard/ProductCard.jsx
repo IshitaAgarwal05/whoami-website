@@ -22,12 +22,15 @@ const ProductCard = ({ product, compact = false, isCombo = false }) => {
     // Placeholder image if none provided
     const imageUrl = product.ImageURL || FALLBACK_IMAGE;
 
-    // Determine tag
-    const tag = product.Tag || (isChotaPandit ? 'Diwali Offer' : null);
+    const isOutOfStock = product.Stock === 0 || product.stock === 0;
+
+    // Determine tag (prioritize Sold Out if stock is 0)
+    const tag = isOutOfStock ? 'Sold Out' : (product.Tag || (isChotaPandit ? 'Diwali Offer' : null));
 
     const handleAddToCart = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        if (isOutOfStock) return;
         if (isChotaPandit) {
             addToCart({
                 ...product,
@@ -59,7 +62,7 @@ const ProductCard = ({ product, compact = false, isCombo = false }) => {
     };
 
     return (
-        <Link href={`/products/${slugify(product.Name)}`} className={`product-card ${compact ? 'compact' : ''}`}>
+        <Link href={`/products/${slugify(product.Name)}`} className={`product-card ${compact ? 'compact' : ''} ${isOutOfStock ? 'out-of-stock' : ''}`}>
             {tag && (
                 <div className={`product-card-tag ${tag.toLowerCase().replace(/\s+/g, '-')}`}>
                     {tag}
@@ -107,7 +110,11 @@ const ProductCard = ({ product, compact = false, isCombo = false }) => {
                             )}
                         </div>
 
-                        {quantity > 0 ? (
+                        {isOutOfStock ? (
+                            <span className="out-of-stock-pill" title="This product is currently out of stock">
+                                Sold Out
+                            </span>
+                        ) : quantity > 0 ? (
                             <div className="qty-stepper">
                                 <button
                                     className="qty-btn qty-btn-minus"
