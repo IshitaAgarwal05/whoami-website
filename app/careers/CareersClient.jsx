@@ -6,9 +6,14 @@ import config from '../../config';
 
 const OPEN_POSITIONS = [
     {
-        id: '3d-modelling',
-        title: '3D Modelling Intern',
-        desc: 'Help us sculpt the future. Design high-fidelity, geometric collectibles of characters and vehicles from legendary universes.'
+        id: 'marketing-sales',
+        title: 'Marketing and Sales Intern',
+        desc: 'Drive our brand reach, explore creator and retail partnerships, and build creative sales campaigns for our fandom identity artifacts.'
+    },
+    {
+        id: 'social-media',
+        title: 'Social Media Intern',
+        desc: 'Tell our brand story through compelling short-form video, reels, behind-the-scenes workshop footage, and viral community engagement.'
     },
     {
         id: 'crocheter',
