@@ -941,3 +941,266 @@
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* -------------------------------------------------------------------------
+ * Admin Authentication Gate
+ * ------------------------------------------------------------------------- */
+.admin-auth-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0a;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-auth-glow {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 184, 77, 0.08) 0%, rgba(10, 10, 10, 0) 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.admin-auth-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 440px;
+    background: #111111;
+    border: 1px solid #222222;
+    border-radius: 16px;
+    padding: 40px 32px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 184, 77, 0.15);
+}
+
+.admin-auth-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.admin-auth-brand-logo {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 16px;
+    background: #171717;
+    border: 1px solid #2a2a2a;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.admin-auth-brand-logo img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.admin-auth-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    background: rgba(255, 184, 77, 0.1);
+    color: #ffb84d;
+    border: 1px solid rgba(255, 184, 77, 0.25);
+    margin-bottom: 12px;
+}
+
+.admin-auth-header h2 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #faf9f6;
+    margin: 0 0 8px;
+}
+
+.admin-auth-header p {
+    color: #88888e;
+    font-size: 0.86rem;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.admin-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.admin-auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.admin-auth-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #a1a1aa;
+}
+
+.admin-auth-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.admin-auth-input {
+    width: 100%;
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: #faf9f6;
+    font-size: 0.92rem;
+    transition: all 0.15s ease;
+    outline: none;
+}
+
+.admin-auth-input:focus {
+    border-color: #ffb84d;
+    background: #191919;
+    box-shadow: 0 0 0 3px rgba(255, 184, 77, 0.12);
+}
+
+.admin-auth-input::placeholder {
+    color: #4b4b53;
+}
+
+.admin-auth-toggle-pwd {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: #71717a;
+    cursor: pointer;
+    font-size: 0.95rem;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease;
+}
+
+.admin-auth-toggle-pwd:hover {
+    color: #e4e4e7;
+}
+
+.admin-auth-btn {
+    width: 100%;
+    background: #ffb84d;
+    color: #0a0a0a;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.admin-auth-btn:hover {
+    background: #ffa826;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(255, 184, 77, 0.25);
+}
+
+.admin-auth-error {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+}
+
+.admin-auth-hint {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #1f1f23;
+    text-align: center;
+    font-size: 0.78rem;
+    color: #71717a;
+}
+
+.admin-auth-hint code {
+    background: #1c1c1f;
+    color: #ffb84d;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+/* User pill in top header */
+.admin-user-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    background: #171717;
+    border: 1px solid #262626;
+    font-size: 0.78rem;
+    color: #d4d4d8;
+}
+
+.admin-user-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ffb84d;
+}
+
+.btn-admin-logout {
+    background: transparent;
+    border: 1px solid #2b2b2e;
+    color: #a1a1aa;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-admin-logout:hover {
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #f87171;
+    background: rgba(239, 68, 68, 0.08);
+}

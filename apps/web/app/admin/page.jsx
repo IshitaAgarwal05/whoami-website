@@ -1,11 +1,16 @@
 import AdminDashboardClient from './AdminDashboardClient';
+import { AdminAuthProvider } from '../../context/AdminAuthContext';
 
 export const metadata = {
-    title: 'Admin Dashboard | Visitor Analytics - WhoAmI Studios',
-    description: 'Real-time visitor tracking and geographic intelligence dashboard for WhoAmI Studios.',
+    title: 'Admin Portal | WhoAmI Studios',
+    description: 'Administrative portal, visitor telemetry, and brand studio for WhoAmI Studios.',
     robots: 'noindex, nofollow'
 };
 
 export default function AdminPage() {
-    return <AdminDashboardClient />;
+    return (
+        <AdminAuthProvider>
+            <AdminDashboardClient />
+        </AdminAuthProvider>
+    );
 }

@@ -3,10 +3,14 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import config, { getApiUrl } from '../../config';
+import { useAdminAuth } from '../../context/AdminAuthContext';
+import AdminLoginView from './AdminLoginView';
 import CssGeneratorTab from './css-generator/CssGeneratorTab';
 import './admin.css';
 
 export default function AdminDashboardClient() {
+    const { user, isAuthenticated, isLoading: authLoading, login, logout } = useAdminAuth();
+
     // Active navigation tab: 'analytics' | 'announcements' | 'css-generator' | 'strapi'
     const [activeTab, setActiveTab] = useState('analytics');
 
@@ -76,9 +80,11 @@ export default function AdminDashboardClient() {
     };
 
     useEffect(() => {
-        fetchStats(timeRange);
-        fetchAnnouncements();
-    }, [timeRange]);
+        if (isAuthenticated) {
+            fetchStats(timeRange);
+            fetchAnnouncements();
+        }
+    }, [isAuthenticated, timeRange]);
 
     // ----------------------------------------------------
     // Analytics Simulation & Reset
@@ -279,6 +285,21 @@ export default function AdminDashboardClient() {
         return '💻';
     };
 
+    if (authLoading) {
+        return (
+            <div className="admin-auth-screen">
+                <div className="admin-loading">
+                    <div className="admin-spinner"></div>
+                    <span style={{ color: '#a1a1aa', fontSize: '0.9rem' }}>Verifying authorization...</span>
+                </div>
+            </div>
+        );
+    }
+
+    if (!isAuthenticated) {
+        return <AdminLoginView onLogin={login} />;
+    }
+
     return (
         <div className="admin-container">
             {/* Header */}
@@ -372,6 +393,26 @@ export default function AdminDashboardClient() {
                             </a>
                         </>
                     )}
+
+                    {/* Admin User Info & Logout Button */}
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginLeft: '6px', borderLeft: '1px solid #262626', paddingLeft: '12px' }}>
+                        <div className="admin-user-pill" title="Super Administrator">
+                            <span className="admin-user-dot"></span>
+                            <span>admin</span>
+                        </div>
+                        <button
+                            onClick={logout}
+                            className="btn-admin-logout"
+                            title="Sign out of Admin Portal"
+                        >
+                            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            <span>Logout</span>
+                        </button>
+                    </div>
                 </div>
             </header>
 
