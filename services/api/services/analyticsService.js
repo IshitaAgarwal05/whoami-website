@@ -1,14 +1,14 @@
 const geoip = require('geoip-lite');
 const db = require('../db/postgresClient');
 
-// Cached region display names formatter
+// Cached region display names formatter (Intl standard)
 const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
 
-// In-memory cache for IP lookups to keep responses ultra fast and avoid redundant calls to ipwho.is
+// In-memory cache for IP lookups to avoid redundant network requests
 const ipCache = new Map();
 
 /**
- * Convert ISO 2-letter country code to flag emoji
+ * Convert ISO 2-letter country code to flag emoji dynamically
  */
 function getFlagEmoji(countryCode) {
     if (!countryCode || countryCode.length !== 2 || countryCode === 'UN' || countryCode === 'LO') {
@@ -26,11 +26,10 @@ function getFlagEmoji(countryCode) {
 }
 
 /**
- * Get readable country name from ISO code
+ * Get readable country name from ISO code dynamically
  */
 function getCountryName(countryCode) {
     if (!countryCode || countryCode === 'UN') return 'Unknown';
-    if (countryCode === 'LO') return 'Localhost / Internal';
     try {
         return regionNames.of(countryCode.toUpperCase()) || countryCode;
     } catch {
@@ -94,7 +93,7 @@ function detectOS(userAgent = '') {
 
 /**
  * IP Geolocation lookup using external API: ipwho.is
- * With fallback to local geoip-lite if network fails
+ * 100% Dynamic: Calls http://ipwho.is/{ip}
  */
 async function lookupIp(ip) {
     const targetIp = (ip || '127.0.0.1').trim();
@@ -111,8 +110,9 @@ async function lookupIp(ip) {
                        targetIp.startsWith('172.16.') ||
                        targetIp.startsWith('172.31.');
 
-    // 1. Primary: External API ipwho.is
+    // 1. Primary: Query external API ipwho.is
     try {
+        // If reserved localhost, querying ipwho.is without an IP dynamically resolves the developer's public internet IP
         const apiUrl = isReserved ? 'http://ipwho.is/' : `http://ipwho.is/${encodeURIComponent(targetIp)}`;
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 4000);
@@ -138,7 +138,7 @@ async function lookupIp(ip) {
         console.warn(`⚠️ ipwho.is external API lookup failed for ${targetIp}:`, apiErr.message);
     }
 
-    // 2. Secondary Fallback: geoip-lite
+    // 2. Secondary Fallback: local geoip-lite if internet is down
     try {
         const geo = geoip.lookup(targetIp);
         if (geo && geo.country) {
@@ -158,14 +158,14 @@ async function lookupIp(ip) {
         console.warn('⚠️ geoip-lite fallback failed:', geoErr.message);
     }
 
-    // 3. Default Fallback
+    // 3. Fallback for offline / unknown IP
     const fallback = {
         ip_resolved: targetIp,
-        country_code: isReserved ? 'IN' : 'UN',
-        country_name: isReserved ? 'India (Local Dev)' : 'Unknown',
-        city: isReserved ? 'Jaipur' : '',
-        region: isReserved ? 'RJ' : '',
-        flag: isReserved ? '🇮🇳' : '🌐',
+        country_code: 'UN',
+        country_name: 'Unknown',
+        city: '',
+        region: '',
+        flag: '🌐',
         isp: ''
     };
     ipCache.set(targetIp, fallback);
@@ -175,14 +175,9 @@ async function lookupIp(ip) {
 /**
  * Record a visit into PostgreSQL
  */
-async function recordVisit({ ip_address, country_code, country_name, city, region, path = '/', user_agent = '', device = null, os = null, referrer = '', created_at = null }) {
-    if (!country_code || !country_name) {
-        const geo = await lookupIp(ip_address);
-        country_code = country_code || geo.country_code;
-        country_name = country_name || geo.country_name;
-        city = city || geo.city;
-        region = region || geo.region;
-    }
+async function recordVisit({ ip_address, path = '/', user_agent = '', device = null, os = null, referrer = '', created_at = null }) {
+    // Dynamically look up IP details via ipwho.is
+    const geo = await lookupIp(ip_address);
 
     const detectedDevice = device || detectDevice(user_agent);
     const detectedOS = os || detectOS(user_agent);
@@ -196,10 +191,10 @@ async function recordVisit({ ip_address, country_code, country_name, city, regio
 
     const values = [
         ip_address || '127.0.0.1',
-        country_code || 'UN',
-        country_name || 'Unknown',
-        city || '',
-        region || '',
+        geo.country_code || 'UN',
+        geo.country_name || 'Unknown',
+        geo.city || '',
+        geo.region || '',
         path || '/',
         user_agent || '',
         detectedDevice,
@@ -213,7 +208,7 @@ async function recordVisit({ ip_address, country_code, country_name, city, regio
 }
 
 /**
- * Get comprehensive analytics stats
+ * Get comprehensive analytics stats from PostgreSQL
  */
 async function getAnalytics(timeRange = 'all') {
     let timeFilter = '';
@@ -346,62 +341,41 @@ async function getAnalytics(timeRange = 'all') {
 }
 
 /**
- * Diverse global IPs with their expected locations
+ * Raw Public IP addresses used purely to simulate incoming web requests.
+ * Zero hardcoded countries or locations — everything is resolved dynamically via ipwho.is API!
  */
-const SIMULATED_VISITORS_POOL = [
-    // India
-    { ip: '49.36.128.45', country_code: 'IN', country_name: 'India', city: 'Delhi', region: 'DL' },
-    { ip: '103.25.130.88', country_code: 'IN', country_name: 'India', city: 'Bengaluru', region: 'KA' },
-    { ip: '117.200.10.55', country_code: 'IN', country_name: 'India', city: 'New Delhi', region: 'DL' },
-    { ip: '122.160.25.12', country_code: 'IN', country_name: 'India', city: 'Jaipur', region: 'RJ' },
-    { ip: '14.139.128.90', country_code: 'IN', country_name: 'India', city: 'Kolkata', region: 'WB' },
-    { ip: '43.242.176.10', country_code: 'IN', country_name: 'India', city: 'Hyderabad', region: 'TG' },
+const SIMULATED_PUBLIC_IPS = [
+    // Asian IPs
+    '49.36.128.45',
+    '103.25.130.88',
+    '117.200.10.55',
+    '122.160.25.12',
+    '14.139.128.90',
+    '133.242.0.1',
+    '210.140.10.1',
+    '103.28.248.1',
+    '94.200.10.1',
 
-    // United States
-    { ip: '8.8.8.8', country_code: 'US', country_name: 'United States', city: 'San Jose', region: 'CA' },
-    { ip: '104.244.42.65', country_code: 'US', country_name: 'United States', city: 'San Francisco', region: 'CA' },
-    { ip: '140.82.112.44', country_code: 'US', country_name: 'United States', city: 'Seattle', region: 'WA' },
-    { ip: '151.101.1.140', country_code: 'US', country_name: 'United States', city: 'New York', region: 'NY' },
-    { ip: '199.16.156.38', country_code: 'US', country_name: 'United States', city: 'Austin', region: 'TX' },
+    // North American IPs
+    '8.8.8.8',
+    '104.244.42.65',
+    '140.82.112.44',
+    '151.101.1.140',
+    '142.250.80.46',
+    '24.114.12.50',
 
-    // United Kingdom
-    { ip: '81.2.69.142', country_code: 'GB', country_name: 'United Kingdom', city: 'Bracknell', region: 'ENG' },
-    { ip: '212.58.244.20', country_code: 'GB', country_name: 'United Kingdom', city: 'London', region: 'ENG' },
-    { ip: '185.86.151.11', country_code: 'GB', country_name: 'United Kingdom', city: 'Edinburgh', region: 'SCT' },
+    // European IPs
+    '81.2.69.142',
+    '212.58.244.20',
+    '85.214.132.117',
+    '178.63.97.34',
+    '51.15.0.1',
+    '188.166.0.1',
 
-    // Germany
-    { ip: '85.214.132.117', country_code: 'DE', country_name: 'Germany', city: 'Berlin', region: 'BE' },
-    { ip: '178.63.97.34', country_code: 'DE', country_name: 'Germany', city: 'Munich', region: 'BY' },
-    { ip: '195.201.201.32', country_code: 'DE', country_name: 'Germany', city: 'Frankfurt', region: 'HE' },
-
-    // Japan
-    { ip: '133.242.0.1', country_code: 'JP', country_name: 'Japan', city: 'Tokyo', region: '13' },
-    { ip: '210.140.10.1', country_code: 'JP', country_name: 'Japan', city: 'Osaka', region: '27' },
-    { ip: '114.179.32.1', country_code: 'JP', country_name: 'Japan', city: 'Kyoto', region: '26' },
-
-    // Canada
-    { ip: '142.250.80.46', country_code: 'CA', country_name: 'Canada', city: 'Toronto', region: 'ON' },
-    { ip: '24.114.12.50', country_code: 'CA', country_name: 'Canada', city: 'Vancouver', region: 'BC' },
-
-    // Australia
-    { ip: '139.130.4.5', country_code: 'AU', country_name: 'Australia', city: 'Sydney', region: 'NSW' },
-    { ip: '203.2.75.1', country_code: 'AU', country_name: 'Australia', city: 'Melbourne', region: 'VIC' },
-
-    // France
-    { ip: '51.15.0.1', country_code: 'FR', country_name: 'France', city: 'Paris', region: 'IDF' },
-    { ip: '195.154.120.1', country_code: 'FR', country_name: 'France', city: 'Lyon', region: 'ARA' },
-
-    // Singapore
-    { ip: '103.28.248.1', country_code: 'SG', country_name: 'Singapore', city: 'Singapore', region: 'SG' },
-
-    // Brazil
-    { ip: '177.18.0.1', country_code: 'BR', country_name: 'Brazil', city: 'São Paulo', region: 'SP' },
-
-    // Netherlands
-    { ip: '188.166.0.1', country_code: 'NL', country_name: 'Netherlands', city: 'Amsterdam', region: 'NH' },
-
-    // United Arab Emirates
-    { ip: '94.200.10.1', country_code: 'AE', country_name: 'United Arab Emirates', city: 'Dubai', region: 'DU' }
+    // South American & Australian IPs
+    '177.18.0.1',
+    '139.130.4.5',
+    '203.2.75.1'
 ];
 
 const PAGES_POOL = [
@@ -436,15 +410,17 @@ const REFERRERS_POOL = [
 ];
 
 /**
- * Simulate web requests from different IPs from different countries
+ * Simulate web requests:
+ * Picks a raw IP and calls ipwho.is dynamically to resolve Country, Flag, and City!
  */
-async function simulateTraffic(count = 50) {
-    console.log(`🚀 Simulating ${count} web visits using ipwho.is across different countries...`);
+async function simulateTraffic(count = 35) {
+    console.log(`🚀 Simulating ${count} web visits using dynamic ipwho.is lookups...`);
     const results = [];
     const now = Date.now();
 
     for (let i = 0; i < count; i++) {
-        const visitor = SIMULATED_VISITORS_POOL[Math.floor(Math.random() * SIMULATED_VISITORS_POOL.length)];
+        // Pick a raw IP string (contains NO country data)
+        const ip = SIMULATED_PUBLIC_IPS[Math.floor(Math.random() * SIMULATED_PUBLIC_IPS.length)];
         const path = PAGES_POOL[Math.floor(Math.random() * PAGES_POOL.length)];
         const profile = PROFILES_POOL[Math.floor(Math.random() * PROFILES_POOL.length)];
         const referrer = REFERRERS_POOL[Math.floor(Math.random() * REFERRERS_POOL.length)];
@@ -454,14 +430,9 @@ async function simulateTraffic(count = 50) {
         const minutesAgo = Math.floor(Math.random() * 60);
         const visitTime = new Date(now - (daysAgo * 86400000 + hoursAgo * 3600000 + minutesAgo * 60000));
 
-        const geo = await lookupIp(visitor.ip);
-
+        // Call recordVisit which queries ipwho.is dynamically for this IP!
         const record = await recordVisit({
-            ip_address: visitor.ip,
-            country_code: geo.country_code || visitor.country_code,
-            country_name: geo.country_name || visitor.country_name,
-            city: geo.city || visitor.city,
-            region: geo.region || visitor.region,
+            ip_address: ip,
             path,
             user_agent: profile.ua,
             device: profile.device,
