@@ -8,6 +8,9 @@ import './Navbar.css';
 
 const Navbar = () => {
     const pathname = usePathname();
+    if (pathname?.startsWith('/admin-dashboard') || pathname?.startsWith('/admin')) {
+        return null;
+    }
     const { toggleDrawer, getItemCount } = useCart();
     const itemCount = getItemCount();
 

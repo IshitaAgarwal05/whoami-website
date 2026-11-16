@@ -1,11 +1,17 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import './FluidSimulation.css';
 
 const FluidSimulation = () => {
+  const pathname = usePathname();
   const canvasRef = useRef(null);
   const animFrameRef = useRef(null);
+
+  if (pathname?.startsWith('/admin-dashboard') || pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   useEffect(() => {
     const canvas = canvasRef.current;

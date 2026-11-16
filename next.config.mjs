@@ -3,6 +3,11 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: '/admin',
+        destination: '/admin-dashboard',
+        permanent: true,
+      },
+      {
         source: '/product/:id',
         destination: '/products', // Generic redirect as we move to slugs
         permanent: true,

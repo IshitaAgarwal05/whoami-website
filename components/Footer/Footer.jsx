@@ -1,9 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import './Footer.css';
 
 const Footer = () => {
+    const pathname = usePathname();
+    if (pathname?.startsWith('/admin-dashboard') || pathname?.startsWith('/admin')) {
+        return null;
+    }
     const currentYear = new Date().getFullYear();
 
     return (

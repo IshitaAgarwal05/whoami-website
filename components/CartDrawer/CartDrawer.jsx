@@ -2,10 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useCart } from '../../context/CartContext';
 import './CartDrawer.css';
 
 const CartDrawer = () => {
+    const pathname = usePathname();
+    if (pathname?.startsWith('/admin-dashboard') || pathname?.startsWith('/admin')) {
+        return null;
+    }
     const {
         cartItems,
         isDrawerOpen,
