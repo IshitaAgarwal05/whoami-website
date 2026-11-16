@@ -105,6 +105,27 @@ async function initSchema() {
         `);
         console.log(' - Created table "tx_newsletter_subscribers"');
 
+        // Visitor Analytics Table
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS tx_visitor_analytics (
+                id SERIAL PRIMARY KEY,
+                ip_address VARCHAR(100) NOT NULL,
+                country_code VARCHAR(10) DEFAULT 'UN',
+                country_name VARCHAR(100) DEFAULT 'Unknown',
+                city VARCHAR(100) DEFAULT '',
+                region VARCHAR(100) DEFAULT '',
+                path VARCHAR(255) DEFAULT '/',
+                user_agent TEXT DEFAULT '',
+                device VARCHAR(50) DEFAULT 'Desktop',
+                referrer TEXT DEFAULT '',
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE INDEX IF NOT EXISTS idx_visitor_ip ON tx_visitor_analytics(ip_address);
+            CREATE INDEX IF NOT EXISTS idx_visitor_country ON tx_visitor_analytics(country_code);
+            CREATE INDEX IF NOT EXISTS idx_visitor_created_at ON tx_visitor_analytics(created_at);
+        `);
+        console.log(' - Created table "tx_visitor_analytics"');
+
         console.log('✅ Transactional PostgreSQL tables initialized successfully!');
     } catch (e) {
         console.error('❌ Failed to initialize schema:', e);
