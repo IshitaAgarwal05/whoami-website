@@ -3,10 +3,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import config, { getApiUrl } from '../../config';
+import CssGeneratorTab from './css-generator/CssGeneratorTab';
 import './admin.css';
 
 export default function AdminDashboardClient() {
-    // Active navigation tab: 'analytics' | 'announcements' | 'strapi'
+    // Active navigation tab: 'analytics' | 'announcements' | 'css-generator' | 'strapi'
     const [activeTab, setActiveTab] = useState('analytics');
 
     // Analytics state
@@ -31,7 +32,7 @@ export default function AdminDashboardClient() {
         setToastMessage(msg);
         setTimeout(() => {
             setToastMessage(null);
-        }, 4000);
+        }, 3500);
     };
 
     // ----------------------------------------------------
@@ -48,7 +49,7 @@ export default function AdminDashboardClient() {
             }
         } catch (err) {
             console.error('Failed to fetch analytics:', err);
-            showToast('⚠️ Failed to load analytics. Please ensure backend is running.');
+            showToast('⚠️ Could not connect to analytics backend.');
         } finally {
             setLoading(false);
         }
@@ -82,7 +83,7 @@ export default function AdminDashboardClient() {
     // ----------------------------------------------------
     // Analytics Simulation & Reset
     // ----------------------------------------------------
-    const handleSimulate = async (count = 50) => {
+    const handleSimulate = async (count = 35) => {
         try {
             setSimulating(true);
             const endpoint = getApiUrl('/api/v1/analytics/simulate');
@@ -93,33 +94,33 @@ export default function AdminDashboardClient() {
             });
             const json = await res.json();
             if (json.success) {
-                showToast(`🚀 Successfully simulated ${count} requests from diverse global IPs!`);
+                showToast(`Simulated ${count} visits across global IPs`);
                 await fetchStats(timeRange);
             } else {
-                showToast('❌ Simulation error: ' + (json.error || 'Unknown error'));
+                showToast('Simulation failed: ' + (json.error || 'Unknown error'));
             }
         } catch (err) {
             console.error('Simulation error:', err);
-            showToast('❌ Simulation failed to connect to backend.');
+            showToast('Could not reach backend');
         } finally {
             setSimulating(false);
         }
     };
 
     const handleReset = async () => {
-        if (!window.confirm('Are you sure you want to clear all analytics visits?')) return;
+        if (!window.confirm('Reset all visitor analytics logs?')) return;
         try {
             setLoading(true);
             const endpoint = getApiUrl('/api/v1/analytics/reset');
             const res = await fetch(endpoint, { method: 'DELETE' });
             const json = await res.json();
             if (json.success) {
-                showToast('🗑️ Analytics data cleared successfully.');
+                showToast('Analytics logs cleared');
                 await fetchStats(timeRange);
             }
         } catch (err) {
             console.error('Reset error:', err);
-            showToast('❌ Failed to clear analytics.');
+            showToast('Failed to clear analytics');
         } finally {
             setLoading(false);
         }
@@ -130,10 +131,7 @@ export default function AdminDashboardClient() {
     // ----------------------------------------------------
     const handleCreateAnnouncement = async (e) => {
         e.preventDefault();
-        if (!newText.trim()) {
-            showToast('⚠️ Announcement text cannot be empty');
-            return;
-        }
+        if (!newText.trim()) return;
 
         try {
             setSubmittingAnnouncement(true);
@@ -149,15 +147,14 @@ export default function AdminDashboardClient() {
             });
             const json = await res.json();
             if (json.success) {
-                showToast('✅ Announcement created and synced to Strapi!');
+                showToast('Announcement published to Strapi');
                 setNewText('');
                 fetchAnnouncements();
             } else {
-                showToast('❌ Error: ' + (json.error || 'Failed to save announcement'));
+                showToast('Failed to save announcement');
             }
         } catch (err) {
-            console.error('Announcement create error:', err);
-            showToast('❌ Failed to reach Strapi API');
+            showToast('Failed to reach Strapi');
         } finally {
             setSubmittingAnnouncement(false);
         }
@@ -175,32 +172,25 @@ export default function AdminDashboardClient() {
             const json = await res.json();
             if (json.success) {
                 showToast(`Announcement set to ${nextStatus ? 'Active' : 'Inactive'}`);
-                // Optimistically update local state
                 setAnnouncements(prev => prev.map(a => a.documentId === item.documentId ? { ...a, is_active: nextStatus } : a));
-            } else {
-                showToast('❌ Failed to update status in Strapi');
             }
         } catch (err) {
-            console.error('Toggle error:', err);
-            showToast('❌ Could not update announcement');
+            showToast('Could not update status');
         }
     };
 
     const handleDeleteAnnouncement = async (documentId) => {
-        if (!window.confirm('Delete this announcement from Strapi?')) return;
+        if (!window.confirm('Delete this announcement?')) return;
         try {
             const endpoint = getApiUrl(`/api/v1/announcements/${documentId}`);
             const res = await fetch(endpoint, { method: 'DELETE' });
             const json = await res.json();
             if (json.success) {
-                showToast('🗑️ Announcement deleted from Strapi');
+                showToast('Announcement deleted');
                 setAnnouncements(prev => prev.filter(a => a.documentId !== documentId));
-            } else {
-                showToast('❌ Failed to delete from Strapi');
             }
         } catch (err) {
-            console.error('Delete error:', err);
-            showToast('❌ Could not delete announcement');
+            showToast('Failed to delete');
         }
     };
 
@@ -219,14 +209,12 @@ export default function AdminDashboardClient() {
             });
             const json = await res.json();
             if (json.success) {
-                showToast('✅ Announcement updated successfully!');
+                showToast('Announcement updated');
                 setEditingItem(null);
                 fetchAnnouncements();
-            } else {
-                showToast('❌ Update failed');
             }
         } catch (err) {
-            showToast('❌ Could not save changes');
+            showToast('Could not save changes');
         }
     };
 
@@ -240,6 +228,7 @@ export default function AdminDashboardClient() {
             (v.country_name && v.country_name.toLowerCase().includes(q)) ||
             (v.country_code && v.country_code.toLowerCase().includes(q)) ||
             (v.city && v.city.toLowerCase().includes(q)) ||
+            (v.os && v.os.toLowerCase().includes(q)) ||
             (v.path && v.path.toLowerCase().includes(q))
         );
     }, [stats?.recentVisits, searchQuery]);
@@ -281,20 +270,29 @@ export default function AdminDashboardClient() {
         }
     };
 
+    const getOsIcon = (os = '') => {
+        const o = os.toLowerCase();
+        if (o.includes('mac') || o === 'ios') return '🍏';
+        if (o.includes('win')) return '🪟';
+        if (o.includes('android')) return '🤖';
+        if (o.includes('linux')) return '🐧';
+        return '💻';
+    };
+
     return (
         <div className="admin-container">
             {/* Header */}
             <header className="admin-header">
                 <div className="admin-title-area">
                     <h1>
-                        WhoAmI Command Center
+                        WhoAmI Admin Portal
                         <span className="admin-badge-live">
                             <span className="admin-live-dot"></span>
-                            Live • Strapi & PostgreSQL
+                            Live System
                         </span>
                     </h1>
                     <p className="admin-subtitle">
-                        Unified Administration: Visitor Analytics, Traffic Geolocation & Strapi CMS Content
+                        Storefront traffic telemetry, announcements, and design system controls
                     </p>
                 </div>
 
@@ -318,39 +316,39 @@ export default function AdminDashboardClient() {
                                     className={`time-btn ${timeRange === '7d' ? 'active' : ''}`}
                                     onClick={() => setTimeRange('7d')}
                                 >
-                                    7 Days
+                                    7D
                                 </button>
                                 <button
                                     className={`time-btn ${timeRange === '30d' ? 'active' : ''}`}
                                     onClick={() => setTimeRange('30d')}
                                 >
-                                    30 Days
+                                    30D
                                 </button>
                             </div>
 
                             <button
-                                className="btn-primary-action"
-                                onClick={() => handleSimulate(50)}
+                                className="btn-secondary-action"
+                                onClick={() => handleSimulate(30)}
                                 disabled={simulating}
-                                title="Simulate 50 web visits from diverse IPs across different countries"
+                                title="Simulate 30 requests from global IP addresses"
                             >
-                                <span>{simulating ? '⏳ Simulating...' : '🚀 Simulate Global Traffic (50)'}</span>
+                                <span>{simulating ? 'Simulating...' : '+ Simulate Traffic'}</span>
                             </button>
 
                             <button
                                 className="btn-secondary-action"
                                 onClick={() => fetchStats(timeRange)}
-                                title="Refresh data"
+                                title="Refresh"
                             >
-                                🔄 Refresh
+                                ⟳
                             </button>
 
                             <button
                                 className="btn-secondary-action btn-danger-action"
                                 onClick={handleReset}
-                                title="Clear visitor analytics records"
+                                title="Clear logs"
                             >
-                                🗑️ Reset
+                                Clear
                             </button>
                         </>
                     )}
@@ -362,29 +360,28 @@ export default function AdminDashboardClient() {
                                 onClick={fetchAnnouncements}
                                 title="Refresh announcements from Strapi"
                             >
-                                🔄 Refresh Strapi
+                                ⟳ Refresh
                             </button>
                             <a
                                 href="http://localhost:1337/admin/content-manager/collection-types/api::announcement.announcement?page=1&pageSize=10&sort=text:ASC"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="btn-secondary-action"
-                                style={{ color: '#ffb84d' }}
                             >
-                                ↗ Open in Strapi Admin
+                                Strapi Admin ↗
                             </a>
                         </>
                     )}
                 </div>
             </header>
 
-            {/* Main Tabs Navigation */}
+            {/* Navigation Tabs */}
             <nav className="admin-nav-tabs">
                 <button
                     className={`admin-nav-tab ${activeTab === 'analytics' ? 'active' : ''}`}
                     onClick={() => setActiveTab('analytics')}
                 >
-                    <span>📊 Visitor Analytics & Geolocation</span>
+                    <span>Visitor Analytics</span>
                     <span className="admin-tab-count">{stats?.totalVisits ?? 0}</span>
                 </button>
 
@@ -392,29 +389,36 @@ export default function AdminDashboardClient() {
                     className={`admin-nav-tab ${activeTab === 'announcements' ? 'active' : ''}`}
                     onClick={() => setActiveTab('announcements')}
                 >
-                    <span>📢 Announcements (Strapi CMS)</span>
+                    <span>Announcements</span>
                     <span className="admin-tab-count">{announcements.length}</span>
+                </button>
+
+                <button
+                    className={`admin-nav-tab ${activeTab === 'css-generator' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('css-generator')}
+                >
+                    <span>CSS Generator</span>
                 </button>
 
                 <button
                     className={`admin-nav-tab ${activeTab === 'strapi' ? 'active' : ''}`}
                     onClick={() => setActiveTab('strapi')}
                 >
-                    <span>🚀 Strapi Studio & Collections</span>
+                    <span>Strapi CMS</span>
                 </button>
             </nav>
 
-            {/* TAB 1: VISITOR ANALYTICS */}
+            {/* TAB 1: VISITOR ANALYTICS & OS RECOGNITION */}
             {activeTab === 'analytics' && (
                 <>
                     {loading && !stats ? (
                         <div className="admin-loading">
                             <div className="admin-spinner"></div>
-                            <p>Fetching visitor telemetry and geographic analytics...</p>
+                            <p>Loading analytics data...</p>
                         </div>
                     ) : (
                         <>
-                            {/* KPI Summary Cards */}
+                            {/* Key Performance Indicators */}
                             <section className="kpi-grid">
                                 <div className="kpi-card">
                                     <div className="kpi-header">
@@ -423,13 +427,13 @@ export default function AdminDashboardClient() {
                                     </div>
                                     <div className="kpi-value">{stats?.totalVisits ?? 0}</div>
                                     <div className="kpi-footer">
-                                        <span>Total page requests recorded</span>
+                                        <span>Total page hits</span>
                                     </div>
                                 </div>
 
                                 <div className="kpi-card">
                                     <div className="kpi-header">
-                                        <span className="kpi-title">Unique IP(s) Visits</span>
+                                        <span className="kpi-title">Unique Visitors</span>
                                         <span className="kpi-icon">👤</span>
                                     </div>
                                     <div className="kpi-value">{stats?.uniqueVisitors ?? 0}</div>
@@ -439,108 +443,60 @@ export default function AdminDashboardClient() {
                                                 ? `${((stats.uniqueVisitors / stats.totalVisits) * 100).toFixed(0)}%`
                                                 : '0%'}
                                         </span>
-                                        <span>uniqueness ratio</span>
+                                        <span>unique IP ratio</span>
                                     </div>
                                 </div>
 
                                 <div className="kpi-card">
                                     <div className="kpi-header">
                                         <span className="kpi-title">Countries Reached</span>
-                                        <span className="kpi-icon">🌍</span>
+                                        <span className="kpi-icon">🌐</span>
                                     </div>
                                     <div className="kpi-value">{stats?.countries?.length ?? 0}</div>
                                     <div className="kpi-footer">
-                                        <span>Nations extracted from visitor IPs</span>
+                                        <span>Geolocated nations</span>
                                     </div>
                                 </div>
 
                                 <div className="kpi-card">
                                     <div className="kpi-header">
-                                        <span className="kpi-title">Top Country</span>
-                                        <span className="kpi-icon">
-                                            {stats?.countries?.[0]?.flag || '🌐'}
-                                        </span>
+                                        <span className="kpi-title">Top Operating System</span>
+                                        <span className="kpi-icon">💻</span>
                                     </div>
-                                    <div className="kpi-value" style={{ fontSize: '1.75rem' }}>
-                                        {stats?.countries?.[0]?.country_name || 'None Yet'}
+                                    <div className="kpi-value" style={{ fontSize: '1.6rem' }}>
+                                        {stats?.operatingSystems?.[0]?.os || 'Awaiting Data'}
                                     </div>
                                     <div className="kpi-footer">
                                         <span>
-                                            {stats?.countries?.[0]
-                                                ? `${stats.countries[0].total_visits} visits (${stats.countries[0].percentage}%)`
-                                                : 'Awaiting traffic'}
+                                            {stats?.operatingSystems?.[0]
+                                                ? `${stats.operatingSystems[0].count} visits (${stats.totalVisits > 0 ? ((stats.operatingSystems[0].count / stats.totalVisits) * 100).toFixed(0) : 0}%)`
+                                                : 'No visits yet'}
                                         </span>
                                     </div>
                                 </div>
                             </section>
 
-                            {/* Simulation Controls Quick Banner */}
-                            <div style={{
-                                background: 'linear-gradient(90deg, #18181b, #121214)',
-                                border: '1px solid #27272a',
-                                borderRadius: '12px',
-                                padding: '16px 20px',
-                                marginBottom: '32px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                flexWrap: 'wrap',
-                                gap: '16px'
-                            }}>
-                                <div>
-                                    <strong style={{ color: '#ffb84d', display: 'block', marginBottom: '4px' }}>
-                                        🧪 IP Geolocation Simulation Engine (ipwho.is)
-                                    </strong>
-                                    <span style={{ color: '#888', fontSize: '0.85rem' }}>
-                                        Test visitor analytics by simulating incoming HTTP requests with real-world IP addresses across India, USA, UK, Germany, Japan, France, Canada, Australia, Singapore, and Brazil resolved via ipwho.is.
-                                    </span>
-                                </div>
-                                <div style={{ display: 'flex', gap: '8px' }}>
-                                    <button
-                                        className="btn-secondary-action"
-                                        onClick={() => handleSimulate(15)}
-                                        disabled={simulating}
-                                    >
-                                        +15 Visits
-                                    </button>
-                                    <button
-                                        className="btn-secondary-action"
-                                        onClick={() => handleSimulate(50)}
-                                        disabled={simulating}
-                                    >
-                                        +50 Visits
-                                    </button>
-                                    <button
-                                        className="btn-secondary-action"
-                                        onClick={() => handleSimulate(100)}
-                                        disabled={simulating}
-                                    >
-                                        +100 Visits
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Two Column Layout: Country Breakdown & Timeline Chart */}
+                            {/* 2-Column Section: Countries & Traffic/Systems */}
                             <div className="admin-grid-2col">
-                                {/* Country Breakdown */}
+                                {/* Left: Country Audience */}
                                 <div className="admin-card">
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
                                         <h2 className="admin-section-title" style={{ margin: 0 }}>
                                             <span>Audience by Country</span>
-                                            <span className="section-tag">{stats?.countries?.length ?? 0} Nations</span>
+                                            <span className="section-tag">{stats?.countries?.length ?? 0}</span>
                                         </h2>
                                         <input
                                             type="text"
-                                            placeholder="Search country..."
+                                            placeholder="Filter country..."
                                             value={countrySearch}
                                             onChange={(e) => setCountrySearch(e.target.value)}
                                             style={{
-                                                background: '#1a1a1a',
-                                                border: '1px solid #2a2a2a',
-                                                color: '#fff',
+                                                background: '#161616',
+                                                border: '1px solid #242424',
+                                                color: '#faf9f6',
                                                 padding: '4px 10px',
                                                 borderRadius: '6px',
-                                                fontSize: '0.8rem',
+                                                fontSize: '0.78rem',
                                                 outline: 'none'
                                             }}
                                         />
@@ -548,11 +504,7 @@ export default function AdminDashboardClient() {
 
                                     {filteredCountries.length === 0 ? (
                                         <div className="admin-empty-state">
-                                            <div className="admin-empty-icon">🌐</div>
-                                            <p>No country visits recorded for this period.</p>
-                                            <button className="btn-primary-action" onClick={() => handleSimulate(25)}>
-                                                Simulate Global Visits
-                                            </button>
+                                            <p>No country visits recorded yet.</p>
                                         </div>
                                     ) : (
                                         <div className="countries-list">
@@ -561,26 +513,18 @@ export default function AdminDashboardClient() {
                                                     <div className="country-info">
                                                         <div className="country-main">
                                                             <span className="country-flag">{c.flag}</span>
-                                                            <div>
-                                                                <span className="country-name">{c.country_name}</span>
-                                                                <span className="country-code-pill" style={{ marginLeft: '8px' }}>
-                                                                    {c.country_code}
-                                                                </span>
-                                                            </div>
+                                                            <span className="country-name">{c.country_name}</span>
+                                                            <span className="country-code-pill">{c.country_code}</span>
                                                         </div>
                                                         <div className="country-stats-nums">
-                                                            <span className="country-unique-count">
-                                                                👤 {c.unique_visitors} unique
-                                                            </span>
-                                                            <span className="country-visits-count">
-                                                                {c.total_visits} ({c.percentage}%)
-                                                            </span>
+                                                            <span className="country-unique-count">{c.unique_visitors} unique</span>
+                                                            <span className="country-visits-count">{c.total_visits} ({c.percentage}%)</span>
                                                         </div>
                                                     </div>
                                                     <div className="country-progress-bar">
                                                         <div
                                                             className="country-progress-fill"
-                                                            style={{ width: `${Math.max(Number(c.percentage), 4)}%` }}
+                                                            style={{ width: `${Math.max(Number(c.percentage), 3)}%` }}
                                                         ></div>
                                                     </div>
                                                 </div>
@@ -589,23 +533,23 @@ export default function AdminDashboardClient() {
                                     )}
                                 </div>
 
-                                {/* Timeline & Device Breakdown */}
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                                    {/* Timeline Chart */}
+                                {/* Right: Traffic Trend & OS/Device Breakdown */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                    {/* Daily Traffic Histogram */}
                                     <div className="admin-card">
                                         <h2 className="admin-section-title">
                                             <span>Traffic Trend</span>
                                             <span className="section-tag">Daily</span>
                                         </h2>
                                         {(!stats?.timeline || stats.timeline.length === 0) ? (
-                                            <div className="admin-empty-state" style={{ padding: '24px' }}>
-                                                <p>No timeline data available</p>
+                                            <div className="admin-empty-state" style={{ padding: '20px' }}>
+                                                <p>No timeline data yet</p>
                                             </div>
                                         ) : (
                                             <div className="chart-container">
                                                 <div className="bars-chart">
-                                                    {stats.timeline.slice(-10).map((t, idx) => {
-                                                        const heightPct = Math.max((t.total_visits / maxTimelineVisits) * 100, 10);
+                                                    {stats.timeline.slice(-8).map((t, idx) => {
+                                                        const heightPct = Math.max((t.total_visits / maxTimelineVisits) * 100, 8);
                                                         return (
                                                             <div className="bar-column" key={idx}>
                                                                 <span className="bar-value">{t.total_visits}</span>
@@ -623,54 +567,78 @@ export default function AdminDashboardClient() {
                                         )}
                                     </div>
 
-                                    {/* Device & Top Pages */}
+                                    {/* Operating Systems & Devices Side-by-Side */}
                                     <div className="admin-card">
                                         <h2 className="admin-section-title">
-                                            <span>Device Breakdown</span>
+                                            <span>Platforms & Systems</span>
                                         </h2>
-                                        <div className="device-bars">
-                                            {stats?.devices?.map((d, idx) => {
-                                                const share = stats.totalVisits > 0
-                                                    ? ((d.count / stats.totalVisits) * 100).toFixed(1)
-                                                    : 0;
-                                                const icon = d.device === 'Mobile' ? '📱' : d.device === 'Tablet' ? '📟' : '💻';
-                                                return (
-                                                    <div className="device-item" key={idx}>
-                                                        <div className="device-info">
-                                                            <span>{icon}</span>
-                                                            <span>{d.device}</span>
-                                                        </div>
-                                                        <div className="device-count">
-                                                            {d.count} ({share}%)
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
+                                        <div className="platform-grid">
+                                            {/* OS List */}
+                                            <div>
+                                                <span style={{ fontSize: '0.75rem', color: '#71717a', textTransform: 'uppercase', fontWeight: 600 }}>
+                                                    Operating Systems
+                                                </span>
+                                                <div className="device-bars">
+                                                    {stats?.operatingSystems?.map((item, idx) => {
+                                                        const pct = stats.totalVisits > 0 ? ((item.count / stats.totalVisits) * 100).toFixed(0) : 0;
+                                                        return (
+                                                            <div className="device-item" key={idx}>
+                                                                <div className="device-info">
+                                                                    <span>{getOsIcon(item.os)}</span>
+                                                                    <span>{item.os}</span>
+                                                                </div>
+                                                                <div className="device-count">{item.count} ({pct}%)</div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+
+                                            {/* Devices List */}
+                                            <div>
+                                                <span style={{ fontSize: '0.75rem', color: '#71717a', textTransform: 'uppercase', fontWeight: 600 }}>
+                                                    Devices
+                                                </span>
+                                                <div className="device-bars">
+                                                    {stats?.devices?.map((item, idx) => {
+                                                        const pct = stats.totalVisits > 0 ? ((item.count / stats.totalVisits) * 100).toFixed(0) : 0;
+                                                        return (
+                                                            <div className="device-item" key={idx}>
+                                                                <div className="device-info">
+                                                                    <span>{item.device === 'Mobile' ? '📱' : item.device === 'Tablet' ? '📟' : '💻'}</span>
+                                                                    <span>{item.device}</span>
+                                                                </div>
+                                                                <div className="device-count">{item.count} ({pct}%)</div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Recent Visits Feed */}
-                            <div className="admin-card" style={{ marginBottom: '32px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+                            {/* Recent Visitors Table with OS Column */}
+                            <div className="admin-card">
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
                                     <h2 className="admin-section-title" style={{ margin: 0 }}>
-                                        <span>Recent Visitor Stream</span>
+                                        <span>Recent Visitor Activity</span>
                                         <span className="section-tag">{filteredRecentVisits.length} Records</span>
                                     </h2>
                                     <input
                                         type="text"
-                                        placeholder="Filter by IP, Country, City, or Path..."
+                                        placeholder="Search by IP, Country, OS, or Page..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         style={{
-                                            background: '#1a1a1a',
-                                            border: '1px solid #2a2a2a',
-                                            color: '#fff',
-                                            padding: '6px 14px',
-                                            borderRadius: '8px',
-                                            fontSize: '0.85rem',
-                                            minWidth: '280px',
+                                            background: '#161616',
+                                            border: '1px solid #242424',
+                                            color: '#faf9f6',
+                                            padding: '5px 12px',
+                                            borderRadius: '6px',
+                                            fontSize: '0.8rem',
+                                            minWidth: '260px',
                                             outline: 'none'
                                         }}
                                     />
@@ -678,20 +646,20 @@ export default function AdminDashboardClient() {
 
                                 {filteredRecentVisits.length === 0 ? (
                                     <div className="admin-empty-state">
-                                        <div className="admin-empty-icon">📋</div>
-                                        <p>No matching visitor logs found.</p>
+                                        <p>No matching visitor activity found.</p>
                                     </div>
                                 ) : (
                                     <div className="admin-table-container">
                                         <table className="admin-table">
                                             <thead>
                                                 <tr>
-                                                    <th>Timestamp</th>
+                                                    <th>Time</th>
                                                     <th>IP Address</th>
                                                     <th>Country</th>
                                                     <th>City / Region</th>
-                                                    <th>Page Visited</th>
+                                                    <th>Page</th>
                                                     <th>Device</th>
+                                                    <th>OS</th>
                                                     <th>Referrer</th>
                                                 </tr>
                                             </thead>
@@ -703,21 +671,23 @@ export default function AdminDashboardClient() {
                                                             <span className="ip-badge">{v.ip_address}</span>
                                                         </td>
                                                         <td>
-                                                            <span style={{ fontSize: '1.2rem', marginRight: '6px' }}>{v.flag}</span>
+                                                            <span style={{ marginRight: '6px' }}>{v.flag}</span>
                                                             <span>{v.country_name}</span>
-                                                            <span className="country-code-pill" style={{ marginLeft: '6px' }}>{v.country_code}</span>
                                                         </td>
-                                                        <td>
-                                                            {v.city ? `${v.city}${v.region ? `, ${v.region}` : ''}` : '-'}
-                                                        </td>
+                                                        <td>{v.city ? `${v.city}${v.region ? `, ${v.region}` : ''}` : '-'}</td>
                                                         <td>
                                                             <span className="path-badge">{v.path}</span>
                                                         </td>
                                                         <td>
                                                             <span className="device-badge">{v.device || 'Desktop'}</span>
                                                         </td>
-                                                        <td style={{ color: '#888', fontSize: '0.8rem' }}>
-                                                            {v.referrer ? v.referrer.replace('https://', '').replace('http://', '').slice(0, 25) : 'Direct'}
+                                                        <td>
+                                                            <span className="os-badge">
+                                                                {getOsIcon(v.os)} {v.os || 'Unknown'}
+                                                            </span>
+                                                        </td>
+                                                        <td style={{ color: '#71717a', fontSize: '0.75rem' }}>
+                                                            {v.referrer ? v.referrer.replace('https://', '').replace('http://', '').slice(0, 22) : 'Direct'}
                                                         </td>
                                                     </tr>
                                                 ))}
@@ -731,17 +701,17 @@ export default function AdminDashboardClient() {
                 </>
             )}
 
-            {/* TAB 2: ANNOUNCEMENTS MANAGEMENT (STRAPI CMS MERGED) */}
+            {/* TAB 2: ANNOUNCEMENTS MANAGEMENT */}
             {activeTab === 'announcements' && (
                 <div>
-                    {/* Live Storefront Announcement Preview */}
+                    {/* Live Preview */}
                     <div className="announcement-preview-card">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '0.8rem', color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
-                                👁️ Live Storefront Banner Preview
+                            <span style={{ fontSize: '0.75rem', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                                Live Storefront Banner Preview
                             </span>
-                            <span style={{ fontSize: '0.75rem', color: activeAnnouncement ? '#4ade80' : '#888' }}>
-                                {activeAnnouncement ? '● Active Announcement Showing to Customers' : '○ No active announcement banner'}
+                            <span style={{ fontSize: '0.72rem', color: activeAnnouncement ? '#4ade80' : '#71717a' }}>
+                                {activeAnnouncement ? '● Active banner visible on whoamistudios.in' : '○ No active banner'}
                             </span>
                         </div>
 
@@ -752,25 +722,25 @@ export default function AdminDashboardClient() {
                             </div>
                         ) : (
                             <div className="preview-banner inactive">
-                                <span>No active announcement. Activate or create one below to display across whoamistudios.in</span>
+                                <span>No active announcement. Activate or create one below to display across store pages.</span>
                             </div>
                         )}
                     </div>
 
-                    {/* Create New Announcement Form */}
-                    <div className="admin-card" style={{ marginBottom: '28px' }}>
+                    {/* Create Announcement Form */}
+                    <div className="admin-card" style={{ marginBottom: '24px' }}>
                         <h2 className="admin-section-title">
-                            <span>Add New Announcement</span>
+                            <span>Create Announcement</span>
                             <span className="section-tag">Strapi Sync</span>
                         </h2>
 
                         <form onSubmit={handleCreateAnnouncement}>
                             <div className="announcement-form-grid">
                                 <div className="form-group">
-                                    <label className="form-label">Announcement Text *</label>
+                                    <label className="form-label">Message *</label>
                                     <input
                                         type="text"
-                                        placeholder="e.g. Free Shipping on all orders above ₹499! Use code WHOAMI"
+                                        placeholder="e.g. Free shipping on all custom orders above ₹499"
                                         value={newText}
                                         onChange={(e) => setNewText(e.target.value)}
                                         className="form-input"
@@ -779,24 +749,24 @@ export default function AdminDashboardClient() {
                                 </div>
 
                                 <div className="form-group">
-                                    <label className="form-label">Banner Type</label>
+                                    <label className="form-label">Theme Type</label>
                                     <select
                                         value={newType}
                                         onChange={(e) => setNewType(e.target.value)}
                                         className="form-select"
                                     >
-                                        <option value="promo">Promo (Warm Amber / Gold)</option>
-                                        <option value="info">Info (Blue / Cool Gray)</option>
+                                        <option value="promo">Promo (Amber Gold)</option>
+                                        <option value="info">Info (Ocean Blue)</option>
                                         <option value="critical">Critical (Crimson Red)</option>
                                     </select>
                                 </div>
 
-                                <div className="form-group" style={{ justifyContent: 'flex-end' }}>
+                                <div className="form-group">
                                     <button
                                         type="submit"
                                         className="btn-primary-action"
                                         disabled={submittingAnnouncement}
-                                        style={{ height: '42px', whiteSpace: 'nowrap' }}
+                                        style={{ height: '38px', whiteSpace: 'nowrap' }}
                                     >
                                         {submittingAnnouncement ? 'Publishing...' : '+ Publish to Strapi'}
                                     </button>
@@ -805,30 +775,28 @@ export default function AdminDashboardClient() {
                         </form>
                     </div>
 
-                    {/* Existing Announcements List */}
+                    {/* Announcements List */}
                     <div className="admin-card">
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                             <h2 className="admin-section-title" style={{ margin: 0 }}>
-                                <span>Managed Announcements</span>
-                                <span className="section-tag">{announcements.length} Total</span>
+                                <span>All Announcements</span>
+                                <span className="section-tag">{announcements.length}</span>
                             </h2>
-                            <span style={{ fontSize: '0.8rem', color: '#888' }}>
-                                Synced with Strapi collection: <code>api::announcement.announcement</code>
+                            <span style={{ fontSize: '0.75rem', color: '#71717a' }}>
+                                Strapi: <code>api::announcement.announcement</code>
                             </span>
                         </div>
 
                         {announcementsLoading ? (
-                            <div className="admin-loading" style={{ minHeight: '180px' }}>
+                            <div className="admin-loading" style={{ minHeight: '140px' }}>
                                 <div className="admin-spinner"></div>
-                                <p>Loading announcements from Strapi...</p>
                             </div>
                         ) : announcements.length === 0 ? (
                             <div className="admin-empty-state">
-                                <div className="admin-empty-icon">📢</div>
-                                <p>No announcements found in Strapi CMS.</p>
+                                <p>No announcements found.</p>
                             </div>
                         ) : (
-                            <div className="announcements-list">
+                            <div>
                                 {announcements.map((item) => (
                                     <div className="announcement-card-item" key={item.documentId || item.id}>
                                         <div className="announcement-content-left">
@@ -837,13 +805,13 @@ export default function AdminDashboardClient() {
                                             </span>
                                             <div>
                                                 <div className="announcement-text">{item.text}</div>
-                                                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '4px' }}>
+                                                <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginTop: '3px' }}>
                                                     <span className={`status-indicator-pill ${item.is_active ? 'active' : 'inactive'}`}>
                                                         <span className={`status-dot-sm ${item.is_active ? 'active' : 'inactive'}`}></span>
                                                         {item.is_active ? 'Active' : 'Inactive'}
                                                     </span>
-                                                    <span style={{ fontSize: '0.75rem', color: '#777' }}>
-                                                        Created: {formatTimestamp(item.createdAt)}
+                                                    <span style={{ fontSize: '0.72rem', color: '#71717a' }}>
+                                                        {formatTimestamp(item.createdAt)}
                                                     </span>
                                                 </div>
                                             </div>
@@ -853,26 +821,23 @@ export default function AdminDashboardClient() {
                                             <button
                                                 className={`btn-toggle-switch ${item.is_active ? 'is-active-btn' : ''}`}
                                                 onClick={() => handleToggleActive(item)}
-                                                title={item.is_active ? 'Deactivate announcement' : 'Activate announcement'}
                                             >
-                                                {item.is_active ? '✓ Active' : '○ Inactive'}
+                                                {item.is_active ? 'Active' : 'Enable'}
                                             </button>
 
                                             <button
                                                 className="btn-secondary-action"
                                                 onClick={() => setEditingItem({ ...item })}
-                                                style={{ padding: '6px 10px', fontSize: '0.8rem' }}
-                                                title="Edit announcement"
+                                                style={{ padding: '5px 9px', fontSize: '0.75rem' }}
                                             >
-                                                ✏️ Edit
+                                                Edit
                                             </button>
 
                                             <button
                                                 className="btn-icon-danger"
                                                 onClick={() => handleDeleteAnnouncement(item.documentId)}
-                                                title="Delete announcement from Strapi"
                                             >
-                                                🗑️
+                                                ✕
                                             </button>
                                         </div>
                                     </div>
@@ -883,17 +848,22 @@ export default function AdminDashboardClient() {
                 </div>
             )}
 
-            {/* TAB 3: STRAPI STUDIO & COLLECTIONS */}
+            {/* TAB 3: CSS GENERATOR & THEME STUDIO (FROM NAMAN BRANCH) */}
+            {activeTab === 'css-generator' && (
+                <CssGeneratorTab />
+            )}
+
+            {/* TAB 4: STRAPI STUDIO */}
             {activeTab === 'strapi' && (
                 <div>
                     <div className="strapi-launch-banner">
                         <div>
-                            <span className="strapi-meta-badge">Strapi v5 Headless CMS</span>
-                            <h2 style={{ fontSize: '1.4rem', margin: '0 0 6px', color: '#fff' }}>
-                                Advanced Content Studio
+                            <span className="strapi-meta-badge">Strapi v5 CMS</span>
+                            <h2 style={{ fontSize: '1.25rem', margin: '0 0 4px', color: '#faf9f6' }}>
+                                Headless CMS Console
                             </h2>
-                            <p style={{ color: '#aaa', margin: 0, fontSize: '0.9rem', maxWidth: '700px' }}>
-                                You have full access to Strapi's backend admin interface on port 1337 for content types, media uploads, role permissions, and database schemas.
+                            <p style={{ color: '#71717a', margin: 0, fontSize: '0.85rem' }}>
+                                Access raw collections, media uploads, schema builder, and permissions directly.
                             </p>
                         </div>
                         <a
@@ -901,92 +871,84 @@ export default function AdminDashboardClient() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn-primary-action"
-                            style={{ padding: '12px 24px', fontSize: '0.95rem' }}
+                            style={{ padding: '9px 18px' }}
                         >
-                            🚀 Open Strapi Admin Portal ↗
+                            Open Strapi Console ↗
                         </a>
                     </div>
 
                     <div className="admin-grid-2col">
                         <div className="admin-card">
                             <h3 className="admin-section-title">
-                                <span>Direct Content Links</span>
+                                <span>Collections Quick Access</span>
                             </h3>
-                            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                <li>
-                                    <a
-                                        href="http://localhost:1337/admin/content-manager/collection-types/api::announcement.announcement?page=1&pageSize=10&sort=text:ASC"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn-secondary-action"
-                                        style={{ width: '100%', justifyContent: 'space-between', padding: '12px 16px' }}
-                                    >
-                                        <span>📢 Announcements Collection</span>
-                                        <span>↗</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="http://localhost:1337/admin/content-manager/collection-types/api::product.product?page=1&pageSize=10&sort=title:ASC"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn-secondary-action"
-                                        style={{ width: '100%', justifyContent: 'space-between', padding: '12px 16px' }}
-                                    >
-                                        <span>📦 Products Collection</span>
-                                        <span>↗</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="http://localhost:1337/admin/content-manager/collection-types/api::category.category"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn-secondary-action"
-                                        style={{ width: '100%', justifyContent: 'space-between', padding: '12px 16px' }}
-                                    >
-                                        <span>🏷️ Categories & Customs</span>
-                                        <span>↗</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="http://localhost:1337/admin/plugins/upload"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn-secondary-action"
-                                        style={{ width: '100%', justifyContent: 'space-between', padding: '12px 16px' }}
-                                    >
-                                        <span>🖼️ Media Library & Image Uploads</span>
-                                        <span>↗</span>
-                                    </a>
-                                </li>
-                            </ul>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <a
+                                    href="http://localhost:1337/admin/content-manager/collection-types/api::announcement.announcement?page=1&pageSize=10&sort=text:ASC"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn-secondary-action"
+                                    style={{ justifyContent: 'space-between', padding: '10px 14px' }}
+                                >
+                                    <span>Announcements Collection</span>
+                                    <span>↗</span>
+                                </a>
+                                <a
+                                    href="http://localhost:1337/admin/content-manager/collection-types/api::product.product?page=1&pageSize=10&sort=title:ASC"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn-secondary-action"
+                                    style={{ justifyContent: 'space-between', padding: '10px 14px' }}
+                                >
+                                    <span>Products Collection</span>
+                                    <span>↗</span>
+                                </a>
+                                <a
+                                    href="http://localhost:1337/admin/content-manager/collection-types/api::category.category"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn-secondary-action"
+                                    style={{ justifyContent: 'space-between', padding: '10px 14px' }}
+                                >
+                                    <span>Categories & Customs</span>
+                                    <span>↗</span>
+                                </a>
+                                <a
+                                    href="http://localhost:1337/admin/plugins/upload"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn-secondary-action"
+                                    style={{ justifyContent: 'space-between', padding: '10px 14px' }}
+                                >
+                                    <span>Media Library (Images)</span>
+                                    <span>↗</span>
+                                </a>
+                            </div>
                         </div>
 
                         <div className="admin-card">
                             <h3 className="admin-section-title">
-                                <span>Architecture Health</span>
+                                <span>Services Status</span>
                             </h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#1c1c1c', borderRadius: '8px' }}>
-                                    <span style={{ color: '#aaa' }}>Next.js Frontend</span>
-                                    <span style={{ color: '#4ade80', fontWeight: 600 }}>● Active (Port 3000)</span>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#141414', borderRadius: '6px', fontSize: '0.82rem' }}>
+                                    <span style={{ color: '#71717a' }}>Next.js Storefront</span>
+                                    <span style={{ color: '#4ade80', fontWeight: 600 }}>Active (Port 3000)</span>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#1c1c1c', borderRadius: '8px' }}>
-                                    <span style={{ color: '#aaa' }}>Express Gateway Backend</span>
-                                    <span style={{ color: '#4ade80', fontWeight: 600 }}>● Active (Port 5001)</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#141414', borderRadius: '6px', fontSize: '0.82rem' }}>
+                                    <span style={{ color: '#71717a' }}>Express API Gateway</span>
+                                    <span style={{ color: '#4ade80', fontWeight: 600 }}>Active (Port 5001)</span>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#1c1c1c', borderRadius: '8px' }}>
-                                    <span style={{ color: '#aaa' }}>Strapi v5 CMS</span>
-                                    <span style={{ color: '#4ade80', fontWeight: 600 }}>● Active (Port 1337)</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#141414', borderRadius: '6px', fontSize: '0.82rem' }}>
+                                    <span style={{ color: '#71717a' }}>Strapi v5 CMS</span>
+                                    <span style={{ color: '#4ade80', fontWeight: 600 }}>Active (Port 1337)</span>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#1c1c1c', borderRadius: '8px' }}>
-                                    <span style={{ color: '#aaa' }}>PostgreSQL Database</span>
-                                    <span style={{ color: '#4ade80', fontWeight: 600 }}>● Connected (Port 5438)</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#141414', borderRadius: '6px', fontSize: '0.82rem' }}>
+                                    <span style={{ color: '#71717a' }}>PostgreSQL</span>
+                                    <span style={{ color: '#4ade80', fontWeight: 600 }}>Connected (Port 5438)</span>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#1c1c1c', borderRadius: '8px' }}>
-                                    <span style={{ color: '#aaa' }}>IP Geolocation API</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#141414', borderRadius: '6px', fontSize: '0.82rem' }}>
+                                    <span style={{ color: '#71717a' }}>IP Geolocation</span>
                                     <span style={{ color: '#ffb84d', fontWeight: 600 }}>ipwho.is</span>
                                 </div>
                             </div>
@@ -1009,20 +971,20 @@ export default function AdminDashboardClient() {
                     padding: '20px'
                 }}>
                     <div style={{
-                        background: '#161616',
-                        border: '1px solid #333',
-                        borderRadius: '12px',
-                        padding: '24px',
-                        maxWidth: '520px',
+                        background: '#141414',
+                        border: '1px solid #282828',
+                        borderRadius: '10px',
+                        padding: '20px',
+                        maxWidth: '480px',
                         width: '100%',
                         boxShadow: '0 20px 40px rgba(0,0,0,0.8)'
                     }}>
-                        <h3 style={{ margin: '0 0 16px', color: '#fff', fontSize: '1.2rem' }}>
+                        <h3 style={{ margin: '0 0 14px', color: '#faf9f6', fontSize: '1.05rem' }}>
                             Edit Announcement
                         </h3>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                             <div className="form-group">
-                                <label className="form-label">Announcement Text</label>
+                                <label className="form-label">Text</label>
                                 <textarea
                                     value={editingItem.text}
                                     onChange={(e) => setEditingItem({ ...editingItem, text: e.target.value })}
@@ -1031,32 +993,32 @@ export default function AdminDashboardClient() {
                                 />
                             </div>
                             <div className="form-group">
-                                <label className="form-label">Banner Type</label>
+                                <label className="form-label">Type</label>
                                 <select
                                     value={editingItem.type}
                                     onChange={(e) => setEditingItem({ ...editingItem, type: e.target.value })}
                                     className="form-select"
                                 >
-                                    <option value="promo">Promo (Gold/Amber)</option>
-                                    <option value="info">Info (Blue)</option>
-                                    <option value="critical">Critical (Red)</option>
+                                    <option value="promo">Promo (Amber Gold)</option>
+                                    <option value="info">Info (Ocean Blue)</option>
+                                    <option value="critical">Critical (Crimson Red)</option>
                                 </select>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '6px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
                                 <input
                                     type="checkbox"
                                     id="editActive"
                                     checked={editingItem.is_active}
                                     onChange={(e) => setEditingItem({ ...editingItem, is_active: e.target.checked })}
-                                    style={{ width: '18px', height: '18px', accentColor: '#ffb84d' }}
+                                    style={{ width: '16px', height: '16px', accentColor: '#ffb84d' }}
                                 />
-                                <label htmlFor="editActive" style={{ color: '#ddd', fontSize: '0.9rem', cursor: 'pointer' }}>
-                                    Set as Active banner
+                                <label htmlFor="editActive" style={{ color: '#d4d4d8', fontSize: '0.85rem', cursor: 'pointer' }}>
+                                    Active on storefront
                                 </label>
                             </div>
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '20px' }}>
                             <button
                                 className="btn-secondary-action"
                                 onClick={() => setEditingItem(null)}

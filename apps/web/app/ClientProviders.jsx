@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { CartProvider } from '../context/CartContext';
+import { ThemeProvider } from '../context/ThemeContext';
 import LoaderIntro from '../components/LoaderIntro/LoaderIntro';
 
 export function ClientProviders({ children }) {
@@ -10,13 +11,15 @@ export function ClientProviders({ children }) {
   const [showSite, setShowSite] = useState(pathname ? pathname !== '/' : false);
 
   return (
-    <CartProvider>
-      {!showSite && (
-        <LoaderIntro onComplete={() => setShowSite(true)} />
-      )}
-      <div style={{ display: showSite ? 'block' : 'none' }}>
-        {children}
-      </div>
-    </CartProvider>
+    <ThemeProvider>
+      <CartProvider>
+        {!showSite && (
+          <LoaderIntro onComplete={() => setShowSite(true)} />
+        )}
+        <div style={{ display: showSite ? 'block' : 'none' }}>
+          {children}
+        </div>
+      </CartProvider>
+    </ThemeProvider>
   );
 }

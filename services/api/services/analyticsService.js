@@ -79,6 +79,20 @@ function detectDevice(userAgent = '') {
 }
 
 /**
+ * Detect client Operating System (OS) from User-Agent
+ */
+function detectOS(userAgent = '') {
+    const ua = userAgent.toLowerCase();
+    if (/iphone|ipad|ipod/i.test(ua)) return 'iOS';
+    if (/android/i.test(ua)) return 'Android';
+    if (/macintosh|mac os x/i.test(ua)) return 'macOS';
+    if (/windows|win32|win64/i.test(ua)) return 'Windows';
+    if (/linux/i.test(ua)) return 'Linux';
+    if (/cros/i.test(ua)) return 'ChromeOS';
+    return 'Other';
+}
+
+/**
  * IP Geolocation lookup using external API: ipwho.is
  * With fallback to local geoip-lite if network fails
  */
@@ -99,7 +113,6 @@ async function lookupIp(ip) {
 
     // 1. Primary: External API ipwho.is
     try {
-        // If it's a local/reserved IP on local dev, querying ipwho.is without IP returns the caller's actual location
         const apiUrl = isReserved ? 'http://ipwho.is/' : `http://ipwho.is/${encodeURIComponent(targetIp)}`;
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 4000);
@@ -162,8 +175,7 @@ async function lookupIp(ip) {
 /**
  * Record a visit into PostgreSQL
  */
-async function recordVisit({ ip_address, country_code, country_name, city, region, path = '/', user_agent = '', device = 'Desktop', referrer = '', created_at = null }) {
-    // If geo fields not provided, look them up via external API ipwho.is
+async function recordVisit({ ip_address, country_code, country_name, city, region, path = '/', user_agent = '', device = null, os = null, referrer = '', created_at = null }) {
     if (!country_code || !country_name) {
         const geo = await lookupIp(ip_address);
         country_code = country_code || geo.country_code;
@@ -172,10 +184,13 @@ async function recordVisit({ ip_address, country_code, country_name, city, regio
         region = region || geo.region;
     }
 
+    const detectedDevice = device || detectDevice(user_agent);
+    const detectedOS = os || detectOS(user_agent);
+
     const query = `
         INSERT INTO tx_visitor_analytics 
-        (ip_address, country_code, country_name, city, region, path, user_agent, device, referrer, created_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, COALESCE($10, CURRENT_TIMESTAMP))
+        (ip_address, country_code, country_name, city, region, path, user_agent, device, os, referrer, created_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, COALESCE($11, CURRENT_TIMESTAMP))
         RETURNING *;
     `;
 
@@ -187,7 +202,8 @@ async function recordVisit({ ip_address, country_code, country_name, city, regio
         region || '',
         path || '/',
         user_agent || '',
-        device || 'Desktop',
+        detectedDevice,
+        detectedOS,
         referrer || '',
         created_at
     ];
@@ -266,7 +282,19 @@ async function getAnalytics(timeRange = 'all') {
     `;
     const devicesRes = await db.query(devicesQuery);
 
-    // 5. Timeline / Trend (grouped by day)
+    // 5. Operating System (OS) Breakdown
+    const osQuery = `
+        SELECT 
+            COALESCE(os, 'Other') AS os,
+            COUNT(*)::int AS count
+        FROM tx_visitor_analytics
+        ${timeFilter}
+        GROUP BY os
+        ORDER BY count DESC;
+    `;
+    const osRes = await db.query(osQuery);
+
+    // 6. Timeline / Trend (grouped by day)
     const timelineQuery = `
         SELECT 
             TO_CHAR(created_at, 'YYYY-MM-DD') AS date,
@@ -279,7 +307,7 @@ async function getAnalytics(timeRange = 'all') {
     `;
     const timelineRes = await db.query(timelineQuery);
 
-    // 6. Recent Visitor Logs (last 50)
+    // 7. Recent Visitor Logs (last 50)
     const recentQuery = `
         SELECT 
             id,
@@ -290,6 +318,7 @@ async function getAnalytics(timeRange = 'all') {
             region,
             path,
             device,
+            COALESCE(os, 'Other') AS os,
             referrer,
             created_at
         FROM tx_visitor_analytics
@@ -308,6 +337,7 @@ async function getAnalytics(timeRange = 'all') {
         countries,
         topPages: pagesRes.rows,
         devices: devicesRes.rows,
+        operatingSystems: osRes.rows,
         timeline: timelineRes.rows,
         recentVisits,
         timeRange,
@@ -387,7 +417,14 @@ const PAGES_POOL = [
     '/blog'
 ];
 
-const DEVICES_POOL = ['Desktop', 'Desktop', 'Mobile', 'Mobile', 'Mobile', 'Tablet'];
+const PROFILES_POOL = [
+    { device: 'Desktop', os: 'Windows', ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' },
+    { device: 'Desktop', os: 'macOS', ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_4_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' },
+    { device: 'Desktop', os: 'Linux', ua: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' },
+    { device: 'Mobile', os: 'iOS', ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1' },
+    { device: 'Mobile', os: 'Android', ua: 'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36' },
+    { device: 'Tablet', os: 'iOS', ua: 'Mozilla/5.0 (iPad; CPU OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1' }
+];
 
 const REFERRERS_POOL = [
     'https://www.google.com/',
@@ -400,7 +437,6 @@ const REFERRERS_POOL = [
 
 /**
  * Simulate web requests from different IPs from different countries
- * Resolving geolocation with ipwho.is
  */
 async function simulateTraffic(count = 50) {
     console.log(`🚀 Simulating ${count} web visits using ipwho.is across different countries...`);
@@ -408,19 +444,16 @@ async function simulateTraffic(count = 50) {
     const now = Date.now();
 
     for (let i = 0; i < count; i++) {
-        // Pick a visitor profile
         const visitor = SIMULATED_VISITORS_POOL[Math.floor(Math.random() * SIMULATED_VISITORS_POOL.length)];
         const path = PAGES_POOL[Math.floor(Math.random() * PAGES_POOL.length)];
-        const device = DEVICES_POOL[Math.floor(Math.random() * DEVICES_POOL.length)];
+        const profile = PROFILES_POOL[Math.floor(Math.random() * PROFILES_POOL.length)];
         const referrer = REFERRERS_POOL[Math.floor(Math.random() * REFERRERS_POOL.length)];
 
-        // Spread timestamps across the last 6 days and today
         const daysAgo = Math.floor(Math.random() * 6);
         const hoursAgo = Math.floor(Math.random() * 24);
         const minutesAgo = Math.floor(Math.random() * 60);
         const visitTime = new Date(now - (daysAgo * 86400000 + hoursAgo * 3600000 + minutesAgo * 60000));
 
-        // Use ipwho.is lookup
         const geo = await lookupIp(visitor.ip);
 
         const record = await recordVisit({
@@ -430,8 +463,9 @@ async function simulateTraffic(count = 50) {
             city: geo.city || visitor.city,
             region: geo.region || visitor.region,
             path,
-            user_agent: `Mozilla/5.0 (${device === 'Mobile' ? 'iPhone; CPU iPhone OS 16_0 like Mac OS X' : 'Windows NT 10.0; Win64; x64'}) AppleWebKit/537.36 SimulatedBot/1.0`,
-            device,
+            user_agent: profile.ua,
+            device: profile.device,
+            os: profile.os,
             referrer,
             created_at: visitTime
         });
@@ -439,7 +473,6 @@ async function simulateTraffic(count = 50) {
         results.push(record);
     }
 
-    // Get fresh totals
     const counts = await db.query(`
         SELECT 
             COUNT(*)::int AS total_visits, 
@@ -469,6 +502,7 @@ module.exports = {
     extractClientIp,
     lookupIp,
     detectDevice,
+    detectOS,
     getFlagEmoji,
     getCountryName,
     recordVisit,
