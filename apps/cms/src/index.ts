@@ -35,6 +35,8 @@ export default {
           'api::announcement.announcement.find',
           'api::announcement.announcement.findOne',
           'api::announcement.announcement.create',
+          'api::announcement.announcement.update',
+          'api::announcement.announcement.delete',
           'api::career.career.find',
           'api::career.career.findOne',
           'api::career.career.create',

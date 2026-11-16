@@ -5,7 +5,8 @@ import Navbar from '../components/Navbar/Navbar';
 import Footer from '../components/Footer/Footer';
 import CartDrawer from '../components/CartDrawer/CartDrawer';
 import FluidSimulation from '../components/FluidSimulation/FluidSimulation'; 
-import AnalyticsTracker from '../components/AnalyticsTracker/AnalyticsTracker'; 
+import AnalyticsTracker from '../components/AnalyticsTracker/AnalyticsTracker';
+import AnnouncementBar from '../components/AnnouncementBar/AnnouncementBar'; 
 
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://whoami.vercel.app'),
@@ -46,6 +47,7 @@ export default function RootLayout({ children }) {
       <body>
         <FluidSimulation />
         <AnalyticsTracker />
+        <AnnouncementBar />
         <ClientProviders>
           <Navbar />
           <CartDrawer />

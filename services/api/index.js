@@ -12,6 +12,7 @@ const blogRoutes = require('./routes/blog');
 const orderRoutes = require('./routes/orders');
 const operationsRoutes = require('./routes/operations');
 const analyticsRoutes = require('./routes/analytics');
+const announcementRoutes = require('./routes/announcements');
 
 const app = express();
 const PORT = process.env.PORT || 5001; // Default to 5001 as specified in .env.local
@@ -127,6 +128,7 @@ app.use('/api/v1/products/reload', reloadLimiter);
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/blog', blogRoutes);
 app.use('/api/v1/orders', orderRoutes);
+app.use('/api/v1/announcements', announcementRoutes);
 app.use('/api/v1', operationsRoutes);
 app.use('/api/v1', analyticsRoutes);
 
@@ -135,6 +137,7 @@ app.use('/api/products/reload', reloadLimiter);
 app.use('/api/products', productRoutes);
 app.use('/api/blog', blogRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/announcements', announcementRoutes);
 app.use('/api', operationsRoutes);
 app.use('/api', analyticsRoutes);
 
