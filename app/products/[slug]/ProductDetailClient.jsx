@@ -20,7 +20,7 @@ const getProductVariants = (product) => {
                 name: 'With Ash Catcher Tray',
                 fullName: `${product.Name} (With Ash Catcher Tray)`,
                 price: 699,
-                originalPrice: null,
+                originalPrice: 899,
                 badge: null,
                 description: 'Complete Set: Chota Pandit Figurine + Custom Ash Catcher Tray'
             },
@@ -29,7 +29,7 @@ const getProductVariants = (product) => {
                 name: 'Figurine Only (Without Tray)',
                 fullName: `${product.Name} (Without Tray)`,
                 price: 499,
-                originalPrice: null,
+                originalPrice: 699,
                 badge: null,
                 description: 'Solo Collectible: Chota Pandit Agarbatti Figurine Only'
             }
