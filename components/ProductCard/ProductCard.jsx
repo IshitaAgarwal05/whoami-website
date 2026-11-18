@@ -12,10 +12,10 @@ const ProductCard = ({ product, compact = false, isCombo = false }) => {
     const FALLBACK_IMAGE = 'https://placehold.co/400x400';
 
     const isChotaPandit = product.Name?.toLowerCase().includes('chota pandit');
-    const defaultId = isChotaPandit ? `${product.ID}-with-tray` : product.ID;
+    const defaultId = isChotaPandit ? `${product.ID}-no-tray` : product.ID;
 
-    // Check if this product or its default variant is in the cart
-    const cartItem = cartItems.find(item => item.ID === product.ID || item.ID === defaultId);
+    // Check if this product or its variants are in the cart
+    const cartItem = cartItems.find(item => item.ID === product.ID || item.ID === `${product.ID}-no-tray` || item.ID === `${product.ID}-with-tray`);
     const quantity = cartItem ? cartItem.quantity : 0;
     const activeCartId = cartItem ? cartItem.ID : defaultId;
 
@@ -24,10 +24,8 @@ const ProductCard = ({ product, compact = false, isCombo = false }) => {
 
     const isOutOfStock = product.Stock === 0 || product.stock === 0;
 
-    // Determine tag (prioritize Out of Stock if stock is 0, Chota Pandit gets Diwali Offer)
-    const tag = isOutOfStock
-        ? 'Out of Stock'
-        : (isChotaPandit ? 'Diwali Offer' : (product.Tag === 'Diwali Special' ? 'Diwali Offer' : product.Tag));
+    // Determine tag (prioritize Out of Stock if stock is 0)
+    const tag = isOutOfStock ? 'Out of Stock' : product.Tag;
 
     const handleAddToCart = (e) => {
         e.preventDefault();
@@ -37,10 +35,10 @@ const ProductCard = ({ product, compact = false, isCombo = false }) => {
             addToCart({
                 ...product,
                 ID: defaultId,
-                Name: `${product.Name} (With Free Ash Catcher Tray)`,
-                Price: product.Price,
-                OriginalPrice: product.OriginalPrice,
-                Variant: 'With Ash Catcher Tray'
+                Name: `${product.Name} (Without Tray)`,
+                Price: 499,
+                OriginalPrice: null,
+                Variant: 'Without Tray'
             });
         } else {
             addToCart(product);

@@ -18,11 +18,11 @@ const getProductVariants = (product) => {
             {
                 id: `${product.ID}-with-tray`,
                 name: 'With Ash Catcher Tray',
-                fullName: `${product.Name} (With Free Ash Catcher Tray)`,
-                price: 499,
-                originalPrice: 699,
-                badge: 'Diwali Offer • Free Tray! 🪔',
-                description: 'Complete Set: Chota Pandit Figurine + Custom Ash Catcher Tray (₹200 value included FREE)'
+                fullName: `${product.Name} (With Ash Catcher Tray)`,
+                price: 699,
+                originalPrice: null,
+                badge: null,
+                description: 'Complete Set: Chota Pandit Figurine + Custom Ash Catcher Tray'
             },
             {
                 id: `${product.ID}-no-tray`,
@@ -44,10 +44,6 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
 
     const variants = getProductVariants(product);
     const [selectedVariant, setSelectedVariant] = useState(variants ? variants[0] : null);
-
-    const isDiwaliProduct = product?.Name?.toLowerCase().includes('chota pandit') || 
-        product?.Tag?.toLowerCase().includes('diwali') || 
-        (product?.Tags && product.Tags.some(t => t.toLowerCase().includes('diwali')));
 
     const isOutOfStock = product?.Stock === 0 || product?.stock === 0;
 
@@ -100,11 +96,9 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
                         <div className="glass-card product-main-info">
                             <div className="product-badges-row">
                                 <span className="product-category-badge">{product.Category}</span>
-                                {isOutOfStock ? (
+                                {isOutOfStock && (
                                     <span className="product-category-badge out-of-stock-pill">Out of Stock</span>
-                                ) : isDiwaliProduct ? (
-                                    <span className="product-category-badge diwali-pill">🪔 Diwali Offer</span>
-                                ) : null}
+                                )}
                             </div>
                             <h1 className="product-title">{product.Name}</h1>
                             <div className="product-price-tag">
@@ -121,19 +115,6 @@ const ProductDetailClient = ({ product, relatedProducts, whatsappNumber, product
                                     )}
                                 </div>
                             </div>
-
-                            {/* Diwali Special Offer Banner */}
-                            {isDiwaliProduct && (
-                                <div className="diwali-special-banner">
-                                    <div className="diwali-banner-header">
-                                        <span className="diwali-flame-icon">🪔</span>
-                                        <span className="diwali-banner-badge">Diwali Festive Offer</span>
-                                    </div>
-                                    <p className="diwali-banner-desc">
-                                        <strong>Free Ash Catcher Tray Included:</strong> The custom-textured ash catcher tray (worth ₹200) is included completely <strong>FREE</strong> with your Chota Pandit figurine this festive season! Both options are <strong>₹499</strong>.
-                                    </p>
-                                </div>
-                            )}
 
                             {/* Variant Selector */}
                             {variants && variants.length > 0 && (

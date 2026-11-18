@@ -275,6 +275,7 @@ ${c.cyan}┌──────────────────────�
 │ ${c.gray}Dimensions:${c.reset} ${(p.dimensions || 'N/A').padEnd(14)} ${c.gray}Weight:${c.reset} ${(p.weight || 'N/A').padEnd(27)} │
 │ ${c.gray}Image:${c.reset} ${(p.image_url || 'N/A').padEnd(52)} │
 │ ${c.gray}Ideal For:${c.reset} ${(p.use_case || 'N/A').padEnd(49)} │
+│ ${c.gray}Tags:${c.reset} ${(Array.isArray(p.tags) && p.tags.length > 0 ? p.tags.join(', ') : 'none').padEnd(53)} │
 │ ${c.gray}Description:${c.reset} ${(p.description ? p.description.slice(0, 46) + (p.description.length > 46 ? '...' : '') : 'N/A').padEnd(46)} │
 ${c.cyan}└─────────────────────────────────────────────────────────────┘${c.reset}
 `);
@@ -313,7 +314,8 @@ const handleEditProduct = async () => {
                     { name: '📁 4. Category', value: 'category' },
                     { name: '🖼️ 5. Image Path (image_url)', value: 'image' },
                     { name: '📦 6. Specs (Material, Dimensions, Weight, Ideal For)', value: 'specs' },
-                    { name: '📝 7. Edit ALL Fields (Full Step-by-Step)', value: 'all' },
+                    { name: '🏷️ 7. Tags (Add, Edit, or Clear Tags)', value: 'tags' },
+                    { name: '📝 8. Edit ALL Fields (Full Step-by-Step)', value: 'all' },
                     new inquirer.Separator(),
                     { name: '↩️ Finish / Back to Main Menu', value: 'back' }
                 ]
@@ -457,6 +459,12 @@ const handleEditProduct = async () => {
             updates.dimensions = dimVal.trim();
             updates.weight = weightVal.trim();
             updates.use_case = useVal.trim();
+        } else if (editType === 'tags') {
+            const currentTags = Array.isArray(current.tags) ? current.tags.join(', ') : '';
+            console.log(`\n${c.cyan}Current Tags:${c.reset} ${currentTags ? c.bold + currentTags + c.reset : c.gray + 'none' + c.reset}\n`);
+            const tagsInput = await askEditable('Tags (comma-separated, or empty to clear):', currentTags);
+            const parsedTags = tagsInput.split(',').map(t => t.trim()).filter(Boolean);
+            updates.tags = parsedTags;
         } else if (editType === 'all') {
             console.log(`\n${c.gray}Press Enter to keep current value or edit inline using Arrow keys/Backspace:${c.reset}`);
             const idVal = await askEditable('SKU / ID:', current.internal_id || '');
