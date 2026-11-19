@@ -1,13 +1,49 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import './ImageCarousel.css';
 
-const ImageCarousel = ({ images = [], productName }) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
+const ImageCarousel = ({ images = [], productName, activeImage = null, variantTrigger = 0 }) => {
+    const findImageIndex = (targetUrl) => {
+        if (!targetUrl || !images || images.length === 0) return -1;
+        // 1. Direct exact match
+        const exactIdx = images.indexOf(targetUrl);
+        if (exactIdx !== -1) return exactIdx;
+
+        // 2. Basename match (e.g. flower-blue.webp)
+        const targetFilename = targetUrl.split('/').pop().toLowerCase();
+        const filenameIdx = images.findIndex(img => img.split('/').pop().toLowerCase() === targetFilename);
+        if (filenameIdx !== -1) return filenameIdx;
+
+        // 3. Match filename stem (e.g. 'flower-blue' in '/products/flower-kc/flower-blue.webp')
+        const targetStem = targetFilename.replace(/\.[^/.]+$/, '');
+        const stemIdx = images.findIndex(img => {
+            const imgStem = img.split('/').pop().replace(/\.[^/.]+$/, '').toLowerCase();
+            return imgStem === targetStem || img.toLowerCase().includes(targetStem);
+        });
+        if (stemIdx !== -1) return stemIdx;
+
+        return -1;
+    };
+
+    const getInitialIndex = () => {
+        const found = findImageIndex(activeImage);
+        return found !== -1 ? found : 0;
+    };
+
+    const [currentIndex, setCurrentIndex] = useState(getInitialIndex);
     const [touchStart, setTouchStart] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
+
+    // Synchronize carousel slide whenever active variant image or trigger changes
+    useEffect(() => {
+        if (!activeImage) return;
+        const found = findImageIndex(activeImage);
+        if (found !== -1) {
+            setCurrentIndex(found);
+        }
+    }, [activeImage, variantTrigger, images]);
 
     const minSwipeDistance = 50;
 
@@ -44,6 +80,20 @@ const ImageCarousel = ({ images = [], productName }) => {
     };
 
     if (images.length === 0) {
+        if (activeImage) {
+            return (
+                <div className="product-image">
+                    <Image 
+                        src={activeImage} 
+                        alt={`${productName} - Identity Artifact`}
+                        width={600}
+                        height={600}
+                        priority
+                        style={{ objectFit: 'cover' }}
+                    />
+                </div>
+            );
+        }
         return (
             <div className="product-image">
                 <div className="fallback-placeholder">No Image Available</div>
@@ -55,7 +105,7 @@ const ImageCarousel = ({ images = [], productName }) => {
         return (
             <div className="product-image">
                 <Image 
-                    src={images[0]} 
+                    src={activeImage || images[0]} 
                     alt={`${productName} - Identity Artifact`}
                     width={600}
                     height={600}

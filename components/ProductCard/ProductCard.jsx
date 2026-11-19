@@ -12,10 +12,50 @@ const ProductCard = ({ product, compact = false, isCombo = false }) => {
     const FALLBACK_IMAGE = 'https://placehold.co/400x400';
 
     const isChotaPandit = product.Name?.toLowerCase().includes('chota pandit');
-    const defaultId = isChotaPandit ? `${product.ID}-no-tray` : product.ID;
+    const idNum = Number(product.ID || product.internal_id);
+    const nameLower = (product.Name || '').toLowerCase();
+    const folderLower = (product.FolderURL || product.ImageURL || product.image_url || '').toLowerCase();
+
+    const isFlowerKeychain = (
+        idNum === 54 ||
+        nameLower.includes('flower keychain') ||
+        folderLower.includes('flower-kc')
+    );
+
+    const isHeartBmPlain = (
+        idNum === 55 ||
+        (nameLower.includes('heart bookmark') && nameLower.includes('plain')) ||
+        folderLower.includes('heart-bm/plain')
+    );
+
+    const isHeartBmDesigner = (
+        idNum === 56 ||
+        (nameLower.includes('heart bookmark') && (nameLower.includes('designer') || nameLower.includes('painted'))) ||
+        folderLower.includes('heart-bm/painted')
+    );
+
+    const isCharmColorProduct = (
+        [50, 51, 52, 53].includes(idNum) ||
+        nameLower.includes('flexi dragon') ||
+        (nameLower.includes('crab') && nameLower.includes('charm')) ||
+        (nameLower.includes('dragon') && nameLower.includes('charm') && !nameLower.includes('egg')) ||
+        nameLower.includes('balloon dog')
+    );
+
+    const isColorProduct = isFlowerKeychain || isCharmColorProduct || isHeartBmPlain;
+
+    const defaultId = isChotaPandit 
+        ? `${product.ID}-no-tray` 
+        : (isHeartBmDesigner 
+            ? `${product.ID}-mandala-black` 
+            : (isColorProduct ? `${product.ID}-red` : product.ID));
 
     // Check if this product or its variants are in the cart
-    const cartItem = cartItems.find(item => item.ID === product.ID || item.ID === `${product.ID}-no-tray` || item.ID === `${product.ID}-with-tray`);
+    const cartItem = cartItems.find(item => 
+        item.ID === product.ID || 
+        item.ID === defaultId || 
+        (typeof item.ID === 'string' && item.ID.startsWith(`${product.ID}-`))
+    );
     const quantity = cartItem ? cartItem.quantity : 0;
     const activeCartId = cartItem ? cartItem.ID : defaultId;
 
@@ -39,6 +79,26 @@ const ProductCard = ({ product, compact = false, isCombo = false }) => {
                 Price: 499,
                 OriginalPrice: null,
                 Variant: 'Without Tray'
+            });
+        } else if (isHeartBmDesigner) {
+            addToCart({
+                ...product,
+                ID: defaultId,
+                Name: `${product.Name} (Mandala / Black)`,
+                Price: product.Price,
+                OriginalPrice: product.OriginalPrice,
+                ImageURL: '/products/heart-bm/painted/1.webp',
+                Variant: 'Mandala / Black'
+            });
+        } else if (isColorProduct) {
+            addToCart({
+                ...product,
+                ID: defaultId,
+                Name: `${product.Name} (Red)`,
+                Price: product.Price,
+                OriginalPrice: product.OriginalPrice,
+                ImageURL: isFlowerKeychain ? '/products/flower-kc/flower-red.webp' : (product.ImageURL || null),
+                Variant: 'Red'
             });
         } else {
             addToCart(product);
@@ -95,6 +155,49 @@ const ProductCard = ({ product, compact = false, isCombo = false }) => {
                             <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontStyle: 'italic', marginTop: '4px' }}>
                                 * Note: Books featured in images are for styling only and are not included.
                             </p>
+                        )}
+                        {isHeartBmDesigner && (
+                            <div className="product-card-color-preview">
+                                <span className="mini-color-dots">
+                                    <span style={{ backgroundColor: '#171717', border: '1px solid rgba(255,255,255,0.4)' }} title="Black" />
+                                    <span style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.4)' }} title="White" />
+                                    <span style={{ backgroundColor: '#FACC15' }} title="Yellow" />
+                                </span>
+                                <span className="mini-color-text">4 Designs • 3 Colors</span>
+                            </div>
+                        )}
+                        {isColorProduct && (
+                            <div className="product-card-color-preview">
+                                <span className="mini-color-dots">
+                                    {isHeartBmPlain ? (
+                                        <>
+                                            <span style={{ backgroundColor: '#EF4444' }} title="Red" />
+                                            <span style={{ backgroundColor: '#3B82F6' }} title="Blue" />
+                                            <span style={{ backgroundColor: '#FACC15' }} title="Yellow" />
+                                            <span style={{ backgroundColor: '#171717', border: '1px solid rgba(255,255,255,0.4)' }} title="Black" />
+                                        </>
+                                    ) : isFlowerKeychain ? (
+                                        <>
+                                            <span style={{ backgroundColor: '#EF4444' }} title="Red" />
+                                            <span style={{ backgroundColor: '#3B82F6' }} title="Blue" />
+                                            <span style={{ backgroundColor: '#10B981' }} title="Green" />
+                                            <span style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.4)' }} title="White" />
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span style={{ backgroundColor: '#EF4444' }} title="Red" />
+                                            <span style={{ backgroundColor: '#3B82F6' }} title="Blue" />
+                                            <span style={{ backgroundColor: '#10B981' }} title="Green" />
+                                            <span style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.4)' }} title="White" />
+                                            <span style={{ backgroundColor: '#FACC15' }} title="Yellow" />
+                                            <span style={{ backgroundColor: '#FFAB91' }} title="Peach" />
+                                        </>
+                                    )}
+                                </span>
+                                <span className="mini-color-text">
+                                    {(isFlowerKeychain || isHeartBmPlain) ? '4 Colors' : '6 Colors'}
+                                </span>
+                            </div>
                         )}
                     </>
                 )}

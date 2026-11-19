@@ -713,6 +713,119 @@
     color: var(--color-warm-gold);
 }
 
+/* Multi Variant Container (2 Simultaneous Options) */
+.multi-variant-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.design-pills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+}
+
+@media (max-width: 520px) {
+    .design-pills-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.design-pill-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: var(--radius-xl);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+}
+
+.design-pill-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(212, 175, 55, 0.4);
+    color: var(--color-text-primary);
+    transform: translateY(-2px);
+}
+
+.design-pill-btn.selected {
+    background: rgba(212, 175, 55, 0.08);
+    border-color: var(--color-warm-gold);
+    color: var(--color-warm-gold);
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.2);
+}
+
+/* Color Swatches Grid */
+.color-swatches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+}
+
+@media (max-width: 520px) {
+    .color-swatches-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.color-swatch-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: left;
+}
+
+.color-swatch-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(212, 175, 55, 0.4);
+    transform: translateY(-2px);
+}
+
+.color-swatch-btn.selected {
+    background: rgba(212, 175, 55, 0.08);
+    border-color: var(--color-warm-gold);
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.2);
+}
+
+.color-dot {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease;
+}
+
+.color-swatch-btn.selected .color-dot {
+    transform: scale(1.15);
+}
+
+.color-name {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    transition: color 0.2s ease;
+}
+
+.color-swatch-btn.selected .color-name {
+    color: var(--color-text-primary);
+    font-weight: 700;
+}
+
 .variant-cards-list {
     display: flex;
     flex-direction: column;
